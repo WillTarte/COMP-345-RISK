@@ -1,2 +1,2 @@
 # COMP-345-proj
-Group project for COMP-345
+Risk project for COMP-345.
