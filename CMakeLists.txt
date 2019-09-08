@@ -3,4 +3,7 @@ project(COMP-345-proj)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(COMP-345-proj main.cpp)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mapconfig.txt
+        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
+add_executable(COMP-345-proj main.cpp map.cpp)
