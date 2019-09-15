@@ -14,13 +14,24 @@ enum class CardType {
     CAVALRY = 2
 };
 
+class Hand {
+public:
+    Hand();
+    std::vector<CardType>* getHand(){ return handPointer; }
+    std::vector<CardType> *handPointer;
+
+private:
+};
+
 class Deck {
 public:
     Deck(int numberCountries);
     int getNumberOfCards(){ return *deckSize; }
+    void setNumberOfCards(int newSize){ deckSize = new int(newSize); }
     std::vector<CardType>* getDeck(){ return deckPointer; }
     void createDeck();
     std::vector<CardType> populateDeck();
+    void draw(Hand& userHand);
 
 private:
     int *deckSize;

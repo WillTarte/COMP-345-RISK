@@ -12,8 +12,15 @@
  * @param amountCountries
  */
 Deck::Deck(int amountCountries) {
-    deckSize = &amountCountries;
-    deckPointer = {};
+    deckSize = new int(amountCountries); //store value on the heap to avoid losing it
+    deckPointer = new std::vector<CardType>;
+}
+
+/**
+ * Initial empty hand
+ */
+Hand::Hand() {
+    handPointer = new std::vector<CardType>;
 }
 
 /**
@@ -23,7 +30,7 @@ Deck::Deck(int amountCountries) {
 void Deck::createDeck() {
     std::vector<CardType> deck = Deck::populateDeck();
     std::shuffle (deck.begin(), deck.end(), std::mt19937(std::random_device()()));
-    deckPointer = new std::vector<CardType>(deck);
+    deckPointer = new std::vector<CardType>(deck); //store value on the heap to avoid losing it
 }
 
 /**
@@ -46,5 +53,18 @@ std::vector<CardType> Deck::populateDeck() {
         deck.emplace_back(CardType::CAVALRY);
     }
 
+    Deck::setNumberOfCards(deckPointer->size());
+
     return deck;
+}
+
+/**
+ * User draws a random card from the deck and it is removed from the deck
+ */
+void Deck::draw(Hand& userHand) {
+    CardType drawnCard = deckPointer->back(); //save a copy of the last value of the vector
+    std::cout << static_cast<int>(drawnCard) << std::endl;
+    deckPointer->pop_back(); //remove the last value of the vector
+    Deck::setNumberOfCards(deckPointer->size());
+    userHand.getHand()->push_back(drawnCard);
 }
