@@ -27,5 +27,5 @@ Dice::Dice(int numDice, int numSides) {
  */
 Dice::roll() {
   srand(time(NULL));
-  return (rand() % Dice::sides+1;
+  return rand() % Dice::sides+1;
 }
