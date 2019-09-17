@@ -2,7 +2,8 @@
 #include "../../include/Dice.h"
 
 int main() {
-  return test_requestMultipleDice();
+  return test_requestMultipleDice() &&
+    test_returnCorrectNumOfDice();
 }
 
 bool test_requestMultipleDice() {
@@ -17,6 +18,19 @@ bool test_requestMultipleDice() {
     catch (int e) {
       success = false;
     }
+  }
+
+  return success;
+}
+
+bool test_returnCorrectNumOfDice() {
+  bool success = true;
+
+  for (int i = 1; i < 4; i++) {
+    DiceRoller roller = DiceRoller(i);
+    int length = roller.getDice()->size();
+
+    success = sucess && lenght == i;
   }
 
   return success;
