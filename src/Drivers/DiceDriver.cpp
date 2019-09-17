@@ -35,3 +35,15 @@ bool test_returnCorrectNumOfDice() {
 
   return success;
 }
+
+bool test_valuesInCorrectRange() {
+  return false;
+}
+
+bool test_equalShareOfValues() {
+  return false;
+}
+
+bool test_maintainPercentageOfRolls() {
+  return false;
+}
