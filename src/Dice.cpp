@@ -10,16 +10,12 @@
  * Dice constructor
  * @param numDice
  */
-Dice::Dice(int numDice) {
-  numDice = new int(numDice);
-}
+Dice::DiceRoller(int numDice) {
+  dice = new std::vector<Dice>;
 
-/**
- * Dice constructor
- * @param numDice, numSides
- */
-Dice::Dice(int numDice, int numSides) {
-
+  for (int i = 0; i < numDice; i++) {
+    dice.push_back(new Dice());
+  }
 }
 
 /**
