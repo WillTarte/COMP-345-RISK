@@ -15,7 +15,7 @@ public:
     Map* initMap();
 
 private:
-    static Map* initMapObject(std::string mn, std::vector<std::vector<std::string>> ctd, std::vector<std::vector<std::string>> cyd, std::vector<std::vector<int>> bd, BOOLEAN vMap);
+    static Map* initMapObject(std::string mn, std::vector<std::vector<std::string>> ctd, std::vector<std::vector<std::string>> cyd, std::vector<std::vector<int>> bd, bool vMap);
 };
 
 #endif //COMP_345_PROJ_MAPLOADER_H

@@ -138,7 +138,7 @@ Map* MapLoader::initMap() {
     return initMapObject(mapName,continentData,countryData,borderData,validMap);
 }
 
-Map* MapLoader::initMapObject(std::string mapName, std::vector<std::vector<std::string>> continentData, std::vector<std::vector<std::string>> countryData, std::vector<std::vector<int>> borderData, BOOLEAN vMap){
+Map* MapLoader::initMapObject(std::string mapName, std::vector<std::vector<std::string>> continentData, std::vector<std::vector<std::string>> countryData, std::vector<std::vector<int>> borderData, bool vMap){
     if(vMap){
         //create map object with empty continents
         Map* gameMap = new Map(mapName,continentData);
