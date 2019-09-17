@@ -14,7 +14,7 @@ int main() {
     Deck deck = Deck(9);
     deck.createDeck();
 
-    int size = deck.getNumberOfCards();
+    int size = *deck.getNumberOfCards();
 
     std::cout << "\n--------------------\n Creation of a Deck \n--------------------" << std::endl;
 

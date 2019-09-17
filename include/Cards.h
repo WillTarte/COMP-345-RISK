@@ -20,13 +20,13 @@ public:
     static int armiesReceived();
 
 private:
-    std::vector<CardType> *handPointer;
+    std::vector<CardType>* handPointer;
 };
 
 class Deck {
 public:
     Deck(int numberCountries);
-    int getNumberOfCards(){ return *deckSize; }
+    int* getNumberOfCards(){ return deckSize; }
     void setNumberOfCards(int newSize){ deckSize = new int(newSize); }
     std::vector<CardType>* getDeck(){ return deckPointer; }
     std::vector<CardType>* getDiscard(){return discardPointer; }
@@ -36,9 +36,9 @@ public:
     void discard(Hand hand, std::vector<CardType> discardedCards);
 
 private:
-    int *deckSize;
-    std::vector<CardType> *deckPointer;
-    std::vector<CardType> *discardPointer;
+    int* deckSize;
+    std::vector<CardType>* deckPointer;
+    std::vector<CardType>* discardPointer;
 };
 
 #endif //COMP_345_PROJ_CARDS_H
