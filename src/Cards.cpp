@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include "../include/Cards.h"
 
 namespace globalHandVariables {
@@ -43,7 +44,6 @@ void Deck::createDeck() {
  * @return
  */
 std::vector<CardType> Deck::populateDeck() {
-
     std::vector<CardType> deck = {};
 
     for (int i = 0; i < Deck::getNumberOfCards() / 3; i++) {
@@ -73,24 +73,36 @@ void Deck::draw(Hand &userHand) {
  * @return
  */
 int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType> & givenCards) {
-
-    int armiesToExchange = Hand::armiesReceived();
-
     if (givenCards.size() != 3) {
         return -1;
     }
-
     //Ensure that all three given cards are the same
-    if (givenCards.at(0) == givenCards.at(1) && givenCards.at(1) == givenCards.at(2)) {
-        deck.discard(hand, givenCards);
+    else if (givenCards.at(0) == givenCards.at(1) && givenCards.at(1) == givenCards.at(2)) {
+        int armiesToExchange = Hand::armiesReceived();
+
+        try {
+            deck.discard(hand, givenCards);
+        } catch (const std::length_error& handLength) {
+            std::cout << handLength.what() << std::endl;
+            exit(1);
+        }
+
         globalHandVariables::tradedSetsCount++;
         return armiesToExchange;
     }
-        //Ensure that all three cards are different
+    //Ensure that all three cards are different
     else if (givenCards.at(0) != givenCards.at(1) &&
              givenCards.at(0) != givenCards.at(2) &&
              givenCards.at(1) != givenCards.at(2)) {
-        deck.discard(hand, givenCards);
+        int armiesToExchange = Hand::armiesReceived();
+
+        try {
+            deck.discard(hand, givenCards);
+        } catch (const std::length_error& handLength) {
+            std::cout << handLength.what() << std::endl;
+            exit(1);
+        }
+
         globalHandVariables::tradedSetsCount++;
         return armiesToExchange;
     }
@@ -102,23 +114,21 @@ int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType> & givenCard
  * @return
  */
 int Hand::armiesReceived() {
-
     if (globalHandVariables::tradedSetsCount < 6) {
-        return (globalHandVariables::tradedSetsCount * 2 + 2);
+        return globalHandVariables::tradedSetsCount * 2 + 2;
     }
-
-    if (globalHandVariables::tradedSetsCount == 6) {
+    else if (globalHandVariables::tradedSetsCount == 6) {
         return 15;
     }
-
-    return (15 + (globalHandVariables::tradedSetsCount - 6) * 5);
+    return 15 + (globalHandVariables::tradedSetsCount - 6) * 5;
 }
 
 /**
- *  Puts exchanged cards in the discard pile & removes them from hand
+ * Puts exchanged cards in the discard pile & removes them from hand
  * @param discardedCards
  */
 void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
+    int initialHandSize = hand.getHand()->size();
 
     for (int i = 0; i < 3; i++) {
         Deck::discardPointer->push_back(discardedCards.at(i));
@@ -137,5 +147,10 @@ void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
                 counter++;
             }
         }
+    }
+
+    // checks if the cards were removed from the hand as expected
+    if (hand.getHand()->size() == initialHandSize) {
+        throw std::length_error("The three cards were not removed from the hand once exchanged successfully. System exiting.");
     }
 }

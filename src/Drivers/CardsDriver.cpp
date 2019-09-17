@@ -34,9 +34,9 @@ int main() {
 
     std::cout << "\n\n------------------\n Deck Composition \n------------------" << std::endl;
 
-    printf ("Number of [INFANTRY] cards: [%d]", infantryCount);
-    printf ("\nNumber of [ARTILLERY] cards: [%d]", infantryCount);
-    printf ("\nNumber of [CAVALRY] cards: [%d]", infantryCount);
+    std::cout << "Number of [INFANTRY] cards: [" << infantryCount << "]" << std::endl;
+    std::cout << "Number of [ARTILLERY] cards: [" << artilleryCount << "]" << std::endl;
+    std::cout << "Number of [CAVALRY] cards: [" << cavalryCount << "]" << std::endl;
 
     std::cout << "\n\n---------------\n Hand of Cards \n---------------" << std::endl;
 
@@ -88,7 +88,7 @@ int main() {
 
     }
     else {
-        printf ("Number of armies received: %d", armiesReceived);
+        std::cout << "Number of armies received: " << armiesReceived << std::endl;
     }
 
     std::cout << "\n\n-----------------------\n Current Hand of Cards \n-----------------------" << std::endl;

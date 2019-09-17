@@ -8,11 +8,7 @@
 #ifndef COMP_345_PROJ_CARDS_H
 #define COMP_345_PROJ_CARDS_H
 
-enum CardType {
-    INFANTRY = 0,
-    ARTILLERY = 1,
-    CAVALRY = 2
-};
+enum CardType { INFANTRY, ARTILLERY, CAVALRY };
 
 class Deck;
 
