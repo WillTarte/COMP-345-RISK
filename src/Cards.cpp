@@ -46,7 +46,7 @@ void Deck::createDeck() {
 std::vector<CardType> Deck::populateDeck() {
     std::vector<CardType> deck = {};
 
-    for (int i = 0; i < Deck::getNumberOfCards() / 3; i++) {
+    for (int i = 0; i < *Deck::getNumberOfCards() / 3; i++) {
         deck.emplace_back(CardType::INFANTRY);
         deck.emplace_back(CardType::ARTILLERY);
         deck.emplace_back(CardType::CAVALRY);
