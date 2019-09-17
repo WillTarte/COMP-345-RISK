@@ -4,7 +4,6 @@
 
 #include <string>
 #include <vector>
-#include <winnt.h>
 
 #ifndef COMP_345_PROJ_MAP_H
 #define COMP_345_PROJ_MAP_H
@@ -31,7 +30,7 @@ public:
     public:
         Continent(std::string cname, int troops);
         std::vector<Country*> pCountriesInContinent;
-        Map::Continent* setCountry(Map::Country* c);
+        void setCountry(Map::Country* c);
         std::string getContinent(){ return *pCName; }
     private:
         std::string* pCName;
@@ -42,7 +41,7 @@ public:
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
     void printMap();
-    BOOLEAN testConnected();
+    bool testConnected();
 };
 
 #endif //COMP_345_PROJ_MAP_H

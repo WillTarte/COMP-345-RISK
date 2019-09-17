@@ -26,7 +26,7 @@ Map* MapLoader::initMap() {
 
     std::string mode = "";
 
-    BOOLEAN validMap = true;
+    bool validMap = true;
 
     //maintain a counter of the file lines, for error tracing
     int lineCount = 0;
@@ -38,8 +38,6 @@ Map* MapLoader::initMap() {
     int countryCount = 0;
 
     while (std::getline(infile, line)){
-
-
         //ignore comments or empty lines
         if(line.empty() || line[0] == *";"){
             //do nothing, the line is empty or is a comment
@@ -65,6 +63,7 @@ Map* MapLoader::initMap() {
                }
                continue;
             }
+
             //read sections
             if(mode == "files"){
                 //this mode is in every example file, do we need it?
@@ -73,11 +72,9 @@ Map* MapLoader::initMap() {
                 continentCount ++;
                 //check validity of the line in this mode
                 if (lineWords.size() < 2) {
-                    //error
                     std::cout << "Line " << lineCount << " - [ERROR] : a line in the continents declaration had missing tokens, map could not be created.\n";
-                    validMap = FALSE;
+                    validMap = false;
                 }else if(lineWords.size() > 2){
-                    //warning
                     std::cout << "Line " << lineCount << " - [WARNING] : a line in  the continents declaration had extra tokens.\n";
                     continentData.push_back(lineWords);
                 }else{
@@ -85,23 +82,19 @@ Map* MapLoader::initMap() {
                 }
             }else if(mode == "countries"){
                 countryCount ++;
-
                 //check validity of the line in this mode
                 if (lineWords.size() < 3) {
-                    //error
                     std::cout << "Line " << lineCount << " - [ERROR] : a line in the countries declaration had missing tokens, map could not be created.\n";
-                    validMap = FALSE;
+                    validMap = false;
                 }else if(lineWords.size() > 3){
-                    //warning
                     std::cout << "Line " << lineCount << " - [WARNING] : a line in  the countries declaration had extra tokens.\n";
-
                     //check country id matches with order and that it references a valid continent
                     if(std::stoi(lineWords[0]) == countryID && std::stoi(lineWords[2]) <= continentCount){
                         countryData.push_back(lineWords);
                         countryID ++;
                     }else{
                         std::cout << "Line " << lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
-                        validMap = FALSE;
+                        validMap = false;
                     }
                 }else{
                     //check country id matches with order and that it references a valid continent
@@ -110,14 +103,14 @@ Map* MapLoader::initMap() {
                         countryID ++;
                     }else{
                         std::cout << "Line " << lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
-                        validMap = FALSE;
+                        validMap = false;
                     }
                 }
             }else if(mode == "borders"){
                 //check validity of the line in this mode
                 if(lineWords.size() < 2){
                     std::cout << "Line " << lineCount << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
-                    validMap = FALSE;
+                    validMap = false;
                 }else{
                     //convert strings to ints
                     std::vector<int> lineNums;
@@ -129,7 +122,7 @@ Map* MapLoader::initMap() {
                         //check that all countries referenced in this line exist
                         if(x > countryCount){
                             std::cout << "Line " << lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
-                            validMap = FALSE;
+                            validMap = false;
                         }
                     }
                     borderData.push_back(lineNums);
@@ -138,7 +131,6 @@ Map* MapLoader::initMap() {
                 //unknown mode error, will be ignored, non-critical
                 std::cout << "Line " << lineCount << " - [WARNING] : the parser encountered an unknown mode.\n";
             }
-
         }
         lineCount++;
     }
@@ -146,17 +138,17 @@ Map* MapLoader::initMap() {
     return initMapObject(mapName,continentData,countryData,borderData,validMap);
 }
 
-Map* MapLoader::initMapObject(std::string mn, std::vector<std::vector<std::string>> ctd, std::vector<std::vector<std::string>> cyd, std::vector<std::vector<int>> bd, BOOLEAN vMap){
+Map* MapLoader::initMapObject(std::string mapName, std::vector<std::vector<std::string>> continentData, std::vector<std::vector<std::string>> countryData, std::vector<std::vector<int>> borderData, BOOLEAN vMap){
     if(vMap){
         //create map object with empty continents
-        Map* gameMap = new Map(mn,ctd);
+        Map* gameMap = new Map(mapName,continentData);
         //add countries to map and continents
-        for(auto & i : cyd){
+        for(auto & i : countryData){
             gameMap->addNode(std::stoi(i[0]),i[1],std::stoi(i[2]));
         }
 
         //add adjacency
-        for(auto & i : bd){
+        for(auto & i : borderData){
             for(int j=1; j<i.size(); j++) {
                 gameMap->addEdge(i[0],i[j]);
             }

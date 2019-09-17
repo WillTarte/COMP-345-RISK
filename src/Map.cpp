@@ -13,7 +13,6 @@
 
 //Map constructor
 Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
-    //set map title
     pMapTitle = new std::string(mapTitle);
     //create empty continents
     for(auto & i : ctd){
@@ -24,7 +23,6 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
 
 //Continent constructor, subclass of Map
 Map::Continent::Continent(std::string cname, int troops) {
-    //set continent name and number of troops
     pCName = new std::string(cname);
     pCTroops = new int(troops);
 }
@@ -33,9 +31,8 @@ Map::Continent::Continent(std::string cname, int troops) {
 add a country to this continent, it does not create a copy of the country, it only adds its pointer to a list
 of pointers. It is used to keep track of which nodes compose each subgraph.
  */
-Map::Continent* Map::Continent::setCountry(Map::Country *c) {
+void Map::Continent::setCountry(Map::Country *c) {
     pCountriesInContinent.push_back(c);
-    return this;
 }
 
 //Country constructor, subclass of Map
@@ -62,7 +59,7 @@ void Map::addEdge(int from, int to) {
 }
 
 //test if the map is a connected graph, if it is, its subgraphs are also connected
-BOOLEAN Map::testConnected() {
+bool Map::testConnected() {
     for(auto & countries : this->pMapCountries){
         if(countries->pAdjCountries.empty()){
             return false;

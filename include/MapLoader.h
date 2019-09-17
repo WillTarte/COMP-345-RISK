@@ -1,7 +1,6 @@
 //
 // Created by lebou on 2019-09-15.
 //
-#include <iostream>
 #include <vector>
 #include <string>
 #include "../include/Map.h"
