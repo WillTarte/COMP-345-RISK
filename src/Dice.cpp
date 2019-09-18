@@ -7,10 +7,10 @@
 #include "../include/Dice.h"
 
 /**
- * Dice constructor
+ * DiceRoller constructor
  * @param numDice
  */
-Dice::DiceRoller(int numDice) {
+DiceRoller::DiceRoller(int numDice) {
   dice = new std::vector<Dice>;
 
   for (int i = 0; i < numDice; i++) {
@@ -19,9 +19,46 @@ Dice::DiceRoller(int numDice) {
 }
 
 /**
+ * Roll 3 dice and return the results in sorted order
+ */
+DiceRoller::roll() {
+  int[] results = {0, 0, 0};
+  for (int i = 0; i < numDice; i++) {
+    results[i] = dice[i].roll();
+  }
+
+  return std::sort(results);
+}
+
+/**
+ * Dice constructor
+ */
+Dice::Dice() {
+  history = {};
+}
+
+/**
+ * Return all the past rolls in order
+ */
+std::vector Dice::getHistory() {
+  return *history;
+}
+
+/**
+ * Save the roll in the vector storing it's history
+ * @param {int} roll
+ */
+void Dice::saveRoll(int roll) {
+  history.push_back(roll);
+}
+
+/**
  * Generates a random number from 1 to 6 to simulate rolling the dice.
  */
-Dice::roll() {
+int Dice::roll() {
   srand(time(NULL));
-  return rand() % Dice::sides+1;
+  int roll = rand() % 6 + 1;
+  saveRoll(roll);
+
+  return roll;
 }
