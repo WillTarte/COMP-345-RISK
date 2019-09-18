@@ -18,7 +18,7 @@ class DiceRoller {
 public:
   DiceRoller(int numDice);
   int[] roll();
-  std::vector<int> getHistory();
+  std::vector<int>[] getHistory();
   Dice[] getDice();
   int getNumDice();
 
