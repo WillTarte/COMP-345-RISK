@@ -6,6 +6,9 @@
 #include <vector>
 #include "../include/Dice.h"
 
+/////////////////////////////////////////////////////////////
+/////////////////      DICEROLLER METHODS      //////////////
+/////////////////////////////////////////////////////////////
 /**
  * DiceRoller constructor
  * @param numDice
@@ -30,6 +33,34 @@ DiceRoller::roll() {
   return std::sort(results);
 }
 
+/**
+ * Return the individual history for each of the dice
+ */
+std::vector<int>[] DiceRoller::getHistory() {
+  return {
+          dice[0].getHistory(),
+          dice[1].getHistory(),
+          dice[2].getHistory()
+  };
+}
+
+/**
+ * Get each of the dice objects
+ */
+Dice[] Dice::getDice() {
+  return *dice;
+}
+
+/**
+ * Get the number of dice initialized for this player
+ */
+int Dice::getNumDice() {
+  return *numDice;
+}
+
+/////////////////////////////////////////////////////////////
+////////////////////    DICE METHODS    /////////////////////
+/////////////////////////////////////////////////////////////
 /**
  * Dice constructor
  */
