@@ -16,7 +16,7 @@ public:
     class Country{
     public:
         Country(int id, std::string name, int continent);
-        std::vector<Country*> pAdjCountries;
+        std::vector<Country*>* pAdjCountries;
         std::string getCountry(){ return *cyName; }
     private:
         int* cyID;
@@ -29,15 +29,15 @@ public:
     class Continent{
     public:
         Continent(std::string cname, int troops);
-        std::vector<Country*> pCountriesInContinent;
+        std::vector<Country*>* pCountriesInContinent;
         void setCountry(Map::Country* c);
         std::string getContinent(){ return *pCName; }
     private:
         std::string* pCName;
         int* pCTroops;
     };
-    std::vector<Continent*> pMapContinents;
-    std::vector<Country*> pMapCountries;
+    std::vector<Continent*>* pMapContinents;
+    std::vector<Country*>* pMapCountries;
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
     void printMap();
