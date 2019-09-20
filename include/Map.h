@@ -17,9 +17,9 @@ public:
     public:
         Country(int id, std::string name, int continent);
         std::vector<Country*>* pAdjCountries;
-        std::string getCountry(){ return *cyName; }
-        void setPlayerOwnerID(int id);
-        void setNumberOfTroops(int troops);
+        std::string getCountryName(){ return *cyName; }
+        void setPlayerOwnerID(int id){*pPlayerOwnerId = id;};
+        void setNumberOfTroops(int troops){*pNumberOfTroops = troops;};
         int getPlayerOwnerID();
         int getNumberOfTroops();
     private:
@@ -35,7 +35,7 @@ public:
         Continent(std::string cname, int troops);
         std::vector<Country*>* pCountriesInContinent;
         void setCountry(Map::Country* c);
-        std::string getContinent(){ return *pCName; }
+        std::string getContinentName(){ return *pCName; }
     private:
         std::string* pCName;
         int* pCTroops;

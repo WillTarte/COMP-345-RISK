@@ -50,14 +50,6 @@ Map::Country::Country(int id, std::string name, int continent) {
     pNumberOfTroops = new int(0);
 }
 
-void Map::Country::setPlayerOwnerID(int id){
-    *pPlayerOwnerId = id;
-}
-
-void Map::Country::setNumberOfTroops(int troops) {
-    *pNumberOfTroops = troops;
-}
-
 int Map::Country::getNumberOfTroops() {
     return *pNumberOfTroops;
 }
@@ -94,14 +86,14 @@ bool Map::testConnected() {
 //helper function to print and test all relevant map information
 void Map::printMap() {
     for(auto & pMapContinent : *this->pMapContinents){
-        std::string currContinent = pMapContinent->getContinent();
+        std::string currContinent = pMapContinent->getContinentName();
         std::vector<Map::Country*> countriesInCurrContinent = *pMapContinent->pCountriesInContinent;
         std::cout << " \n\n\n ######################## \n COUNTRIES IN CONTINENT : " << currContinent << "\n ######################## \n";
         for(auto & j : countriesInCurrContinent){
-            std::string currCountryName = j->getCountry();
+            std::string currCountryName = j->getCountryName();
             std::cout << currCountryName << " is adjacent to :\n";
             for(auto & pAdjCountry : *j->pAdjCountries){
-                std::string currAdjCountry = pAdjCountry->getCountry();
+                std::string currAdjCountry = pAdjCountry->getCountryName();
                 std::cout << "     -" << currAdjCountry << "\n";
             }
         }
