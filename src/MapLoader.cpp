@@ -45,7 +45,9 @@ Map* MapLoader::readMapFile() {
             splitLine(line,pLineWords);
             getMapName(pMapName,pLineWords);
 
-            if(checkSection(pMode,pLineWords))continue;
+            if(checkSection(pMode,pLineWords)){
+                continue;
+            }
 
             //read sections
             if(*pMode == "files"){
