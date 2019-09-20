@@ -50,6 +50,22 @@ Map::Country::Country(int id, std::string name, int continent) {
     pNumberOfTroops = new int(0);
 }
 
+void Map::Country::setPlayerOwnerID(int id){
+    *pPlayerOwnerId = id;
+}
+
+void Map::Country::setNumberOfTroops(int troops) {
+    *pNumberOfTroops = troops;
+}
+
+int Map::Country::getNumberOfTroops() {
+    return *pNumberOfTroops;
+}
+
+int Map::Country::getPlayerOwnerID() {
+    return *pPlayerOwnerId;
+}
+
 Map::Country* Map::addNode(int id, std::string name, int continent) {
     //create graph node
     auto* thisCountry = new Country(id,name,continent);

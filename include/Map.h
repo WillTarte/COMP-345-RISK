@@ -18,6 +18,10 @@ public:
         Country(int id, std::string name, int continent);
         std::vector<Country*>* pAdjCountries;
         std::string getCountry(){ return *cyName; }
+        void setPlayerOwnerID(int id);
+        void setNumberOfTroops(int troops);
+        int getPlayerOwnerID();
+        int getNumberOfTroops();
     private:
         int* cyID;
         std::string* cyName;
