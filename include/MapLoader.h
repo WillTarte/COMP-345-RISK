@@ -14,7 +14,7 @@ public:
     MapLoader(std::string mapFile);
     std::string* pMapFile;
     void setMapFile(std::string newMapFile);
-    Map* initMap();
+    Map* readMapFile();
 
 private:
     static Map* initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, bool* vMap);

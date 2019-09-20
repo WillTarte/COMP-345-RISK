@@ -11,7 +11,7 @@ int main()
 
     //create first (valid) map
     std::cout << "creating map 1 (valid)\n";
-    Map* firstMap = myLoader.initMap();
+    Map* firstMap = myLoader.readMapFile();
     std::cout << "map 1 creation completed.\n";
 //    firstMap->printMap();
 
@@ -23,7 +23,7 @@ int main()
      */
     myLoader.setMapFile("world2.map");
     std::cout << "creating map 2 (invalid)\n";
-    Map* secondMap = myLoader.initMap();
+    Map* secondMap = myLoader.readMapFile();
     std::cout << "map 2 creation attempt completed.\n";
 
     return 0;

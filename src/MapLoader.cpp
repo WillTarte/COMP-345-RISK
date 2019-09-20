@@ -15,7 +15,7 @@ MapLoader::MapLoader(std::string mapFile) {
     pMapFile = &mapFile;
 }
 
-Map* MapLoader::initMap() {
+Map* MapLoader::readMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
     std::string line;
