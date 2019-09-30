@@ -1,30 +1,32 @@
 #include <string>
+#include <vector>
 
 #ifndef COMP_345_PROJ_DICE_H
 #define COMP_345_PROJ_DICE_H
 
 class Dice {
 public:
-  Dice();
-  int roll();
-  std::vector<int> getHistory();
+    Dice();
+    u_int roll();
+    std::vector<u_int> getHistory();
 
 private:
-  std::vector<int>* history;
-  void saveRoll();
+    u_int* timesRolled;
+    std::vector<u_int>* history;
+    void saveRoll(u_int roll);
 };
 
 class DiceRoller {
 public:
-  DiceRoller(int numDice);
-  int[] roll();
-  std::vector<int>[] getHistory();
-  Dice[] getDice();
-  int getNumDice();
+    DiceRoller(u_int numDice);
+    std::vector<u_int> roll();
+    std::vector<std::vector<u_int>> getHistory();
+    std::vector<Dice> getDice();
+    u_int getNumDice();
 
 private:
-  int* numDice;
-  Dice[]* dice;
+    u_int* numDice{};
+    std::vector<Dice>* dice;
 };
 
 #endif // COMP_345_PROJ_DICE_H
