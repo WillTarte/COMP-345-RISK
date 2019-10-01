@@ -8,12 +8,25 @@ bool test_DiceRoller() {
         try {
             DiceRoller roller = DiceRoller(i);
             success = success && roller.getNumDice() == i;
-            //success = success && roller.getDice().size() == i;
+            success = success && roller.getDice().size() == i;
         }
         catch (int e) {
             success = false;
         }
     }
+
+    return success;
+}
+
+bool test_DiceRoller_roll() {
+    bool success = true;
+    DiceRoller roller = DiceRoller(3);
+    auto outcome = roller.roll();
+
+    success = success && outcome.size() == 3;
+    success = success && outcome.at(0) > 0 && outcome.at(0) < 7;
+    success = success && outcome.at(1) > 0 && outcome.at(1) < 7;
+    success = success && outcome.at(2) > 0 && outcome.at(2) < 7;
 
     return success;
 }
@@ -70,7 +83,7 @@ int main() {
     std::cout << "" << std::endl;
 
     std::cout << "----- Testing DiceRoller constructor" << std::endl;
-    //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
+    assert(test_DiceRoller_roll());
 
     std::cout << "----- Testing roll method" << std::endl;
     //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
