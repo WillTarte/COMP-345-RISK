@@ -1,6 +1,33 @@
 #include <iostream>
 #include "../../include/Dice.h"
 
+////////////////////////////////////////////////////////////
+///////////////////// Dice Tests ///////////////////////////
+////////////////////////////////////////////////////////////
+bool test_Dice() {
+    return false;
+}
+
+bool test_Dice_roll() {
+    bool success = true;
+
+    Dice dice = Dice();
+    for (int i = 1; i < 100; i++) {
+        int result = dice.roll();
+        success = success && (result < 7 && result > 0);
+    }
+
+    return success;
+}
+
+bool test_Dice_getHistory() {
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+////////////////// DiceRoller Tests ////////////////////////
+////////////////////////////////////////////////////////////
 bool test_DiceRoller() {
     bool success = true;
 
@@ -31,35 +58,21 @@ bool test_DiceRoller_roll() {
     return success;
 }
 
-/**
- * Test to make sure all numbers resulting from rolls are between 1 and 6 (inclusive)
- */
-bool test_valuesInCorrectRange() {
-  bool success = true;
-
-  Dice dice = Dice();
-  for (int i = 1; i < 100; i++) {
-    int result = dice.roll();
-    success = success && (result < 7 && result > 0);
-  }
-
-  return success;
-}
-
-/**
- * Test to make sure the rolling of the dice is "fair"
- */
-bool test_equalShareOfValues() {
+bool test_DiceRoller_getHistory() {
   return false;
 }
 
-/**
- * Test to ensure the history of rolls is properly remembered
- */
-bool test_maintainPercentageOfRolls() {
-  return false;
+bool test_DiceRoller_getDice() {
+    return false;
 }
 
+bool test_DiceRoller_getNumDice() {
+    return false;
+}
+
+////////////////////////////////////////////////////////////
+////////////////////// Run Tests ///////////////////////////
+////////////////////////////////////////////////////////////
 void assert(bool success) {
     if (success)
         std::cout << "Pass" << std::endl;
@@ -74,7 +87,11 @@ int main() {
     std::cout << "" << std::endl;
 
     std::cout << "----- Testing Dice constructor" << std::endl;
-    assert(test_DiceRoller());
+    assert(test_Dice());
+    std::cout << "----- Testing Dice roll() method" << std::endl;
+    assert(test_Dice_roll());
+    std::cout << "----- Testing Dice getHistory()" << std::endl;
+    assert(test_Dice_getHistory());
 
     std::cout << "" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
@@ -83,19 +100,17 @@ int main() {
     std::cout << "" << std::endl;
 
     std::cout << "----- Testing DiceRoller constructor" << std::endl;
+    assert(test_DiceRoller());
+    std::cout << "----- Testing DiceRoller roll() method" << std::endl;
     assert(test_DiceRoller_roll());
+    std::cout << "----- Testing DiceRoller getHistory() method" << std::endl;
+    assert(test_DiceRoller_getHistory());
 
-    std::cout << "----- Testing roll method" << std::endl;
-    //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
+    std::cout << "----- Testing DiceRoller getDice() method" << std::endl;
+    assert(test_DiceRoller());
 
-    std::cout << "----- Testing getHistory" << std::endl;
-    //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
-
-    std::cout << "----- Testing getDice" << std::endl;
-    //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
-
-    std::cout << "----- Testing getNumDice" << std::endl;
-    //std::cout << (test_DiceRoller() ? "Pass" : "Fail") << std::endl;
+    std::cout << "----- Testing DiceRoller getNumDice() method" << std::endl;
+    assert(test_DiceRoller());
 
     return 0;
 }
