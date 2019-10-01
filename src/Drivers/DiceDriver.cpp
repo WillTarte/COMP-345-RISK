@@ -78,15 +78,35 @@ bool test_DiceRoller_roll() {
 }
 
 bool test_DiceRoller_getHistory() {
-  return false;
+    bool success = true;
+    auto* roller = new DiceRoller(3);
+
+    for (int x = 0 ; x < 10 ; x++)
+        roller->roll();
+
+    auto dice = roller->getDice();
+    std::vector<std::vector<u_int>> outcomes = {
+            dice[0].getHistory(),
+            dice[1].getHistory(),
+            dice[2].getHistory()
+    };
+
+    auto history = roller->getHistory();
+    for (u_long x = 0; x < outcomes.size() ; x++)
+        for (u_long y = 0 ; y < outcomes[x].size() ; y++)
+            success = success && outcomes[x][y] == history[x][y];
+
+    return success;
 }
 
 bool test_DiceRoller_getDice() {
-    return false;
+    auto* roller = new DiceRoller(3);
+    return roller->getDice().size() == 3;
 }
 
 bool test_DiceRoller_getNumDice() {
-    return false;
+    auto* roller = new DiceRoller(3);
+    return roller->getNumDice() == 3;
 }
 
 ////////////////////////////////////////////////////////////
