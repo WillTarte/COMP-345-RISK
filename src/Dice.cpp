@@ -11,11 +11,11 @@
  * DiceRoller constructor
  * @param numDice
  */
-DiceRoller::DiceRoller(int _numDice) {
-    numDice = &_numDice;
+DiceRoller::DiceRoller(int n) {
+    numDice = n;
     dice = new std::vector<Dice>();
 
-    for (int i = 0; i < *numDice; i++) {
+    for (int i = 0; i < numDice; i++) {
         dice->push_back(*new Dice());
     }
 }
@@ -24,12 +24,13 @@ DiceRoller::DiceRoller(int _numDice) {
  * Roll 3 dice and return the results in sorted order
  */
 std::vector<u_int> DiceRoller::roll() {
-    std::vector<u_int> results = {0, 0, 0};
-    for (int i = 0; i < *numDice; i++) {
-        results[i] = dice->at(i).roll();
+    auto* results = new std::vector<u_int>();
+    for (int i = 0; i < numDice; i++) {
+        results->push_back(dice->at(i).roll());
     }
 
-    return results;
+    std::sort(results->begin(), results->end());
+    return *results;
 }
 
 /**
@@ -47,7 +48,7 @@ std::vector<std::vector<u_int>> DiceRoller::getHistory() {
  * Get the number of dice initialized for this player
  */
 u_int DiceRoller::getNumDice() {
-    return *numDice;
+    return numDice;
 }
 
 /**
@@ -64,7 +65,13 @@ std::vector<Dice> DiceRoller::getDice() {
  * Dice constructor
  */
 Dice::Dice() {
-    history = {};
+    history = new std::vector<u_int>();
+    for (int i = 0; i < 6; i++) {
+        history->push_back(0);
+    }
+
+    timesRolled = 0;
+
 }
 
 /**
@@ -79,15 +86,19 @@ std::vector<u_int> Dice::getHistory() {
  * @param {int} roll
  */
 void Dice::saveRoll(u_int roll) {
-    history->push_back(roll);
+    (*history)[roll-1]++;
 }
 
 /**
  * Generates a random number from 1 to 6 to simulate rolling the dice.
  */
 u_int Dice::roll() {
-    srand(time(nullptr));
-    u_int roll = rand() % 6 + 1;
+    std::random_device r;
+    std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
+    std::mt19937 eng{seed};
+    std::uniform_int_distribution<> dist(1,6);
+
+    u_int roll = dist(eng);
     saveRoll(roll);
 
     return roll;
