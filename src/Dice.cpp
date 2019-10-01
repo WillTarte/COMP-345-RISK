@@ -11,14 +11,12 @@
  * DiceRoller constructor
  * @param numDice
  */
-DiceRoller::DiceRoller(u_int _numDice) {
+DiceRoller::DiceRoller(int _numDice) {
     numDice = &_numDice;
-    dice = {};
+    dice = new std::vector<Dice>();
 
-    Dice* d = new Dice();
-    for (u_int i = 0; i < *numDice; i++) {
-        std::cout << "Here" << std::endl;
-        dice->push_back(*d);
+    for (int i = 0; i < *numDice; i++) {
+        dice->push_back(*new Dice());
     }
 }
 
@@ -27,7 +25,7 @@ DiceRoller::DiceRoller(u_int _numDice) {
  */
 std::vector<u_int> DiceRoller::roll() {
     std::vector<u_int> results = {0, 0, 0};
-    for (u_int i = 0; i < *numDice; i++) {
+    for (int i = 0; i < *numDice; i++) {
         results[i] = dice->at(i).roll();
     }
 

@@ -18,14 +18,14 @@ private:
 
 class DiceRoller {
 public:
-    DiceRoller(u_int numDice);
+    DiceRoller(int numDice);
     std::vector<u_int> roll();
     std::vector<std::vector<u_int>> getHistory();
     std::vector<Dice> getDice();
     u_int getNumDice();
 
 private:
-    u_int* numDice{};
+    int* numDice;
     std::vector<Dice>* dice;
 };
 
