@@ -1,7 +1,6 @@
 #include <random>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include "../include/Dice.h"
 
 ////////////////////////////////////////////////////////////
