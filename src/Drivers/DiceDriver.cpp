@@ -13,7 +13,6 @@ bool test_Dice() {
     }
     catch (int e) {
         return false;
-
     }
 }
 
@@ -33,7 +32,7 @@ bool test_Dice_getHistory() {
     bool success = true;
 
     Dice* d = new Dice();
-    std::vector<u_int> history = {0, 0, 0, 0, 0, 0};
+    std::vector<int> history = {0, 0, 0, 0, 0, 0};
     for (int i = 0; i < 100; i++) {
         int outcome = d->roll();
         history[outcome-1]++;
@@ -50,10 +49,10 @@ bool test_Dice_getHistory() {
 bool test_DiceRoller() {
     bool success = true;
 
-    for (u_int i = 1; i < 4; i++) {
+    for (int i = 1; i < 4; i++) {
         try {
             auto* roller = new DiceRoller(i);
-            success = success && roller->getDice().size() == i;
+            success = success && (int)roller->getDice().size() == i;
         }
         catch (int e) {
             success = false;
@@ -66,7 +65,7 @@ bool test_DiceRoller() {
 bool test_DiceRoller_roll() {
     bool success = true;
     auto* roller = new DiceRoller(3);
-    std::vector<u_int> outcome = roller->roll();
+    std::vector<int> outcome = roller->roll();
 
     success = success && outcome.size() == 3;
     success = success && outcome[0] > 0 && outcome[0] < 7;
@@ -85,15 +84,15 @@ bool test_DiceRoller_getHistory() {
         roller->roll();
 
     auto dice = roller->getDice();
-    std::vector<std::vector<u_int>> outcomes = {
+    std::vector<std::vector<int>> outcomes = {
             dice[0].getHistory(),
             dice[1].getHistory(),
             dice[2].getHistory()
     };
 
     auto history = roller->getHistory();
-    for (u_long x = 0; x < outcomes.size() ; x++)
-        for (u_long y = 0 ; y < outcomes[x].size() ; y++)
+    for (long x = 0; x < (long)outcomes.size() ; x++)
+        for (long y = 0 ; y < (long)outcomes[x].size() ; y++)
             success = success && outcomes[x][y] == history[x][y];
 
     return success;

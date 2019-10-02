@@ -7,25 +7,25 @@
 class Dice {
 public:
     Dice();
-    u_int roll();
-    std::vector<u_int> getHistory();
+    int roll();
+    std::vector<int> getHistory() { return *history; };
 
 private:
-    u_int* timesRolled;
-    std::vector<u_int>* history;
-    void saveRoll(u_int roll);
+    int* timesRolled;
+    std::vector<int>* history;
+    void saveRoll(int roll);
 };
 
 class DiceRoller {
 public:
-    DiceRoller(int n);
-    std::vector<u_int> roll();
-    std::vector<std::vector<u_int>> getHistory();
-    std::vector<Dice> getDice();
-    u_int getNumDice();
+    DiceRoller(int _numDice);
+    std::vector<int> roll();
+    std::vector<std::vector<int>> getHistory();
+    std::vector<Dice> getDice() { return *dice; };
+    int getNumDice() { return *numDice; };
 
 private:
-    int numDice;
+    int* numDice;
     std::vector<Dice>* dice;
 };
 
