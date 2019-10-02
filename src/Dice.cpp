@@ -10,34 +10,31 @@
  * DiceRoller constructor
  * @param numDice
  */
-DiceRoller::DiceRoller(int _numDice): numDice(new int(_numDice)), dice(new std::vector<Dice>()) {
-    for (int i = 0; i < *numDice; i++) {
-        dice->push_back(*new Dice());
+DiceRoller::DiceRoller(): diceRolled(new int(0)), history(new std::vector<int>) {
+    for (int x = 0 ; x < 6 ; x++) {
+        history->push_back(0);
     }
 }
 
 /**
  * Roll <n> dice and return the results in sorted order
  */
-std::vector<int> DiceRoller::roll() {
+std::vector<int> DiceRoller::roll(int numDice) {
     auto* results = new std::vector<int>();
-    for (int i = 0; i < *numDice; i++) {
-        results->push_back(dice->at(i).roll());
+    Dice d = Dice();
+    for (int i = 0; i < numDice; i++) {
+        int result = d.roll();
+        results->push_back(result);
+        saveRoll(result);
     }
 
     std::sort(results->begin(), results->end());
     return *results;
 }
 
-/**
- * Return the individual history for each of the dice
- */
-std::vector<std::vector<int>> DiceRoller::getHistory() {
-    return {
-        dice->at(0).getHistory(),
-        dice->at(1).getHistory(),
-        dice->at(2).getHistory()
-    };
+void DiceRoller::saveRoll(int roll) {
+    (*history)[roll-1]++;
+    (*diceRolled)++;
 }
 
 /////////////////////////////////////////////////////////////
@@ -46,19 +43,7 @@ std::vector<std::vector<int>> DiceRoller::getHistory() {
 /**
  * Dice constructor
  */
-Dice::Dice(): timesRolled(nullptr), history(new std::vector<int>()) {
-    for (int i = 0; i < 6; i++) {
-        history->push_back(0);
-    }
-}
-
-/**
- * Save the roll in the vector storing it's history
- * @param {int} roll
- */
-void Dice::saveRoll(int roll) {
-    (*history)[roll-1]++;
-}
+Dice::Dice() {}
 
 /**
  * Generates a random number from 1 to 6 to simulate rolling the dice.
@@ -70,7 +55,6 @@ int Dice::roll() {
     std::uniform_int_distribution<> dist(1,6);
 
     int roll = dist(eng);
-    saveRoll(roll);
 
     return roll;
 }

@@ -28,21 +28,6 @@ bool test_Dice_roll() {
     return success;
 }
 
-bool test_Dice_getHistory() {
-    bool success = true;
-
-    Dice* d = new Dice();
-    std::vector<int> history = {0, 0, 0, 0, 0, 0};
-    for (int i = 0; i < 100; i++) {
-        int outcome = d->roll();
-        history[outcome-1]++;
-        success = success && history[outcome-1] == d->getHistory()[outcome-1];
-    }
-
-    return success;
-}
-
-
 ////////////////////////////////////////////////////////////
 ////////////////// DiceRoller Tests ////////////////////////
 ////////////////////////////////////////////////////////////
@@ -51,8 +36,12 @@ bool test_DiceRoller() {
 
     for (int i = 1; i < 4; i++) {
         try {
-            auto* roller = new DiceRoller(i);
-            success = success && (int)roller->getDice().size() == i;
+            auto* roller = new DiceRoller();
+            success = success && roller->getDiceRolled() == 0;
+
+            for (int x = 0 ; x < (long)roller->getHistory().size() ; x++) {
+                success = success && roller->getHistory().at(x) == 0;
+            }
         }
         catch (int e) {
             success = false;
@@ -64,8 +53,8 @@ bool test_DiceRoller() {
 
 bool test_DiceRoller_roll() {
     bool success = true;
-    auto* roller = new DiceRoller(3);
-    std::vector<int> outcome = roller->roll();
+    auto* roller = new DiceRoller();
+    std::vector<int> outcome = roller->roll(3);
 
     success = success && outcome.size() == 3;
     success = success && outcome[0] > 0 && outcome[0] < 7;
@@ -78,34 +67,33 @@ bool test_DiceRoller_roll() {
 
 bool test_DiceRoller_getHistory() {
     bool success = true;
-    auto* roller = new DiceRoller(3);
+    auto* roller = new DiceRoller();
 
-    for (int x = 0 ; x < 10 ; x++)
-        roller->roll();
-
-    auto dice = roller->getDice();
-    std::vector<std::vector<int>> outcomes = {
-            dice[0].getHistory(),
-            dice[1].getHistory(),
-            dice[2].getHistory()
-    };
+    std::vector<int> outcomes = {0, 0, 0, 0, 0, 0};
+    for (int x = 0 ; x < 10 ; x++) {
+        std::vector<int> results = roller->roll(3);
+        for (int y = 0 ; y < (long)results.size() ; y++) {
+            outcomes[results[y]-1]++;
+        }
+    }
 
     auto history = roller->getHistory();
     for (long x = 0; x < (long)outcomes.size() ; x++)
-        for (long y = 0 ; y < (long)outcomes[x].size() ; y++)
-            success = success && outcomes[x][y] == history[x][y];
+        success = success && outcomes[x] == history[x];
 
     return success;
 }
 
-bool test_DiceRoller_getDice() {
-    auto* roller = new DiceRoller(3);
-    return roller->getDice().size() == 3;
-}
+bool test_DiceRoller_getDiceRolled() {
+    auto* roller = new DiceRoller();
 
-bool test_DiceRoller_getNumDice() {
-    auto* roller = new DiceRoller(3);
-    return roller->getNumDice() == 3;
+    int rolls = 0;
+    for (int x = 0 ; x < 10 ; x++) {
+        rolls += x;
+        roller->roll(x);
+    }
+
+    return roller->getDiceRolled() == rolls;
 }
 
 ////////////////////////////////////////////////////////////
@@ -120,7 +108,6 @@ int main() {
 
     std::cout << "Testing Dice constructor: " << assert(test_Dice());
     std::cout << "Testing Dice roll() method: " << assert(test_Dice_roll());
-    std::cout << "Testing Dice getHistory() method: " << assert(test_Dice_getHistory());
 
     std::cout << "\033[34m" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
@@ -131,8 +118,7 @@ int main() {
     std::cout << "Testing DiceRoller constructor: " << assert(test_DiceRoller());
     std::cout << "Testing DiceRoller roll() method: " << assert(test_DiceRoller_roll());
     std::cout << "Testing DiceRoller getHistory() method: " << assert(test_DiceRoller_getHistory());
-    std::cout << "Testing DiceRoller getDice() method: " << assert(test_DiceRoller_getDice());
-    std::cout << "Testing DiceRoller getNumDice() method: " << assert(test_DiceRoller_getNumDice());
+    std::cout << "Testing DiceRoller getNumDice() method: " << assert(test_DiceRoller_getDiceRolled());
 
     return 0;
 }
