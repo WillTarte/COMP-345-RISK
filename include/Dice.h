@@ -6,8 +6,7 @@
 
 class Dice {
 public:
-    Dice();
-    int roll();
+    static int roll();
 };
 
 class DiceRoller {
@@ -15,12 +14,9 @@ public:
     DiceRoller();
     std::vector<int> roll(int numDice);
 
-    int getDiceRolled() {
-        return *diceRolled;
-    }
-    std::vector<int> getHistory() {
-        return *history;
-    }
+    std::vector<double> getPercentages();
+    int getDiceRolled() { return *diceRolled; }
+    std::vector<int> getHistory() { return *history; }
 
 private:
     int* diceRolled;

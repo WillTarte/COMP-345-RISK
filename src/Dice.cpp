@@ -21,9 +21,8 @@ DiceRoller::DiceRoller(): diceRolled(new int(0)), history(new std::vector<int>) 
  */
 std::vector<int> DiceRoller::roll(int numDice) {
     auto* results = new std::vector<int>();
-    Dice d = Dice();
     for (int i = 0; i < numDice; i++) {
-        int result = d.roll();
+        int result = Dice::roll();
         results->push_back(result);
         saveRoll(result);
     }
@@ -37,14 +36,19 @@ void DiceRoller::saveRoll(int roll) {
     (*diceRolled)++;
 }
 
+std::vector<double> DiceRoller::getPercentages() {
+    auto* percentages = new std::vector<double>();
+
+    for (int x : *history) {
+        percentages->push_back((double)x / (double)*diceRolled);
+    }
+
+    return *percentages;
+}
+
 /////////////////////////////////////////////////////////////
 ////////////////////    DICE METHODS    /////////////////////
 /////////////////////////////////////////////////////////////
-/**
- * Dice constructor
- */
-Dice::Dice() {}
-
 /**
  * Generates a random number from 1 to 6 to simulate rolling the dice.
  */
