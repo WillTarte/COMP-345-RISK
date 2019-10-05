@@ -42,3 +42,6 @@ Makefile
 
 # Jetbrains Files
 .idea
+
+# macos files
+DS_Store
