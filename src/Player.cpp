@@ -53,18 +53,18 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
         return PlayerAction::FAILED;
     }
 
-    // Check if numAttackingDice is valid
-    if ((numAttackingDice < fromCountry->getNumberOfTroops() && 0 < numAttackingDice && numAttackingDice <= 3) ||
-        (numDefendingDice < toCountry->getNumberOfTroops() && 0 <= numDefendingDice && numDefendingDice <= 2)) {
+    // Check if numAttackingDice and numDefendingDice is valid
+    if ((numAttackingDice >= fromCountry->getNumberOfTroops() || numAttackingDice <= 0 || numAttackingDice > 3)
+        || (numDefendingDice > toCountry->getNumberOfTroops() || numDefendingDice <= 0 || numDefendingDice > 2)) {
         return PlayerAction::FAILED;
     }
 
     // Roll
     std::vector<int> attackingRolls = this->getDiceRoller().roll(numAttackingDice);
-    std::vector<int> defendingRolls = defendingPlayer->getDiceRoller().roll(numAttackingDice);
+    std::vector<int> defendingRolls = defendingPlayer->getDiceRoller().roll(numDefendingDice);
 
     // Compare the rolls, decide who wins and change number of armies of each country. Maybe update if attacking wins
-    while (attackingRolls.empty() || defendingRolls.empty()) {
+    while (!attackingRolls.empty() && !defendingRolls.empty()) {
 
         int aRoll = attackingRolls.back();
         int dRoll = defendingRolls.back();
@@ -79,14 +79,20 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
             toCountry->setNumberOfTroops(toCountry->getNumberOfTroops() - 1);
             // then, if no armies left on defending country, attacking player conquers it
 
+            // TODO: If the defender loses its country, this part of the code silently crashes. The # of armies of toCountry also seems to be erroneous?
             if (toCountry->getNumberOfTroops() == 0) {
                 std::cout << "Defender has lost possession of country " << toCountry->getCountryName() << std::endl;
                 toCountry->setPlayerOwnerID(this->getPlayerId());
 
                 for (unsigned int i = 0; i < defendingPlayer->getOwnedCountries().size(); i++) {
+
                     if (defendingPlayer->getOwnedCountries().at(i)->getCountryName() == toCountry->getCountryName()) {
+
                         this->getOwnedCountries().push_back(defendingPlayer->getOwnedCountries().at(i));
+
                         defendingPlayer->getOwnedCountries().erase(defendingPlayer->getOwnedCountries().begin() + i);
+
+                        break;
                     }
                 }
             }
@@ -116,8 +122,9 @@ int Player::fortify(Map::Country *countryToFortify, const int numArmies) {
     bool valid1 = false;
     for (unsigned int i = 0; i < this->getOwnedCountries().size(); i++) {
         if (this->getOwnedCountries().at(i)->getCountryName() == countryToFortify->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == countryToFortify->getPlayerOwnerID() ==
-               this->getPlayerId()) {
+            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == countryToFortify->getPlayerOwnerID()
+            && countryToFortify->getPlayerOwnerID() == this->getPlayerId()) {
+
             countryToFortify->setNumberOfTroops(countryToFortify->getNumberOfTroops() + numArmies);
             valid1 = true;
             break;
@@ -128,7 +135,7 @@ int Player::fortify(Map::Country *countryToFortify, const int numArmies) {
         return PlayerAction::FAILED;
     }
 
-    std::cout << "Player " << countryToFortify->getPlayerOwnerID() << " has fortified "
+    std::cout << "\nPlayer " << countryToFortify->getPlayerOwnerID() << " has fortified "
               << countryToFortify->getCountryName() << std::endl;
     return PlayerAction::SUCCEEDED;
 }
@@ -157,13 +164,13 @@ int Player::reinforce(Map::Country *fromCountry, Map::Country *toCountry, const 
     for (unsigned int i = 0; i < this->getOwnedCountries().size(); i++) {
         // check if fromCountry is valid
         if (this->getOwnedCountries().at(i)->getCountryName() == fromCountry->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == fromCountry->getPlayerOwnerID() ==
-               this->getPlayerId()) {
+            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == fromCountry->getPlayerOwnerID()
+            && fromCountry->getPlayerOwnerID() == this->getPlayerId()) {
             valid1 = true;
         }
         if (this->getOwnedCountries().at(i)->getCountryName() == toCountry->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == toCountry->getPlayerOwnerID() ==
-               this->getPlayerId()) {
+            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == toCountry->getPlayerOwnerID()
+            && toCountry->getPlayerOwnerID() == this->getPlayerId()) {
             valid2 = true;
         }
     }
@@ -186,7 +193,8 @@ int Player::reinforce(Map::Country *fromCountry, Map::Country *toCountry, const 
         return PlayerAction::FAILED;
     }
 
-    std::cout << "Player " << this->getPlayerId() << " has reinforced " << toCountry->getCountryName() << std::endl;
+    std::cout << "\nPlayer " << this->getPlayerId() << " has reinforced " << toCountry->getCountryName() << " from "
+              << fromCountry->getCountryName() << std::endl;
     return PlayerAction::SUCCEEDED;
 }
 
