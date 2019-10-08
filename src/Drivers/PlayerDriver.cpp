@@ -260,7 +260,7 @@ bool test_Player_attack(bool verbose = false) {
         std::cout << "player1 is using " << numAttackingDice << " dice " << " and player2 is using " << numDefendingDice
                   << std::endl;
         std::cout << "player1's " << pCountry1->getCountryName() << " had " << numArmies << std::endl;
-        std::cout << "player2's " << pCountry2->getCountryName() << " had " << numArmies - 2 << std::endl;
+        std::cout << "player2's " << pCountry2->getCountryName() << " had " << numArmies - 3 << std::endl;
         std::cout << "player1's " << pCountry1->getCountryName() << " now has " << pCountry1->getNumberOfTroops()
                   << std::endl;
         std::cout << "player2's " << pCountry2->getCountryName() << " now has " << pCountry2->getNumberOfTroops()
@@ -328,7 +328,7 @@ int main() {
 
     std::cout << assert("Player", "getDiceRoller", test_Player_getDiceRoller(true)) << std::endl;
 
-    //std::cout << assert("Player", "attack", test_Player_attack(true)) << std::endl; FAILS when defender loses country
+    std::cout << assert("Player", "attack", test_Player_attack(true)) << std::endl;
 
     std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 

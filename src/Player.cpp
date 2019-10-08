@@ -75,13 +75,12 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
         if (aRoll > dRoll) {
 
             // defender loses 1 army
-            std::cout << "Defender lost 1 army!" << std::endl;
+            std::cout << "\nDefender lost 1 army!" << std::endl;
             toCountry->setNumberOfTroops(toCountry->getNumberOfTroops() - 1);
             // then, if no armies left on defending country, attacking player conquers it
 
-            // TODO: If the defender loses its country, this part of the code silently crashes. The # of armies of toCountry also seems to be erroneous?
             if (toCountry->getNumberOfTroops() == 0) {
-                std::cout << "Defender has lost possession of country " << toCountry->getCountryName() << std::endl;
+                std::cout << "Defender has lost possession of country " << toCountry->getCountryName();
                 toCountry->setPlayerOwnerID(this->getPlayerId());
 
                 for (unsigned int i = 0; i < defendingPlayer->getOwnedCountries().size(); i++) {
@@ -99,7 +98,7 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
         } else {
 
             // attacker loses 1 army
-            std::cout << "Attacker lost 1 army!" << std::endl;
+            std::cout << "\nAttacker lost 1 army!";
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - 1);
         }
     }

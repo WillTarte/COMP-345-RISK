@@ -23,11 +23,11 @@ public:
 
     int fortify(Map::Country *countryToFortify, int numArmies);
 
-    Hand getHand() { return *cardsPointer; }
+    Hand getHand() &{ return *cardsPointer; }
 
-    std::vector<Map::Country *> getOwnedCountries() { return *ownedCountriesPointer; }
+    std::vector<Map::Country *> &getOwnedCountries() { return *ownedCountriesPointer; }
 
-    DiceRoller getDiceRoller() { return *diceRollerPointer; }
+    DiceRoller &getDiceRoller() { return *diceRollerPointer; }
 
     int getPlayerId() { return *playerIdPointer; }
 
