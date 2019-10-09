@@ -9,7 +9,6 @@
 #include <Player.h>
 #include <iterator>
 
-
 bool test_Player_Constructor() {
 
     std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
@@ -306,8 +305,6 @@ bool test_Player_fortify(bool verbose = false) {
 ////////////////////////////////////////////////////////////
 ////////////////////// Run Tests ///////////////////////////
 ////////////////////////////////////////////////////////////
-
-
 
 #define assert(c, m, s) "\nTesting " << c << " " << m << "() method: " \
     << (s ? "\033[32mPass" : "\033[31mFail") << "\033[30m" << std::endl

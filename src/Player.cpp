@@ -16,9 +16,7 @@
  * @param numAttackingDice  number of dice the attacking player should roll
  * @param numDefendingDice  number of dice the defending player should roll
  */
-int
-Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defendingPlayer, const int numAttackingDice,
-               const int numDefendingDice) {
+int Player::attack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, const int numAttackingDice, const int numDefendingDice) {
     /*
      * 1. The attacking player rolls 1-3 dice, having +1 army than dice rolled. 1 dice roll per attacking army.
      * 2. Defender rolls 2 dice, 1 for each army defending
@@ -27,29 +25,27 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
      * at least 1 of the attacking armies on the conquered country, up to all but one army
      */
 
-    bool valid1 = false;
-    bool valid2 = false;
+    bool fromCountryValid = false;
+    bool toCountryValid = false;
 
     // Check if passed countries are valid (adjacent to each other, fromCountry owned by this player, toCountry owned by defender)
-    for (unsigned int i = 0; i < this->getOwnedCountries().size(); i++) {
-
+    for (auto & i : this->getOwnedCountries()) {
         // check if fromCountry is valid
-        if (this->getOwnedCountries().at(i)->getCountryName() == fromCountry->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == fromCountry->getPlayerOwnerID()) {
-            valid1 = true;
+        if (i->getCountryName() == fromCountry->getCountryName()
+            && i->getPlayerOwnerID() == fromCountry->getPlayerOwnerID()) {
+            fromCountryValid = true;
         }
     }
 
-    for (unsigned int i = 0; i < defendingPlayer->getOwnedCountries().size(); i++) {
-
+    for (auto & i : defendingPlayer->getOwnedCountries()) {
         // check if toCountry is valid
-        if (defendingPlayer->getOwnedCountries().at(i)->getCountryName() == toCountry->getCountryName()
-            && defendingPlayer->getOwnedCountries().at(i)->getPlayerOwnerID() == toCountry->getPlayerOwnerID()) {
-            valid2 = true;
+        if (i->getCountryName() == toCountry->getCountryName()
+            && i->getPlayerOwnerID() == toCountry->getPlayerOwnerID()) {
+            toCountryValid = true;
         }
     }
 
-    if (!valid1 || !valid2) {
+    if (!fromCountryValid || !toCountryValid) {
         return PlayerAction::FAILED;
     }
 
@@ -73,36 +69,30 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
         defendingRolls.pop_back();
 
         if (aRoll > dRoll) {
-
             // defender loses 1 army
             std::cout << "\nDefender lost 1 army!" << std::endl;
             toCountry->setNumberOfTroops(toCountry->getNumberOfTroops() - 1);
-            // then, if no armies left on defending country, attacking player conquers it
 
+            // then, if no armies left on defending country, attacking player conquers it
             if (toCountry->getNumberOfTroops() == 0) {
                 std::cout << "Defender has lost possession of country " << toCountry->getCountryName();
                 toCountry->setPlayerOwnerID(this->getPlayerId());
 
-                for (unsigned int i = 0; i < defendingPlayer->getOwnedCountries().size(); i++) {
+                for (unsigned long i = 0; i < defendingPlayer->getOwnedCountries().size(); i++) {
 
                     if (defendingPlayer->getOwnedCountries().at(i)->getCountryName() == toCountry->getCountryName()) {
-
                         this->getOwnedCountries().push_back(defendingPlayer->getOwnedCountries().at(i));
-
                         defendingPlayer->getOwnedCountries().erase(defendingPlayer->getOwnedCountries().begin() + i);
-
                         break;
                     }
                 }
             }
         } else {
-
             // attacker loses 1 army
             std::cout << "\nAttacker lost 1 army!";
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - 1);
         }
     }
-
     return PlayerAction::SUCCEEDED;
 }
 
@@ -112,25 +102,27 @@ Player::attack(Map::Country *fromCountry, Map::Country *toCountry, Player *defen
  * @param countryToFortify the country the player wishes to fortify
  * @param numArmies the number of armies to fortify with
  */
-int Player::fortify(Map::Country *countryToFortify, const int numArmies) {
+int Player::fortify(Map::Country* countryToFortify, const int numArmies) {
     /* Act of collecting new armies and placing them on the map
      * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
-    bool valid1 = false;
-    for (unsigned int i = 0; i < this->getOwnedCountries().size(); i++) {
-        if (this->getOwnedCountries().at(i)->getCountryName() == countryToFortify->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == countryToFortify->getPlayerOwnerID()
+
+    bool countryToFortifyValid = false;
+
+    for (auto & i : this->getOwnedCountries()) {
+        if (i->getCountryName() == countryToFortify->getCountryName()
+            && i->getPlayerOwnerID() == countryToFortify->getPlayerOwnerID()
             && countryToFortify->getPlayerOwnerID() == this->getPlayerId()) {
 
             countryToFortify->setNumberOfTroops(countryToFortify->getNumberOfTroops() + numArmies);
-            valid1 = true;
+            countryToFortifyValid = true;
             break;
         }
     }
 
-    if (!valid1) {
+    if (!countryToFortifyValid) {
         return PlayerAction::FAILED;
     }
 
@@ -146,49 +138,49 @@ int Player::fortify(Map::Country *countryToFortify, const int numArmies) {
  * @param toCountry  the country to move those armies to
  * @param numArmies  the number of armies to move
  */
-int Player::reinforce(Map::Country *fromCountry, Map::Country *toCountry, const int numArmies) {
+int Player::reinforce(Map::Country* fromCountry, Map::Country* toCountry, const int numArmies) {
     /*
      * Act of moving armies between this player's owned countries.
      * fromCountry and toCountry have to be owned by this player and adjacent to each other.
      */
-    bool valid1 = false;
-    bool valid2 = false;
-    bool valid3 = false;
+    bool fromCountryValid = false;
+    bool toCountryValid = false;
+    bool reinforceValid = false;
 
     if (numArmies >= fromCountry->getNumberOfTroops()) {
         return PlayerAction::FAILED;
     }
 
     // Check if passed countries are valid (adjacent to each other, owned by this player)
-    for (unsigned int i = 0; i < this->getOwnedCountries().size(); i++) {
+    for (auto & i : this->getOwnedCountries()) {
         // check if fromCountry is valid
-        if (this->getOwnedCountries().at(i)->getCountryName() == fromCountry->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == fromCountry->getPlayerOwnerID()
+        if (i->getCountryName() == fromCountry->getCountryName()
+            && i->getPlayerOwnerID() == fromCountry->getPlayerOwnerID()
             && fromCountry->getPlayerOwnerID() == this->getPlayerId()) {
-            valid1 = true;
+            fromCountryValid = true;
         }
-        if (this->getOwnedCountries().at(i)->getCountryName() == toCountry->getCountryName()
-            && this->getOwnedCountries().at(i)->getPlayerOwnerID() == toCountry->getPlayerOwnerID()
+        if (i->getCountryName() == toCountry->getCountryName()
+            && i->getPlayerOwnerID() == toCountry->getPlayerOwnerID()
             && toCountry->getPlayerOwnerID() == this->getPlayerId()) {
-            valid2 = true;
+            toCountryValid = true;
         }
     }
 
-    if (!valid1 || !valid2) {
+    if (!fromCountryValid || !toCountryValid) {
         return PlayerAction::FAILED;
     }
 
-    // Check to make sure both
+    // Check to make sure both countries are adjacent, and move armies
     for (unsigned long i = 0; i < fromCountry->pAdjCountries->size(); i++) {
         if (fromCountry->pAdjCountries->at(i)->getCountryName() == toCountry->getCountryName()) {
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - numArmies);
             toCountry->setNumberOfTroops(toCountry->getNumberOfTroops() + numArmies);
-            valid3 = true;
+            reinforceValid = true;
             break;
         }
     }
 
-    if (!valid3) {
+    if (!reinforceValid) {
         return PlayerAction::FAILED;
     }
 
@@ -205,9 +197,8 @@ int Player::reinforce(Map::Country *fromCountry, Map::Country *toCountry, const 
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country *> ownedCountries, Hand cards, DiceRoller diceRoller,
-               const int playerId) {
-    ownedCountriesPointer = new std::vector<Map::Country *>(std::move(ownedCountries)); // avoid unnecessary copy
+Player::Player(std::vector<Map::Country *> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId) {
+    ownedCountriesPointer = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
     cardsPointer = new Hand(cards);
     diceRollerPointer = new DiceRoller(diceRoller);
     playerIdPointer = new int(playerId);
