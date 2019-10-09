@@ -1,0 +1,33 @@
+name invalid War Map
+
+[files]
+
+
+[continents]
+; name numberOfArmy
+North-America 5
+South-America 2
+Europe 5
+Africa 3
+Asia 7
+Australia 2
+
+[countries]
+; id name continent
+1 Alaska 9
+2 North-West-Territory 1
+4 Alberta 1
+4 Western-United-States 1
+
+
+[borders]
+; country neighboor neighboor neighboor...
+1 2 3 38
+35 27 34 36 38
+36 29 35 37 38 27
+37 36 38
+38 1 34 35 36 37
+39 33 41 40
+40 39 41 42
+41 39 40 42
+42 40 41
