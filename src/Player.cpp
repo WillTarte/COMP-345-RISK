@@ -69,7 +69,7 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingP
 }
 
 /**
- * \brief Makes this player attack another player's country.
+ * Makes this player attack another player's country.
  * If the defending country has no armies left, places 1 army of the attacking country on the newly acquired country.
  * @param fromCountry       the country to attack from
  * @param toCountry         the country to attack
