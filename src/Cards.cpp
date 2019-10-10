@@ -128,14 +128,14 @@ int Hand::armiesReceived() {
  * @param discardedCards
  */
 void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
-    int initialHandSize = hand.getHand()->size();
+    unsigned int initialHandSize = hand.getHand()->size();
 
     for (int i = 0; i < 3; i++) {
         Deck::discardPointer->push_back(discardedCards.at(i));
     }
 
     for (int i = 0; i < 3; i++) {
-        int counter = 0; // position in vector
+        unsigned int counter = 0; // position in vector
         int removedCard = 0;
 
         while (removedCard == 0 && counter < hand.getHand()->size()) { //stop once the vector has been gone through completely or a card was removed

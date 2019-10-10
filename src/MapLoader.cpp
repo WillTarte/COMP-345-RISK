@@ -56,15 +56,21 @@ Map* MapLoader::readMapFile() {
             }else if(*pMode == "continents") {
                 if(validateContinentLine(pContinentCount,pLineWords,pLineCount,pValidMap)){
                     pContinentData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "countries"){
                 if(validateCountryLine(pCountryCount,pLineWords,pLineCount,pValidMap,pCountryID,pContinentCount)){
                     pCountryData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "borders"){
                 auto* pLineNums = new std::vector<int>;
                 if(validateBordersLine(pLineNums,pLineWords,pLineCount,pValidMap,pCountryCount)){
                     pBorderData->push_back(*pLineNums);
+                }else{
+                    return nullptr;
                 }
             }else{
                 //unknown mode error, will be ignored, non-critical
@@ -90,7 +96,7 @@ Map* MapLoader::readMapFile() {
     return map;
 }
 
-Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, bool* vMap){
+Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, const bool* vMap){
     if(*vMap){
         //create map object with empty continents
         Map* gameMap = new Map(*mapName,*continentData);
@@ -181,6 +187,7 @@ MapLoader::validateCountryLine(int *countryCount, std::vector<std::string> *line
             return false;
         }
     }
+    return false;
 }
 
 bool MapLoader::validateBordersLine(std::vector<int> *lineNums, std::vector<std::string> *lineWords, const int *lineCount,

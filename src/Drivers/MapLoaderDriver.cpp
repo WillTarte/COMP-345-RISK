@@ -13,7 +13,10 @@ int main()
     std::cout << "creating map 1 (valid)\n";
     Map* firstMap = myLoader.readMapFile();
     std::cout << "map 1 creation completed.\n";
-//    firstMap->printMap();
+    if(firstMap){
+        firstMap->printMap();
+    }
+
 
     //create second (invalid) map
     /*
@@ -22,9 +25,11 @@ int main()
      * connected graph (that can be tested for in Map.cpp).
      */
     myLoader.setMapFile("world2.map");
-    std::cout << "creating map 2 (invalid)\n";
+    std::cout << "\ncreating map 2 (invalid)\n";
     Map* secondMap = myLoader.readMapFile();
     std::cout << "map 2 creation attempt completed.\n";
-
+    if(secondMap){
+        secondMap->printMap();
+    }
     return 0;
 }

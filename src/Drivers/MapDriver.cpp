@@ -23,7 +23,7 @@ int main()
 
     //add adjacency
     for(auto & i : validBorderData){
-        for(int j=1; j<i.size(); j++) {
+        for(unsigned int j=1; j<i.size(); j++) {
             validMap.addEdge(i[0],i[j]);
         }
     }
@@ -42,7 +42,7 @@ int main()
 
     //add adjacency
     for(auto & i : invalidBorderData){
-        for(int j=1; j<i.size(); j++) {
+        for(unsigned int j=1; j<i.size(); j++) {
             invalidMap.addEdge(i[0],i[j]);
         }
     }
