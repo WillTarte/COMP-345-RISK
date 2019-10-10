@@ -3,13 +3,9 @@
 //
 
 #include "../include/Map.h"
-#include <sstream>
 #include <string>
-#include <fstream>
 #include <vector>
 #include <iostream>
-#include <memory>
-#include <winnt.h>
 
 //Map constructor
 Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {

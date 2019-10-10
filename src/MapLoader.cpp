@@ -39,13 +39,14 @@ Map* MapLoader::readMapFile() {
         //will hold the words of each line (separated by spaces) in an array
         auto* pLineWords = new std::vector<std::string>;
         //ignore comments or empty lines
-        if(line.empty() || line[0] == *";"){
+        if(line.empty() || line[0] == *";" || line[0] == *"\n" || line[0] == *"\r"){
             //do nothing, the line is empty or is a comment
+            continue;
         }else{
-            splitLine(line,pLineWords);
-            getMapName(pMapName,pLineWords);
+            splitLine(line, pLineWords);
+            getMapName(pMapName, pLineWords);
 
-            if(checkSection(pMode,pLineWords)){
+            if(checkSection(pMode, pLineWords)){
                 continue;
             }
 
@@ -54,17 +55,23 @@ Map* MapLoader::readMapFile() {
                 //this mode is in every example file, do we need it?
                 std::cout << "Line " << *pLineCount << " - [WARNING] : the parser encountered the file mode, which is not supported at the moment.\n";
             }else if(*pMode == "continents") {
-                if(validateContinentLine(pContinentCount,pLineWords,pLineCount,pValidMap)){
+                if(validateContinentLine(pContinentCount, pLineWords,pLineCount,pValidMap)){
                     pContinentData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "countries"){
-                if(validateCountryLine(pCountryCount,pLineWords,pLineCount,pValidMap,pCountryID,pContinentCount)){
+                if(validateCountryLine(pCountryCount, pLineWords,pLineCount,pValidMap,pCountryID,pContinentCount)){
                     pCountryData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "borders"){
                 auto* pLineNums = new std::vector<int>;
                 if(validateBordersLine(pLineNums,pLineWords,pLineCount,pValidMap,pCountryCount)){
                     pBorderData->push_back(*pLineNums);
+                }else{
+                    return nullptr;
                 }
             }else{
                 //unknown mode error, will be ignored, non-critical
@@ -90,7 +97,7 @@ Map* MapLoader::readMapFile() {
     return map;
 }
 
-Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, bool* vMap){
+Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, const bool* vMap){
     if(*vMap){
         //create map object with empty continents
         Map* gameMap = new Map(*mapName,*continentData);
@@ -125,7 +132,7 @@ void MapLoader::splitLine(const std::string& line, std::vector<std::string> *pLi
 
 void MapLoader::getMapName(std::string *mapName, std::vector<std::string> *lineWords) {
     //get map name
-    if((*lineWords)[0] == "name" || (*lineWords)[0] == "Name"){
+    if(lineWords->at(0) == "name" || lineWords->at(0) == "Name"){
         for(unsigned int i = 1; i<lineWords->size(); i++) {
             *mapName += (*lineWords)[i] + " ";
         }
@@ -181,6 +188,7 @@ MapLoader::validateCountryLine(int *countryCount, std::vector<std::string> *line
             return false;
         }
     }
+    return false;
 }
 
 bool MapLoader::validateBordersLine(std::vector<int> *lineNums, std::vector<std::string> *lineWords, const int *lineCount,
