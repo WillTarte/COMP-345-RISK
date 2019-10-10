@@ -7,7 +7,8 @@
 int main()
 {
     //init loader
-    MapLoader myLoader = MapLoader("world.map");
+    std::string MAP = "world.map";
+    MapLoader myLoader = MapLoader(MAP);
 
     //create first (valid) map
     std::cout << "creating map 1 (valid)\n";
