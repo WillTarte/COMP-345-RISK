@@ -25,7 +25,8 @@ int main()
      * that doesnt exist, alberta has a wrong country ID and it is not a
      * connected graph (that can be tested for in Map.cpp).
      */
-    myLoader.setMapFile("world2.map");
+    std::string MAP2 = "world2.map";
+    myLoader.setMapFile(MAP2);
     std::cout << "\ncreating map 2 (invalid)\n";
     Map* secondMap = myLoader.readMapFile();
     std::cout << "map 2 creation attempt completed.\n";
