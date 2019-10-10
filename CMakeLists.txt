@@ -7,6 +7,7 @@ add_compile_options(
         -Wall
         -Wextra
         -Werror
+        -Wno-unknown-pragmas
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world.map
