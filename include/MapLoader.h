@@ -11,13 +11,13 @@ class string;
 
 class MapLoader{
 public:
-    MapLoader(std::string mapFile);
+    explicit MapLoader(std::string mapFile);
     std::string* pMapFile;
     void setMapFile(std::string newMapFile);
     Map* readMapFile();
 
 private:
-    static Map* initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, bool* vMap);
+    static Map* initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, const bool* vMap);
     void splitLine(const std::string &line, std::vector<std::string> *pLineWords);
     void getMapName(std::string *mapName, std::vector<std::string> *lineWords);
 
