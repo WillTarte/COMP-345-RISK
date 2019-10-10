@@ -6,8 +6,8 @@
 ////////////////////////////////////////////////////////////
 bool test_Dice() {
     try {
-        Dice *dice = new Dice();
-        delete(dice);
+        Dice* dice = new Dice();
+        delete (dice);
         return true;
     }
     catch (int e) {
@@ -37,11 +37,11 @@ bool test_DiceRoller() {
             auto* roller = new DiceRoller();
             success = success && roller->getDiceRolled() == 0;
 
-            for (int x = 0 ; x < (long)roller->getHistory().size() ; x++) {
+            for (int x = 0; x < (long) roller->getHistory().size(); x++) {
                 success = success && roller->getHistory().at(x) == 0;
             }
 
-            delete(roller);
+            delete (roller);
         }
         catch (int e) {
             success = false;
@@ -55,10 +55,10 @@ bool test_DiceRoller_roll() {
     bool success = true;
     auto* roller = new DiceRoller();
 
-    for (int x = 1 ; x < 4; x++) {
+    for (int x = 1; x < 4; x++) {
         std::vector<int> outcome = roller->roll(x);
 
-        success = success && x == (int)outcome.size();
+        success = success && x == (int) outcome.size();
         int prev = outcome[0];
         for (int y = 0; y < x; y++) {
             success = success && outcome[y] > 0 && outcome[y] < 7;
@@ -66,7 +66,7 @@ bool test_DiceRoller_roll() {
         }
     }
 
-    delete(roller);
+    delete (roller);
 
     return success;
 }
@@ -76,18 +76,18 @@ bool test_DiceRoller_getHistory() {
     auto* roller = new DiceRoller();
 
     std::vector<int> outcomes = {0, 0, 0, 0, 0, 0};
-    for (int x = 0 ; x < 10 ; x++) {
+    for (int x = 0; x < 10; x++) {
         std::vector<int> results = roller->roll(3);
         for (int result : results) {
-            outcomes[result-1]++;
+            outcomes[result - 1]++;
         }
     }
 
     auto history = roller->getHistory();
-    for (long x = 0; x < (long)outcomes.size() ; x++)
+    for (long x = 0; x < (long) outcomes.size(); x++)
         success = success && outcomes[x] == history[x];
 
-    delete(roller);
+    delete (roller);
 
     return success;
 }
@@ -96,13 +96,13 @@ bool test_DiceRoller_getDiceRolled() {
     auto* roller = new DiceRoller();
 
     int rolls = 0;
-    for (int x = 0 ; x < 10 ; x++) {
+    for (int x = 0; x < 10; x++) {
         rolls += x;
         roller->roll(x);
     }
 
     bool success = roller->getDiceRolled() == rolls;
-    delete(roller);
+    delete (roller);
 
     return success;
 }
@@ -112,19 +112,19 @@ bool test_DiceRoller_getPercentages() {
     int timesRolled = 0;
     auto* history = new std::vector<int>(6);
     auto* roller = new DiceRoller();
-    for (int x = 0 ; x < 100 ; x++) {
+    for (int x = 0; x < 100; x++) {
         int roll = roller->roll(1).at(0);
         timesRolled++;
-        (*history)[roll-1]++;
+        (*history)[roll - 1]++;
     }
 
-    for (int x = 0 ; x < (int)history->size() ; x++) {
-        double percent = (double)history->at(x) / (double)timesRolled;
+    for (int x = 0; x < (int) history->size(); x++) {
+        double percent = (double) history->at(x) / (double) timesRolled;
         success = success && percent == roller->getPercentages()[x];
     }
 
-    delete(history);
-    delete(roller);
+    delete (history);
+    delete (roller);
 
     return success;
 }

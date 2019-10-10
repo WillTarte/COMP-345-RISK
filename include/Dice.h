@@ -12,15 +12,19 @@ public:
 class DiceRoller {
 public:
     DiceRoller();
+
     std::vector<int> roll(int numDice);
 
     std::vector<double> getPercentages();
+
     int getDiceRolled() { return *diceRolled; }
+
     std::vector<int> getHistory() { return *history; }
 
 private:
     int* diceRolled;
     std::vector<int>* history;
+
     void saveRoll(int roll);
 };
 

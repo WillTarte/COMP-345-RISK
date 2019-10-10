@@ -15,7 +15,7 @@
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country *> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId) {
+Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId) {
     pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
     pCards = new Hand(cards);
     pDiceRoller = new DiceRoller(diceRoller);
@@ -42,7 +42,8 @@ static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
  * @param defendingArmies the number of armies on the defending country
  * @return true if the numbers of dice are valid
  */
-static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies, const int defendingArmies) {
+static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
+                                  const int defendingArmies) {
     return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
            || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
 }
@@ -77,7 +78,8 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingP
  * @param numAttackingDice  number of dice the attacking player should roll
  * @param numDefendingDice  number of dice the defending player should roll
  */
-int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& defendingPlayer, const int numAttackingDice, const int numDefendingDice) {
+int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& defendingPlayer, const int numAttackingDice,
+               const int numDefendingDice) {
     /*
      * 1. The attacking player rolls 1-3 dice, having +1 army than dice rolled. 1 dice roll per attacking army.
      * 2. Defender rolls 2 dice, 1 for each army defending
@@ -89,12 +91,13 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
     // Check if passed countries are valid (adjacent to each other, fromCountry owned by this player, toCountry owned by defender)
     if (!checkOwnedByPlayer(*this, fromCountry)
         || !checkOwnedByPlayer(defendingPlayer, toCountry)
-        || !checkIfAdjacent(fromCountry, toCountry) ) {
+        || !checkIfAdjacent(fromCountry, toCountry)) {
         return PlayerAction::FAILED;
     }
 
     // Check if numAttackingDice and numDefendingDice is valid
-    if (!checkValidDiceNumbers(numAttackingDice, numDefendingDice, fromCountry.getNumberOfTroops(), toCountry.getNumberOfTroops())) {
+    if (!checkValidDiceNumbers(numAttackingDice, numDefendingDice, fromCountry.getNumberOfTroops(),
+                               toCountry.getNumberOfTroops())) {
         return PlayerAction::FAILED;
     }
 
@@ -116,7 +119,7 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
             // then, if no armies left on defending country, attacking player conquers it
             if (toCountry.getNumberOfTroops() == 0) {
                 std::cout << "Defender has lost possession of country " << toCountry.getCountryName();
-                if(!exchangeCountryOwnership(*this, defendingPlayer, toCountry)) {
+                if (!exchangeCountryOwnership(*this, defendingPlayer, toCountry)) {
                     return PlayerAction::FAILED;
                 } else {
                     return PlayerAction::SUCCEEDED;
@@ -172,7 +175,8 @@ int Player::reinforce(Map::Country& fromCountry, Map::Country& toCountry, const 
         return PlayerAction::FAILED;
     }
 
-    if(!checkIfAdjacent(fromCountry, toCountry) || !checkOwnedByPlayer(*this, fromCountry) || !checkOwnedByPlayer(*this, toCountry) ) {
+    if (!checkIfAdjacent(fromCountry, toCountry) || !checkOwnedByPlayer(*this, fromCountry) ||
+        !checkOwnedByPlayer(*this, toCountry)) {
         return PlayerAction::FAILED;
     }
 

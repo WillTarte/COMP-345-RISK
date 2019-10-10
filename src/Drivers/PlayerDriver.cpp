@@ -12,13 +12,13 @@
 bool test_Player_Constructor() {
 
     // Arrange
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 0);
     Map::Country country2 = Map::Country(1, "country2", 0);
     Map::Country country3 = Map::Country(3, "country3", 1);
-    Map::Country *pCountry1 = &country1;
-    Map::Country *pCountry2 = &country2;
-    Map::Country *pCountry3 = &country3;
+    Map::Country* pCountry1 = &country1;
+    Map::Country* pCountry2 = &country2;
+    Map::Country* pCountry3 = &country3;
     ownedCountries1.push_back(pCountry1);
     ownedCountries1.push_back(pCountry2);
     ownedCountries1.push_back(pCountry3);
@@ -45,13 +45,13 @@ bool test_Player_getOwnedCountries(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 0);
     Map::Country country2 = Map::Country(1, "country2", 0);
     Map::Country country3 = Map::Country(3, "country3", 1);
-    Map::Country *pCountry1 = &country1;
-    Map::Country *pCountry2 = &country2;
-    Map::Country *pCountry3 = &country3;
+    Map::Country* pCountry1 = &country1;
+    Map::Country* pCountry2 = &country2;
+    Map::Country* pCountry3 = &country3;
     ownedCountries1.push_back(pCountry1);
     ownedCountries1.push_back(pCountry2);
     ownedCountries1.push_back(pCountry3);
@@ -66,7 +66,7 @@ bool test_Player_getOwnedCountries(bool verbose = false) {
     if (verbose) {
         std::cout << "\033[35m";
         std::cout << "\nThe player owns countries: ";
-        for (auto & i : player1.getOwnedCountries()) {
+        for (auto& i : player1.getOwnedCountries()) {
             std::cout << i->getCountryName() << " ";
         }
         std::cout << "\033[31m" << std::endl;
@@ -78,7 +78,7 @@ bool test_Player_getHand(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     Hand cards = Hand();
     Deck deck = Deck(3);
     deck.createDeck();
@@ -97,7 +97,7 @@ bool test_Player_getHand(bool verbose = false) {
 
     if (verbose) {
         std::cout << "\n" << "\033[35m";
-        for (auto & i : *player1.getCards().getHand()) {
+        for (auto& i : *player1.getCards().getHand()) {
             switch ((int) i) {
                 case 0:
                     std::cout << "player1 has a card " << "INFANTRY" << std::endl;
@@ -119,7 +119,7 @@ bool test_Player_getDiceRoller(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
 
     // Act
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
@@ -156,7 +156,7 @@ bool test_Player_reinforce(bool verbose = false) {
     // Arrange
     const int numArmies = 4;
     bool success = true;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 0);
     Map::Country country2 = Map::Country(1, "country2", 0);
     Map::Country country3 = Map::Country(3, "country3", 1);
@@ -164,9 +164,9 @@ bool test_Player_reinforce(bool verbose = false) {
     country2.setPlayerOwnerID(1);
     country3.setPlayerOwnerID(1);
     country1.setNumberOfTroops(numArmies);
-    Map::Country *pCountry1 = &country1;
-    Map::Country *pCountry2 = &country2;
-    Map::Country *pCountry3 = &country3;
+    Map::Country* pCountry1 = &country1;
+    Map::Country* pCountry2 = &country2;
+    Map::Country* pCountry3 = &country3;
     ownedCountries1.push_back(pCountry1);
     ownedCountries1.push_back(pCountry2);
     ownedCountries1.push_back(pCountry3);
@@ -195,6 +195,11 @@ bool test_Player_reinforce(bool verbose = false) {
                   << std::endl;
         std::cout << "\033[31m";
     }
+
+    delete(pCountry1);
+    delete(pCountry2);
+    delete(pCountry3);
+
     return success;
 }
 
@@ -205,16 +210,16 @@ bool test_Player_attack(bool verbose = false) {
     const int numDefendingDice = 1;
     const int numAttackingDice = 3;
     bool success = true;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
-    std::vector<Map::Country *> ownedCountries2 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
+    std::vector<Map::Country*> ownedCountries2 = std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 1);
     Map::Country country2 = Map::Country(1, "country2", 1);
     country1.setPlayerOwnerID(1);
     country2.setPlayerOwnerID(2);
     country1.setNumberOfTroops(numArmies);
     country2.setNumberOfTroops(numArmies - 3);
-    Map::Country *pCountry1 = &country1;
-    Map::Country *pCountry2 = &country2;
+    Map::Country* pCountry1 = &country1;
+    Map::Country* pCountry2 = &country2;
     ownedCountries1.push_back(pCountry1);
     ownedCountries2.push_back(pCountry2);
     country1.pAdjCountries->push_back(pCountry2);
@@ -241,6 +246,10 @@ bool test_Player_attack(bool verbose = false) {
                   << std::endl;
         std::cout << "\033[31m";
     }
+
+    delete(pCountry1);
+    delete(pCountry2);
+
     return success;
 }
 
@@ -250,11 +259,11 @@ bool test_Player_fortify(bool verbose = false) {
     bool success = true;
     const int numArmies = 4;
     const int numFortify = 10;
-    std::vector<Map::Country *> ownedCountries1 = std::vector<Map::Country *>();
+    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 1);
     country1.setPlayerOwnerID(1);
     country1.setNumberOfTroops(numArmies);
-    Map::Country *pCountry1 = &country1;
+    Map::Country* pCountry1 = &country1;
     ownedCountries1.push_back(pCountry1);
 
     // Act & Assert
@@ -271,6 +280,9 @@ bool test_Player_fortify(bool verbose = false) {
                   << " armies" << std::endl;
         std::cout << "\033[31m";
     }
+
+    delete(pCountry1);
+
     return success;
 }
 
