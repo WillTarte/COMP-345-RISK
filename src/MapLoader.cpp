@@ -56,15 +56,21 @@ Map* MapLoader::readMapFile() {
             }else if(*pMode == "continents") {
                 if(validateContinentLine(pContinentCount,pLineWords,pLineCount,pValidMap)){
                     pContinentData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "countries"){
                 if(validateCountryLine(pCountryCount,pLineWords,pLineCount,pValidMap,pCountryID,pContinentCount)){
                     pCountryData->push_back(*pLineWords);
+                }else{
+                    return nullptr;
                 }
             }else if(*pMode == "borders"){
                 auto* pLineNums = new std::vector<int>;
                 if(validateBordersLine(pLineNums,pLineWords,pLineCount,pValidMap,pCountryCount)){
                     pBorderData->push_back(*pLineNums);
+                }else{
+                    return nullptr;
                 }
             }else{
                 //unknown mode error, will be ignored, non-critical
