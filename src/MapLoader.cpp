@@ -90,7 +90,7 @@ Map* MapLoader::readMapFile() {
     return map;
 }
 
-Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, bool* vMap){
+Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData, std::vector<std::vector<std::string>>* countryData, std::vector<std::vector<int>>* borderData, const bool* vMap){
     if(*vMap){
         //create map object with empty continents
         Map* gameMap = new Map(*mapName,*continentData);
@@ -181,6 +181,7 @@ MapLoader::validateCountryLine(int *countryCount, std::vector<std::string> *line
             return false;
         }
     }
+    return false;
 }
 
 bool MapLoader::validateBordersLine(std::vector<int> *lineNums, std::vector<std::string> *lineWords, const int *lineCount,
