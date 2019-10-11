@@ -196,10 +196,6 @@ bool test_Player_reinforce(bool verbose = false) {
         std::cout << "\033[31m";
     }
 
-    delete(pCountry1);
-    delete(pCountry2);
-    delete(pCountry3);
-
     return success;
 }
 
@@ -247,9 +243,6 @@ bool test_Player_attack(bool verbose = false) {
         std::cout << "\033[31m";
     }
 
-    delete(pCountry1);
-    delete(pCountry2);
-
     return success;
 }
 
@@ -280,8 +273,6 @@ bool test_Player_fortify(bool verbose = false) {
                   << " armies" << std::endl;
         std::cout << "\033[31m";
     }
-
-    delete(pCountry1);
 
     return success;
 }

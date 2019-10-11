@@ -16,6 +16,7 @@ MapLoader::MapLoader(std::string mapFile) {
     pMapFile = &mapFile;
 }
 
+//TODO: For all valid lines in world map files, strip new lines (\n) and carriage returns (\r)
 Map* MapLoader::readMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
@@ -79,6 +80,7 @@ Map* MapLoader::readMapFile() {
             } else {
                 //unknown mode error, will be ignored, non-critical
                 std::cout << "Line " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode.\n";
+                std::cout << " :: " << line;
             }
         }
         delete (pLineWords);

@@ -4,8 +4,8 @@
 
 int main() {
     //init loader
-    std::string MAP = "world.map";
-    MapLoader myLoader = MapLoader(MAP);
+    const std::string MAP1 = "world.map";
+    MapLoader myLoader = MapLoader(MAP1);
 
     //create first (valid) map
     std::cout << "creating map 1 (valid)\n";
@@ -14,15 +14,16 @@ int main() {
     if (firstMap) {
         firstMap->printMap();
     }
-
-
+    
     //create second (invalid) map
     /*
      * this map is invalid in many ways. Alaska is assigned to a continent
      * that doesnt exist, alberta has a wrong country ID and it is not a
      * connected graph (that can be tested for in Map.cpp).
      */
-    myLoader.setMapFile("world2.map");
+    std::cout << "\n\n";
+    const std::string MAP2 = "world2.map";
+    myLoader.setMapFile(MAP2);
     std::cout << "\ncreating map 2 (invalid)\n";
     Map* secondMap = myLoader.readMapFile();
     std::cout << "map 2 creation attempt completed.\n";
