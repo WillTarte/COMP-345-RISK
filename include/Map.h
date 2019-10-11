@@ -10,24 +10,17 @@
 
 class Map {
 public:
-    Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd);
-
+    Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
     std::string* pMapTitle;
 
-    class Country {
+    class Country{
     public:
         Country(int id, std::string name, int continent);
-
         std::vector<Country*>* pAdjCountries;
-
         std::string getCountryName() { return *cyName; }
-
-        void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; };
-
+        void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
         void setNumberOfTroops(int troops) { *pNumberOfTroops = troops; };
-
         int getPlayerOwnerID();
-
         int getNumberOfTroops();
 
     private:
@@ -42,11 +35,8 @@ public:
     class Continent {
     public:
         Continent(std::string cname, int troops);
-
         std::vector<Country*>* pCountriesInContinent;
-
         void setCountry(Map::Country* c);
-
         std::string getContinentName() { return *pCName; }
 
     private:
@@ -56,13 +46,9 @@ public:
 
     std::vector<Continent*>* pMapContinents;
     std::vector<Country*>* pMapCountries;
-
     Map::Country* addNode(int id, std::string name, int continent);
-
     void addEdge(int from, int to);
-
     void printMap();
-
     bool testConnected();
 };
 
