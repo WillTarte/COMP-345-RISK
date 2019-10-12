@@ -10,8 +10,8 @@
  * DiceRoller constructor
  * @param numDice
  */
-DiceRoller::DiceRoller(): diceRolled(new int(0)), history(new std::vector<int>) {
-    for (int x = 0 ; x < 6 ; x++) {
+DiceRoller::DiceRoller() : diceRolled(new int(0)), history(new std::vector<int>) {
+    for (int x = 0; x < 6; x++) {
         history->push_back(0);
     }
 }
@@ -32,7 +32,7 @@ std::vector<int> DiceRoller::roll(int numDice) {
 }
 
 void DiceRoller::saveRoll(int roll) {
-    (*history)[roll-1]++;
+    (*history)[roll - 1]++;
     (*diceRolled)++;
 }
 
@@ -40,7 +40,7 @@ std::vector<double> DiceRoller::getPercentages() {
     auto* percentages = new std::vector<double>();
 
     for (int x : *history) {
-        percentages->push_back((double)x / (double)*diceRolled);
+        percentages->push_back((double) x / (double) *diceRolled);
     }
 
     return *percentages;
@@ -56,7 +56,7 @@ int Dice::roll() {
     std::random_device r;
     std::seed_seq seed{r(), r(), r(), r(), r(), r(), r(), r()};
     std::mt19937 eng{seed};
-    std::uniform_int_distribution<> dist(1,6);
+    std::uniform_int_distribution<> dist(1, 6);
 
     int roll = dist(eng);
 
