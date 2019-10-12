@@ -23,10 +23,12 @@ int main() {
         if (deck.getDeck()->at(i) == 0) {
             std::cout << "Card: [INFANTRY]" << std::endl;
             infantryCount++;
-        }if (deck.getDeck()->at(i) == 1) {
+        }
+        if (deck.getDeck()->at(i) == 1) {
             std::cout << "Card: [ARTILLERY]" << std::endl;
             artilleryCount++;
-        }if (deck.getDeck()->at(i) == 2) {
+        }
+        if (deck.getDeck()->at(i) == 2) {
             std::cout << "Card: [CAVALRY]" << std::endl;
             cavalryCount++;
         }
@@ -47,14 +49,16 @@ int main() {
 
     int handSize = hand.getHand()->size();
 
-    for (int i = 0; i < handSize; i++)  {
+    for (int i = 0; i < handSize; i++) {
         if (hand.getHand()->at(i) == 0) {
             std::cout << "Card: [INFANTRY]" << std::endl;
             infantryCount++;
-        }if (hand.getHand()->at(i) == 1) {
+        }
+        if (hand.getHand()->at(i) == 1) {
             std::cout << "Card: [ARTILLERY]" << std::endl;
             artilleryCount++;
-        }if (hand.getHand()->at(i) == 2) {
+        }
+        if (hand.getHand()->at(i) == 2) {
             std::cout << "Card: [CAVALRY]" << std::endl;
             cavalryCount++;
         }
@@ -70,24 +74,26 @@ int main() {
     int armiesReceived = Hand::exchange(hand, deck, cardsExchanged);
 
     if (armiesReceived == -1) {
-        std::cout << ("Invalid set of cards exchanged. They must either: All be of the same type or all be different.") << std::endl;
-        std::cout <<  ("\nCards attempted to exchange:") << std::endl;
+        std::cout << ("Invalid set of cards exchanged. They must either: All be of the same type or all be different.")
+                  << std::endl;
+        std::cout << ("\nCards attempted to exchange:") << std::endl;
 
         for (int i = 0; i < 3; i++) {
             if (hand.getHand()->at(i) == 0) {
                 std::cout << "Card: [INFANTRY]" << std::endl;
                 infantryCount++;
-            }if (hand.getHand()->at(i) == 1) {
+            }
+            if (hand.getHand()->at(i) == 1) {
                 std::cout << "Card: [ARTILLERY]" << std::endl;
                 artilleryCount++;
-            }if (hand.getHand()->at(i) == 2) {
+            }
+            if (hand.getHand()->at(i) == 2) {
                 std::cout << "Card: [CAVALRY]" << std::endl;
                 cavalryCount++;
             }
         }
 
-    }
-    else {
+    } else {
         std::cout << "Number of armies received: " << armiesReceived << std::endl;
     }
 
@@ -95,14 +101,16 @@ int main() {
 
     handSize = hand.getHand()->size();
 
-    for (int i = 0; i < handSize; i++)  {
+    for (int i = 0; i < handSize; i++) {
         if (hand.getHand()->at(i) == 0) {
             std::cout << "Card: [INFANTRY]" << std::endl;
             infantryCount++;
-        }if (hand.getHand()->at(i) == 1) {
+        }
+        if (hand.getHand()->at(i) == 1) {
             std::cout << "Card: [ARTILLERY]" << std::endl;
             artilleryCount++;
-        }if (hand.getHand()->at(i) == 2) {
+        }
+        if (hand.getHand()->at(i) == 2) {
             std::cout << "Card: [CAVALRY]" << std::endl;
             cavalryCount++;
         }
