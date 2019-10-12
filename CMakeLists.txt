@@ -15,8 +15,23 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world.map
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world2.map
         ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-add_executable(COMP-345-proj main.cpp src/Cards.cpp src/Dice.cpp include/Cards.h include/Dice.h src/Drivers/CardsDriver.cpp src/Drivers/DiceDriver.cpp)
-add_executable(Cards-driver src/Cards.cpp include/Cards.h src/Drivers/CardsDriver.cpp)
-add_executable(Dice-driver src/Dice.cpp include/Dice.h src/Drivers/DiceDriver.cpp)
-add_executable(map-driver src/Drivers/MapDriver.cpp src/Map.cpp include/Map.h)
-add_executable(map-loader-driver src/Drivers/MapLoaderDriver.cpp src/Map.cpp include/Map.h src/MapLoader.cpp include/MapLoader.h)
+add_executable(Cards-driver)
+add_executable(Dice-driver)
+add_executable(Map-driver)
+add_executable(Map-Loader-driver)
+add_executable(Player-driver)
+
+target_include_directories(Cards-driver PRIVATE "include")
+target_sources(Cards-driver PRIVATE "src/Cards.cpp" "src/Drivers/CardsDriver.cpp")
+
+target_include_directories(Dice-driver PRIVATE "include")
+target_sources(Dice-driver PRIVATE "src/Dice.cpp" "src/Drivers/DiceDriver.cpp")
+
+target_include_directories(Map-driver PRIVATE "include")
+target_sources(Map-driver PRIVATE "src/Map.cpp" "src/Drivers/MapDriver.cpp")
+
+target_include_directories(Map-Loader-driver PRIVATE "include")
+target_sources(Map-Loader-driver PRIVATE "src/MapLoader.cpp" "src/Drivers/MapLoaderDriver.cpp" "src/Map.cpp")
+
+target_include_directories(Player-driver PRIVATE "include")
+target_sources(Player-driver PRIVATE "src/Player.cpp" "src/Drivers/PlayerDriver.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp")
