@@ -60,7 +60,7 @@ std::vector<CardType> Deck::populateDeck() {
 /**
  * User draws a random card from the deck and it is removed from the deck
  */
-void Deck::draw(Hand &userHand) {
+void Deck::draw(Hand& userHand) {
     CardType drawnCard = deckPointer->back();
     deckPointer->pop_back();
     Deck::setNumberOfCards(deckPointer->size());
@@ -72,11 +72,11 @@ void Deck::draw(Hand &userHand) {
  * @param deck
  * @return
  */
-int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType> & givenCards) {
+int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards) {
     if (givenCards.size() != 3) {
         return -1;
     }
-    //Ensure that all three given cards are the same
+        //Ensure that all three given cards are the same
     else if (givenCards.at(0) == givenCards.at(1) && givenCards.at(1) == givenCards.at(2)) {
         int armiesToExchange = Hand::armiesReceived();
 
@@ -90,7 +90,7 @@ int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType> & givenCard
         globalHandVariables::tradedSetsCount++;
         return armiesToExchange;
     }
-    //Ensure that all three cards are different
+        //Ensure that all three cards are different
     else if (givenCards.at(0) != givenCards.at(1) &&
              givenCards.at(0) != givenCards.at(2) &&
              givenCards.at(1) != givenCards.at(2)) {
@@ -116,8 +116,7 @@ int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType> & givenCard
 int Hand::armiesReceived() {
     if (globalHandVariables::tradedSetsCount < 6) {
         return globalHandVariables::tradedSetsCount * 2 + 2;
-    }
-    else if (globalHandVariables::tradedSetsCount == 6) {
+    } else if (globalHandVariables::tradedSetsCount == 6) {
         return 15;
     }
     return 15 + (globalHandVariables::tradedSetsCount - 6) * 5;
@@ -138,12 +137,12 @@ void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
         unsigned int counter = 0; // position in vector
         int removedCard = 0;
 
-        while (removedCard == 0 && counter < hand.getHand()->size()) { //stop once the vector has been gone through completely or a card was removed
+        while (removedCard == 0 && counter <
+                                   hand.getHand()->size()) { //stop once the vector has been gone through completely or a card was removed
             if (hand.getHand()->at(counter) == discardedCards.at(i)) {
                 hand.getHand()->erase(hand.getHand()->begin() + counter);
                 removedCard = 1;
-            }
-            else {
+            } else {
                 counter++;
             }
         }
@@ -151,6 +150,7 @@ void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
 
     // checks if the cards were removed from the hand as expected
     if (hand.getHand()->size() == initialHandSize) {
-        throw std::length_error("The three cards were not removed from the hand once exchanged successfully. System exiting.");
+        throw std::length_error(
+                "The three cards were not removed from the hand once exchanged successfully. System exiting.");
     }
 }
