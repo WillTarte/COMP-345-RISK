@@ -23,11 +23,14 @@ public:
     vector<Player> getAllPlayers() { return allPlayers; }
     bool isRoundFinished(unsigned long currentPlayerPosition);
     void queryReinforcement(Player currentPlayer);
+    void queryAttack(vector<Player>, Player currentPlayer);
 };
 
 namespace BasicMechanics{
-    int findCountryPosition(vector<Map::Country*>, const string&);
+    int findCountryPosition(vector<Map::Country*>, string&);
     Map::Country* queryCountry(const vector<Map::Country*>& countryList, int);
     int queryArmies();
+    int queryDefendingPlayer();
+    int queryDice(int dicePrompt);
 }
 #endif //COMP_345_PROJ_GAMEENGINE_H
