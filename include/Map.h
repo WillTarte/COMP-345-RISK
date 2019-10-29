@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #ifndef COMP_345_PROJ_MAP_H
 #define COMP_345_PROJ_MAP_H
@@ -50,6 +51,7 @@ public:
     void addEdge(int from, int to);
     void printMap();
     bool testConnected();
+    void dfs(std::set<std::string>* visitedCountries,Country* countries);
 };
 
 bool checkIfAdjacent(Map::Country& country1, Map::Country& country2);

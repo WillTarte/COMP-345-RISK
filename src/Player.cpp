@@ -147,7 +147,7 @@ int Player::attack() {
 /**
  * Once per turn, this player can place a number of armies on one of his/her country
  *
- * @param countryToFortify the country the player wishes to fortify
+ * @param countryToReinforce the country the player wishes to fortify
  * @param numArmies the number of armies to fortify with
  */
 int Player::reinforce() {
@@ -160,13 +160,13 @@ int Player::reinforce() {
     /*
     Map::Country& countryToFortify, const int numArmies
 
-    if (!checkOwnedByPlayer(*this, countryToFortify)) {
+    if (!checkOwnedByPlayer(*this, countryToReinforce)) {
         return PlayerAction::FAILED;
     }
 
-    countryToFortify.setNumberOfTroops(countryToFortify.getNumberOfTroops() + numArmies);
-    std::cout << "\nPlayer " << countryToFortify.getPlayerOwnerID() << " has fortified "
-              << countryToFortify.getCountryName() << std::endl;
+    countryToReinforce.setNumberOfTroops(countryToReinforce.getNumberOfTroops() + numArmies);
+    std::cout << "\nPlayer " << countryToReinforce.getPlayerOwnerID() << " has fortified "
+              << countryToReinforce.getCountryName() << std::endl;
 
     return PlayerAction::SUCCEEDED;
     */
