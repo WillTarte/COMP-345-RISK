@@ -29,9 +29,9 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
  * @param country the country
  * @return true if the country is owned by the player
  */
-static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
-    return player.getPlayerId() == country.getPlayerOwnerID();
-}
+//static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
+//    return player.getPlayerId() == country.getPlayerOwnerID();
+//}
 
 /**
  * Checks if the number of attacking and defending dice are valid
@@ -42,11 +42,11 @@ static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
  * @param defendingArmies the number of armies on the defending country
  * @return true if the numbers of dice are valid
  */
-static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
-                                  const int defendingArmies) {
-    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
-           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
-}
+//static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
+//                                  const int defendingArmies) {
+//    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
+//           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
+//}
 
 /**
  * Exchanges a countries owner with a new owner
@@ -56,18 +56,18 @@ static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefen
  * @param country the country to exchange ownership of
  * @return true if the exchange succeeded
  */
-static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingPlayer, Map::Country& country) {
-
-    country.setPlayerOwnerID(attackingPlayer.getPlayerId());
-    for (unsigned long i = 0; i < defendingPlayer.getOwnedCountries().size(); i++) {
-        if (defendingPlayer.getOwnedCountries().at(i)->getCountryName() == country.getCountryName()) {
-            attackingPlayer.getOwnedCountries().push_back(defendingPlayer.getOwnedCountries().at(i));
-            defendingPlayer.getOwnedCountries().erase(defendingPlayer.getOwnedCountries().begin() + i);
-            return true;
-        }
-    }
-    return false;
-}
+//static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingPlayer, Map::Country& country) {
+//
+//    country.setPlayerOwnerID(attackingPlayer.getPlayerId());
+//    for (unsigned long i = 0; i < defendingPlayer.getOwnedCountries().size(); i++) {
+//        if (defendingPlayer.getOwnedCountries().at(i)->getCountryName() == country.getCountryName()) {
+//            attackingPlayer.getOwnedCountries().push_back(defendingPlayer.getOwnedCountries().at(i));
+//            defendingPlayer.getOwnedCountries().erase(defendingPlayer.getOwnedCountries().begin() + i);
+//            return true;
+//        }
+//    }
+//    return false;
+//}
 
 /**
  * Makes this player attack another player's country.
@@ -140,6 +140,8 @@ int Player::attack() {
     }
     return PlayerAction::SUCCEEDED;
     */
+
+    return 0;
 }
 
 /**
@@ -148,7 +150,7 @@ int Player::attack() {
  * @param countryToFortify the country the player wishes to fortify
  * @param numArmies the number of armies to fortify with
  */
-int Player::fortify() {
+int Player::reinforce() {
     /* Act of collecting new armies and placing them on the map
      * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
      * 1. Trade valid sets of cards to receive armies
@@ -168,6 +170,8 @@ int Player::fortify() {
 
     return PlayerAction::SUCCEEDED;
     */
+
+    return 0;
 }
 
 /**
@@ -177,7 +181,7 @@ int Player::fortify() {
  * @param toCountry  the country to move those armies to
  * @param numArmies  the number of armies to move
  */
-int Player::reinforce() {
+int Player::fortify() {
     /*
      * Act of moving armies between this player's owned countries.
      * fromCountry and toCountry have to be owned by this player and adjacent to each other.
@@ -200,4 +204,6 @@ int Player::reinforce() {
               << fromCountry.getCountryName() << std::endl;
     return PlayerAction::SUCCEEDED;
      */
+
+    return 0;
 }
