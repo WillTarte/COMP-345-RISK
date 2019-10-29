@@ -38,14 +38,20 @@ int main() {
                                                                   {"asia",   "4"}};
     std::vector<std::vector<std::string>> invalidCountryData = {{"1", "france",  "1"},
                                                                 {"2", "germany", "1"},
-                                                                {"3", "russia",  "2"}};
+                                                                {"3", "russia",  "2"},
+                                                                {"4", "kongo",  "1"},
+                                                                {"5", "lebanon",  "2"},
+                                                                {"6", "nepal",  "2"}};
     std::vector<std::vector<int>> invalidBorderData = {{1, 2},
-                                                       {2, 1},
-                                                       {3}};
+                                                       {2, 3},
+                                                       {3, 1},
+                                                       {4,5},
+                                                       {5,6},
+                                                       {6,4}};
     //create map object with empty continents
     Map invalidMap = Map(invalidMapName, invalidContinentData);
     //add countries to map and continents
-    for (auto& i : validCountryData) {
+    for (auto& i : invalidCountryData) {
         invalidMap.addNode(std::stoi(i[0]), i[1], std::stoi(i[2]));
     }
 
