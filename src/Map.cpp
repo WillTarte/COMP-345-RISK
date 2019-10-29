@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <set>
 #include <iostream>
 
 /**
@@ -107,12 +108,27 @@ void Map::addEdge(int from, int to) {
  * @return true if the map is a connected graph
  */
 bool Map::testConnected() {
-    for (auto& countries : *this->pMapCountries) {
-        if (countries->pAdjCountries->empty()) {
-            return false;
+    auto* visitedCountries = new std::set<std::string>;
+    dfs(visitedCountries,this->pMapCountries[0][0]);
+    bool connected = visitedCountries->size() == this->pMapCountries->size();
+    delete (visitedCountries);
+    return connected;
+}
+
+/**
+ * Test if the map is a connected graph, if it is, its subgraphs are also connected.
+ * recurse through all adjacent countries from starting point and add country name to list. If all the countries are in the list after the recursion, then map is fully connected
+ *
+ * @param visitedCountries a list of visited country names
+ * @param country the country we are analyzing
+ */
+void Map::dfs(std::set<std::string>* visitedCountries,Country* country){
+    if(visitedCountries->find(country->getCountryName()) == visitedCountries->end()){
+        visitedCountries->insert(country->getCountryName());
+        for(auto& c : *country->pAdjCountries) {
+            dfs(visitedCountries,c);
         }
     }
-    return true;
 }
 
 /**
