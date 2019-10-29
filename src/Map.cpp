@@ -4,12 +4,18 @@
 
 #include "../include/Map.h"
 #include <string>
+#include <utility>
 #include <vector>
 #include <iostream>
 
-//Map constructor
+/**
+ * Map constructor
+ *
+ * @param mapTitle the name of the map
+ * @param ctd the continents data
+ */
 Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
-    pMapTitle = new std::string(mapTitle);
+    pMapTitle = new std::string(std::move(mapTitle));
     pMapContinents = new std::vector<Continent*>;
     pMapCountries = new std::vector<Country*>;
     //create empty continents
@@ -19,25 +25,38 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
     }
 }
 
-//Continent constructor, subclass of Map
+/**
+ * Continent constructor, subclass of Map
+ *
+ * @param cname the continent name
+ * @param troops the number of troops
+ */
 Map::Continent::Continent(std::string cname, int troops) {
-    pCName = new std::string(cname);
+    pCName = new std::string(std::move(cname));
     pCTroops = new int(troops);
     pCountriesInContinent = new std::vector<Country*>;
 }
 
-/*
-add a country to this continent, it does not create a copy of the country, it only adds its pointer to a list
-of pointers. It is used to keep track of which nodes compose each subgraph.
+/**
+ * add a country to this continent, it does not create a copy of the country, it only adds its pointer to a list
+ * of pointers. It is used to keep track of which nodes compose each subgraph.
+ *
+ * @param c the country to add
  */
 void Map::Continent::setCountry(Map::Country* c) {
     pCountriesInContinent->push_back(c);
 }
 
-//Country constructor, subclass of Map
+/**
+ * Country constructor, subclass of Map
+ *
+ * @param id the country id
+ * @param name the country name
+ * @param continent the continent id
+ */
 Map::Country::Country(int id, std::string name, int continent) {
     cyID = new int(id);
-    cyName = new std::string(name);
+    cyName = new std::string(std::move(name));
     // each country only has one continent (-1 because we transform continent count to continent index)
     cyContinent = new int(continent - 1);
     pAdjCountries = new std::vector<Country*>;
@@ -54,9 +73,16 @@ int Map::Country::getPlayerOwnerID() {
     return *pPlayerOwnerId;
 }
 
+/**
+ * Add connection between two countries
+ *
+ * @param id the country id
+ * @param name the country name
+ * @param continent the continent id
+ */
 Map::Country* Map::addNode(int id, std::string name, int continent) {
     //create graph node
-    auto* thisCountry = new Country(id, name, continent);
+    auto* thisCountry = new Country(id, std::move(name), continent);
     //add node to graph (overall graph)
     pMapCountries->push_back(thisCountry);
     //add node to relevant subgraph
@@ -64,12 +90,22 @@ Map::Country* Map::addNode(int id, std::string name, int continent) {
     return thisCountry;
 }
 
+/**
+ * Add connection between two countries
+ *
+ * @param from the first country id
+ * @param to the second country id
+ */
 void Map::addEdge(int from, int to) {
     //each node maintains a list of pointers to all neighboor nodes
     (*pMapCountries)[from - 1]->pAdjCountries->push_back((*pMapCountries)[to - 1]);
 }
 
-//test if the map is a connected graph, if it is, its subgraphs are also connected
+/**
+ * Test if the map is a connected graph, if it is, its subgraphs are also connected
+ *
+ * @return true if the map is a connected graph
+ */
 bool Map::testConnected() {
     for (auto& countries : *this->pMapCountries) {
         if (countries->pAdjCountries->empty()) {
@@ -79,7 +115,10 @@ bool Map::testConnected() {
     return true;
 }
 
-//helper function to print and test all relevant map information
+/**
+ * Print and test all relevant map information
+ *
+ */
 void Map::printMap() {
     for (auto& pMapContinent : *this->pMapContinents) {
         std::string currContinent = pMapContinent->getContinentName();
