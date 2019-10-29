@@ -78,8 +78,7 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingP
  * @param numAttackingDice  number of dice the attacking player should roll
  * @param numDefendingDice  number of dice the defending player should roll
  */
-int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& defendingPlayer, const int numAttackingDice,
-               const int numDefendingDice) {
+int Player::attack() {
     /*
      * 1. The attacking player rolls 1-3 dice, having +1 army than dice rolled. 1 dice roll per attacking army.
      * 2. Defender rolls 2 dice, 1 for each army defending
@@ -87,6 +86,14 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
      * 4. If the defending country loses all its armies, the attacking country has to place
      * at least 1 of the attacking armies on the conquered country, up to all but one army
      */
+
+    //TODO - implement the attack method and fix the driver
+    /*
+    Map::Country fromCountry;
+    Map::Country toCountry;
+    Player defendingPlayer;
+    int numAttackingDice;
+    int numDefendingDice;
 
     // Check if passed countries are valid (adjacent to each other, fromCountry owned by this player, toCountry owned by defender)
     if (!checkOwnedByPlayer(*this, fromCountry)
@@ -132,6 +139,7 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
         }
     }
     return PlayerAction::SUCCEEDED;
+    */
 }
 
 /**
@@ -140,12 +148,15 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
  * @param countryToFortify the country the player wishes to fortify
  * @param numArmies the number of armies to fortify with
  */
-int Player::fortify(Map::Country& countryToFortify, const int numArmies) {
+int Player::fortify() {
     /* Act of collecting new armies and placing them on the map
      * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
+//TODO - implement the fortify method and fix the driver
+    /*
+    Map::Country& countryToFortify, const int numArmies
 
     if (!checkOwnedByPlayer(*this, countryToFortify)) {
         return PlayerAction::FAILED;
@@ -156,6 +167,7 @@ int Player::fortify(Map::Country& countryToFortify, const int numArmies) {
               << countryToFortify.getCountryName() << std::endl;
 
     return PlayerAction::SUCCEEDED;
+    */
 }
 
 /**
@@ -165,12 +177,14 @@ int Player::fortify(Map::Country& countryToFortify, const int numArmies) {
  * @param toCountry  the country to move those armies to
  * @param numArmies  the number of armies to move
  */
-int Player::reinforce(Map::Country& fromCountry, Map::Country& toCountry, const int numArmies) {
+int Player::reinforce() {
     /*
      * Act of moving armies between this player's owned countries.
      * fromCountry and toCountry have to be owned by this player and adjacent to each other.
      */
 
+    //TODO - implement the reinforce method and fix the driver
+    /*
     if (numArmies >= fromCountry.getNumberOfTroops()) {
         return PlayerAction::FAILED;
     }
@@ -185,4 +199,5 @@ int Player::reinforce(Map::Country& fromCountry, Map::Country& toCountry, const 
     std::cout << "\nPlayer " << this->getPlayerId() << " has reinforced " << toCountry.getCountryName() << " from "
               << fromCountry.getCountryName() << std::endl;
     return PlayerAction::SUCCEEDED;
+     */
 }
