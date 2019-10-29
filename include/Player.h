@@ -13,10 +13,10 @@
 class Player {
 public:
     Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, int playerId);
-    int reinforce(Map::Country& fromCountry, Map::Country& toCountry, int numArmies);
+    int fortify(Map::Country& fromCountry, Map::Country& toCountry, int numArmies);
     int attack(Map::Country& fromCountry, Map::Country& toCountry, Player& defendingPlayer, int numAttackingDice,
                int numDefendingDice);
-    int fortify(Map::Country& countryToFortify, int numArmies);
+    int reinforce(Map::Country& countryToReinforce, int numArmies);
     Hand& getCards() { return *pCards; }
     std::vector<Map::Country*>& getOwnedCountries() { return *pOwnedCountries; }
     DiceRoller& getDiceRoller() { return *pDiceRoller; }

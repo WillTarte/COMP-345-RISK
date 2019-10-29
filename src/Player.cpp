@@ -137,23 +137,23 @@ int Player::attack(Map::Country& fromCountry, Map::Country& toCountry, Player& d
 /**
  * Once per turn, this player can place a number of armies on one of his/her country
  *
- * @param countryToFortify the country the player wishes to fortify
+ * @param countryToReinforce the country the player wishes to fortify
  * @param numArmies the number of armies to fortify with
  */
-int Player::fortify(Map::Country& countryToFortify, const int numArmies) {
+int Player::reinforce(Map::Country& countryToReinforce, int numArmies) {
     /* Act of collecting new armies and placing them on the map
      * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
 
-    if (!checkOwnedByPlayer(*this, countryToFortify)) {
+    if (!checkOwnedByPlayer(*this, countryToReinforce)) {
         return PlayerAction::FAILED;
     }
 
-    countryToFortify.setNumberOfTroops(countryToFortify.getNumberOfTroops() + numArmies);
-    std::cout << "\nPlayer " << countryToFortify.getPlayerOwnerID() << " has fortified "
-              << countryToFortify.getCountryName() << std::endl;
+    countryToReinforce.setNumberOfTroops(countryToReinforce.getNumberOfTroops() + numArmies);
+    std::cout << "\nPlayer " << countryToReinforce.getPlayerOwnerID() << " has fortified "
+              << countryToReinforce.getCountryName() << std::endl;
 
     return PlayerAction::SUCCEEDED;
 }
@@ -165,7 +165,7 @@ int Player::fortify(Map::Country& countryToFortify, const int numArmies) {
  * @param toCountry  the country to move those armies to
  * @param numArmies  the number of armies to move
  */
-int Player::reinforce(Map::Country& fromCountry, Map::Country& toCountry, const int numArmies) {
+int Player::fortify(Map::Country& fromCountry, Map::Country& toCountry, int numArmies) {
     /*
      * Act of moving armies between this player's owned countries.
      * fromCountry and toCountry have to be owned by this player and adjacent to each other.
