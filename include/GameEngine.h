@@ -7,30 +7,22 @@
 #include "Cards.h"
 #include "Dice.h"
 #include "Player.h"
+
 using namespace std;
 
 #ifndef COMP_345_PROJ_GAMEENGINE_H
 #define COMP_345_PROJ_GAMEENGINE_H
 
 class GameLoop {
-    vector<Map::Country*> allCountries;
+    vector<Map::Country *> allCountries;
     vector<Player> allPlayers;
-    bool gameNotDone;
-    GameLoop (const vector<Map::Country*>&, const vector<Player>&);
+
 public:
-    void playerTurn();
-    vector<Map::Country*> getAllCountries(){ return allCountries; }
-    vector<Player> getAllPlayers() { return allPlayers; }
-    bool isRoundFinished(unsigned long currentPlayerPosition);
-    void queryReinforcement(Player currentPlayer);
-    void queryAttack(vector<Player>, Player currentPlayer);
+    GameLoop(const vector<Map::Country*> &, const vector<Player> &);
+    void loop();
+    vector<Player> getAllPlayers () { return allPlayers; }
+    static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player> &playerList);
+    static bool isGameDone (Player currentPlayer, const vector<Map::Country *> &countryList);
 };
 
-namespace BasicMechanics{
-    int findCountryPosition(vector<Map::Country*>, string&);
-    Map::Country* queryCountry(const vector<Map::Country*>& countryList, int);
-    int queryArmies();
-    int queryDefendingPlayer();
-    int queryDice(int dicePrompt);
-}
 #endif //COMP_345_PROJ_GAMEENGINE_H
