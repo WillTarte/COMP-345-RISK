@@ -153,7 +153,7 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     return success;
 }
 
-bool test_Player_reinforce(bool verbose = false) {
+bool test_Player_fortify(bool verbose = false) {
 
     // Arrange
     const int numArmies = 4;
@@ -180,7 +180,7 @@ bool test_Player_reinforce(bool verbose = false) {
     // Act & Assert
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
 
-    if (player1.reinforce(country1, country2, numArmies - 1) == PlayerAction::FAILED) {
+    if (player1.fortify(country1, country2, numArmies - 1) == PlayerAction::FAILED) {
         success = false;
     }
     if (country1.getNumberOfTroops() >= numArmies) {
@@ -248,7 +248,7 @@ bool test_Player_attack(bool verbose = false) {
     return success;
 }
 
-bool test_Player_fortify(bool verbose = false) {
+bool test_Player_reinforce(bool verbose = false) {
 
     // Arrange
     bool success = true;
@@ -264,7 +264,7 @@ bool test_Player_fortify(bool verbose = false) {
     // Act & Assert
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
 
-    if (player1.fortify(country1, numFortify) == PlayerAction::FAILED) {
+    if (player1.reinforce(country1, numFortify) == PlayerAction::FAILED) {
         success = false;
     }
 
