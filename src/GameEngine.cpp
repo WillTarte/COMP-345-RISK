@@ -48,7 +48,7 @@ void GameLoop::loop() {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition, *allPlayers)) {
                 currentPlayerPosition = 0;
-                currentPlayer.getOwnedCountries() = *allCountries; // for demo - give all countries to player 0 at the end of the round
+                currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to player 0 at the end of the round
             }
         }
     }
@@ -73,5 +73,5 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector
  * @return
  */
 bool GameLoop::isGameDone(Player currentPlayer, const vector<Map::Country *> &countryList) {
-    return currentPlayer.getOwnedCountries().size() != countryList.size();
+    return currentPlayer.getOwnedCountries()->size() != countryList.size();
 }
