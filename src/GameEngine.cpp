@@ -12,9 +12,9 @@ using namespace std;
  * @param countryList - the list of all countries in the game
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
-GameLoop::GameLoop(const vector<Map::Country *> &countryList, const vector<Player> &playerList) {
-    allCountries = countryList;
-    allPlayers = playerList;
+GameLoop::GameLoop(vector<Map::Country *> countryList, vector<Player> playerList) {
+    allCountries = &countryList;
+    allPlayers = &playerList;
 }
 
 /**
@@ -42,13 +42,13 @@ void GameLoop::loop() {
         cout << "\u001b[34m";
         currentPlayer.fortify();
 
-        gameNotDone = isGameDone(currentPlayer, allCountries);
+        gameNotDone = isGameDone(currentPlayer, *allCountries);
 
         if (gameNotDone) {
             currentPlayerPosition++;
-            if (isRoundFinished(currentPlayerPosition, allPlayers)) {
+            if (isRoundFinished(currentPlayerPosition, *allPlayers)) {
                 currentPlayerPosition = 0;
-                currentPlayer.getOwnedCountries() = allCountries; // for demo - give all countries to player 0 at the end of the round
+                currentPlayer.getOwnedCountries() = *allCountries; // for demo - give all countries to player 0 at the end of the round
             }
         }
     }

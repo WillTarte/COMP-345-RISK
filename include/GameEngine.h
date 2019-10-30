@@ -14,13 +14,13 @@ using namespace std;
 #define COMP_345_PROJ_GAMEENGINE_H
 
 class GameLoop {
-    vector<Map::Country *> allCountries;
-    vector<Player> allPlayers;
+    vector<Map::Country *>* allCountries;
+    vector<Player>* allPlayers;
 
 public:
-    GameLoop(const vector<Map::Country*> &, const vector<Player> &);
+    GameLoop(vector<Map::Country*> countryList, vector<Player> playerList);
     void loop();
-    vector<Player> getAllPlayers () { return allPlayers; }
+    vector<Player> getAllPlayers () { return *allPlayers; }
     static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player> &playerList);
     static bool isGameDone (Player currentPlayer, const vector<Map::Country *> &countryList);
 };
