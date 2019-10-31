@@ -21,10 +21,12 @@ public:
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
     Deck* getGameDeck(){return gameDeck;};
+    static void distributeArmies(vector<Player*>*,int offset);
 private:
     string chooseMap();
     static int choosePlayerNumber();
     static vector<Player*>* initPlayers(int numPlayers, Map map);
+    static int getNumberOfArmies(int numberOfPlayers);
     vector<Player*>* gamePlayers;
     Map* gameMap;
     Deck* gameDeck;
@@ -37,7 +39,7 @@ class GameLoop {
 
 public:
     GameLoop(vector<Map::Country*> countryList, vector<Player> playerList);
-    void loop();
+    void loop(vector<Player*>* players, int offset);
     vector<Player> getAllPlayers () { return *allPlayers; }
     static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player> &playerList);
     static bool isGameDone (Player currentPlayer, const vector<Map::Country *> &countryList);

@@ -20,11 +20,11 @@ GameLoop::GameLoop(vector<Map::Country *> countryList, vector<Player> playerList
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
-void GameLoop::loop() {
+void GameLoop::loop(vector<Player*>* players, int offset) {
 
     bool gameNotDone = true;
-    int currentPlayerPosition = 0;
-    Player currentPlayer = getAllPlayers()[currentPlayerPosition];
+    int currentPlayerPosition = offset;
+    Player currentPlayer = *players->at(currentPlayerPosition);
 
     while (gameNotDone) {
         cout << "\u001b[31m";  // for demo purposes
@@ -176,4 +176,55 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
     }
 
     return players;
+}
+
+/**
+ * Prompt each player for army distribution
+ * @param players the players in the game
+ * @param offset the offset constant that randomizes the order of play
+ */
+void GameStarter::distributeArmies(vector<Player*>* players, int offset) {
+    int numberOfPlayers = players->size();
+    int numberOfArmies = getNumberOfArmies(numberOfPlayers);
+    int currentPlayerPosition = offset;
+    Player currentPlayer = *players->at(currentPlayerPosition);
+    int counter = 0;
+    cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
+    while (counter < numberOfPlayers) {
+        cout << "Player " << currentPlayerPosition << " , please place your armies. Here is your list of countries :\n";
+        for(unsigned int i=1;i<=currentPlayer.getOwnedCountries()->size();i++){
+            cout << i << " - " << currentPlayer.getOwnedCountries()->at(i-1)->getCountryName() << "\n";
+        }
+        for(int i=1;i<=numberOfArmies;i++){
+            int countryToPlaceOn;
+            do{
+                cout << "\nWhere do you place your " << i << " th army ?";
+                cin >> countryToPlaceOn;
+                cin.clear();
+                cin.ignore(512, '\n');
+            }while(countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer.getOwnedCountries()->size()) || isnan(countryToPlaceOn));
+            //increment the number of troops on the selected country
+            currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1)->setNumberOfTroops(currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1)->getNumberOfTroops()+1);
+        }
+        currentPlayerPosition++;
+        currentPlayerPosition = currentPlayerPosition % numberOfPlayers;
+        currentPlayer = *players->at(currentPlayerPosition);
+        counter++;
+    }
+}
+
+/**
+ * Get the total number of armies for the game
+ * @param numberOfPlayers the number of players
+ * @return the number of armies per player in the game
+ */
+int GameStarter::getNumberOfArmies(int numberOfPlayers) {
+   switch(numberOfPlayers){
+       case 2: return 40;
+       case 3: return 35;
+       case 4: return 30;
+       case 5: return 25;
+       case 6: return 20;
+       default: return 999;
+   }
 }

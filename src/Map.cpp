@@ -143,7 +143,7 @@ void Map::printMap() {
                   << "\n ######################## \n";
         for (auto& j : countriesInCurrContinent) {
             std::string currCountryName = j->getCountryName();
-            std::cout << currCountryName << " is owned by player " << j->getPlayerOwnerID() <<"\n";
+            std::cout << currCountryName << " is owned by player " << j->getPlayerOwnerID() <<" and has " << j->getNumberOfTroops() << " troops \n";
 //            std::cout << currCountryName << " is adjacent to :\n";
 //            for (auto& pAdjCountry : *j->pAdjCountries) {
 //                std::string currAdjCountry = pAdjCountry->getCountryName();

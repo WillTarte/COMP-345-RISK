@@ -7,6 +7,7 @@
 #include "../../include/GameEngine.h"
 #include <vector>
 #include <iostream>
+#include <random>
 
 using std::cout;
 using std::vector;
@@ -54,14 +55,13 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    gameLoop.loop();
-
     cout << "\n";
 
     GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
     starter.start();
 
     vector<Player*>* players = starter.getGamePlayers();
+    Map* map = starter.getGameMap();
 
     for(unsigned int i=0;i<players->size();i++){
         for(unsigned int j=0;j<players->at(i)->getOwnedCountries()->size();j++){
@@ -69,5 +69,14 @@ int main() {
         }
     }
 
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> startPos(0,players->size()-1);
+    const int STARTING_POS = startPos(rng);
+
+    GameStarter::distributeArmies(players,STARTING_POS);
+    gameLoop.loop(players,STARTING_POS);
+
+    map->printMap();
 
 }
