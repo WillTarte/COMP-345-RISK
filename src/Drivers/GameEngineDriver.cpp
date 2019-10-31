@@ -30,6 +30,7 @@ int main() {
 
     vector<Player*>* players = starter.getGamePlayers();
     Map* map = starter.getGameMap();
+    Deck* deck = starter.getGameDeck();
 
     for(unsigned int i=0;i<players->size();i++){
         for(unsigned int j=0;j<players->at(i)->getOwnedCountries()->size();j++){
@@ -60,5 +61,9 @@ int main() {
     std::cout << "\033[30m";
     GameLoop gameLoop = GameLoop(map->getMapCountries(), players);
     gameLoop.loop(players);
+
+    delete(players);
+    delete(map);
+    delete(deck);
 
 }

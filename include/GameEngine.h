@@ -14,7 +14,6 @@ using namespace std;
 #define COMP_345_PROJ_GAMEENGINE_H
 
 class GameStarter {
-    vector<string*>* mapList;
 public:
     explicit GameStarter(const vector<string>& fileNames);
     void start();
@@ -23,6 +22,7 @@ public:
     Deck* getGameDeck(){return gameDeck;};
     static void distributeArmies(vector<Player*>*);
 private:
+    vector<string*>* mapList;
     string chooseMap();
     static int choosePlayerNumber();
     static vector<Player*>* initPlayers(int numPlayers, Map map);
