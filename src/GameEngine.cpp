@@ -161,10 +161,10 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
     vector<vector<Map::Country*>> countriesPerPlayer;
     countriesPerPlayer.reserve(numPlayers);
     //split up the countries by the number of players
-    for(int i=0;i<numPlayers;i++){
+    for(int i = 0; i < numPlayers; i++){
         countriesPerPlayer.emplace_back();
     }
-    for(unsigned int i=0;i < map.getMapCountries()->size();i++){
+    for(unsigned int i = 0; i < map.getMapCountries()->size(); i++){
         Map::Country* currCountry = map.getMapCountries()->at(i);
         currCountry->setPlayerOwnerID(int(i)%numPlayers);
         countriesPerPlayer[i%numPlayers].push_back(currCountry);
@@ -173,7 +173,7 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
     auto* players = new vector<Player*>;
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
-    for(int i=0;i<numPlayers;i++){
+    for(int i = 0; i < numPlayers; i++){
         players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
@@ -194,19 +194,20 @@ void GameStarter::distributeArmies(vector<Player*>* players) {
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
         cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
-        for(unsigned int i=1;i<=currentPlayer.getOwnedCountries()->size();i++){
+        for(unsigned int i = 1; i <= currentPlayer.getOwnedCountries()->size(); i++){
             cout << i << " - " << currentPlayer.getOwnedCountries()->at(i-1)->getCountryName() << "\n";
         }
-        for(int i=1;i<=numberOfArmies;i++){
+        for(int i = 1; i <= numberOfArmies; i++){
             int countryToPlaceOn;
             do{
-                cout << "\nWhere do you place your " << i << " th army ?";
+                cout << "\nWhere do you place army number " << i << " army ?";
                 cin >> countryToPlaceOn;
                 cin.clear();
                 cin.ignore(512, '\n');
             }while(countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer.getOwnedCountries()->size()) || isnan(countryToPlaceOn));
             //increment the number of troops on the selected country
-            currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1)->setNumberOfTroops(currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1)->getNumberOfTroops()+1);
+            Map::Country* currCountry = currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1);
+            currCountry->setNumberOfTroops(currCountry->getNumberOfTroops()+1);
         }
         currentPlayerPosition++;
         currentPlayerPosition = currentPlayerPosition % numberOfPlayers;

@@ -32,8 +32,8 @@ int main() {
     Map* map = starter.getGameMap();
     Deck* deck = starter.getGameDeck();
 
-    for(unsigned int i=0;i<players->size();i++){
-        for(unsigned int j=0;j<players->at(i)->getOwnedCountries()->size();j++){
+    for(unsigned int i = 0; i < players->size(); i++){
+        for(unsigned int j = 0 ; j < players->at(i)->getOwnedCountries()->size(); j++){
             cout << "player " << i << " owns country : " << players->at(i)->getOwnedCountries()->at(j)->getCountryName() << "\n";
         }
     }
