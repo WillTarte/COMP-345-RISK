@@ -14,6 +14,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world.map
         ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world2.map
         ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/worldEmpty.map
+        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 add_executable(Cards-driver)
 add_executable(Dice-driver)
@@ -38,4 +40,4 @@ target_include_directories(Player-driver PRIVATE "include")
 target_sources(Player-driver PRIVATE "src/Player.cpp" "src/Drivers/PlayerDriver.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp")
 
 target_include_directories(Game-engine-driver PRIVATE "include")
-target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp")
+target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")

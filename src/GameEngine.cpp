@@ -5,8 +5,7 @@
 #include "GameEngine.h"
 #include <vector>
 #include <cmath>
-
-using namespace std;
+#include <MapLoader.h>
 
 /**
  * Game loop constructor
@@ -80,20 +79,32 @@ bool GameLoop::isGameDone(Player currentPlayer, const vector<Map::Country *> &co
 /**
  * GameStarter constructor
  */
-GameStarter::GameStarter(const vector<string>& fileNames) {
-    mapList = new vector<string*>();
+GameStarter::GameStarter(const vector<std::string>& fileNames) {
+    mapList = new vector<std::string*>();
     for(const auto& fileName : fileNames){
-        mapList->push_back(new string(fileName));
+        mapList->push_back(new std::string(fileName));
     }
 }
 
 void GameStarter::start() {
-    string mapToLoad = chooseMap();
-    int numberOfPlayers = choosePlayerNumber();
-    cout << mapToLoad << numberOfPlayers;
+    auto* mapToLoad = new std::string(chooseMap());
+//    int numberOfPlayers = choosePlayerNumber();
+    MapLoader myLoader = MapLoader(*mapToLoad);
+    Map* playMap = myLoader.readMapFile();
+
+    if(playMap == nullptr || !playMap->testConnected()){
+        cout << "\nThere was an error loading the game board. Try another mapfile.\n";
+        start();
+        delete(mapToLoad);
+        return;
+    }
+
+    playMap->printMap();
+
+    delete(mapToLoad);
 }
 
-string GameStarter::chooseMap() {
+std::string GameStarter::chooseMap() {
     if(!mapList->empty()){
         unsigned int mapChoice;
         unsigned int numberMaps;

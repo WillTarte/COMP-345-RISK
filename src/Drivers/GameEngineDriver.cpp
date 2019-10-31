@@ -7,6 +7,7 @@
 #include "../../include/GameEngine.h"
 #include <vector>
 #include <iostream>
+
 using std::cout;
 using std::vector;
 
@@ -57,6 +58,6 @@ int main() {
 
     cout << "\n";
 
-    GameStarter starter = GameStarter({"world.map","world2.map"});
+    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
     starter.start();
 }
