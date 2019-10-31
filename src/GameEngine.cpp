@@ -164,8 +164,11 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
     for(int i = 0; i < numPlayers; i++){
         countriesPerPlayer.emplace_back();
     }
-    for(unsigned int i = 0; i < map.getMapCountries()->size(); i++){
-        Map::Country* currCountry = map.getMapCountries()->at(i);
+    //randomize map countries
+    vector<Map::Country*>* randomizedCountries = map.getMapCountries();
+    std::shuffle(randomizedCountries->begin(), randomizedCountries->end(), std::mt19937(std::random_device()()));
+    for(unsigned int i = 0; i < randomizedCountries->size(); i++){
+        Map::Country* currCountry = randomizedCountries->at(i);
         currCountry->setPlayerOwnerID(int(i)%numPlayers);
         countriesPerPlayer[i%numPlayers].push_back(currCountry);
     }
