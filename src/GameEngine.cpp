@@ -12,9 +12,9 @@
  * @param countryList - the list of all countries in the game
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
-GameLoop::GameLoop(vector<Map::Country *> countryList, vector<Player> playerList) {
-    allCountries = &countryList;
-    allPlayers = &playerList;
+GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerList) {
+    allCountries = countryList;
+    allPlayers = playerList;
 }
 
 /**
@@ -46,7 +46,7 @@ void GameLoop::loop(vector<Player*>* players, int offset) {
 
         if (gameNotDone) {
             currentPlayerPosition++;
-            if (isRoundFinished(currentPlayerPosition, *allPlayers)) {
+            if (isRoundFinished(currentPlayerPosition, players)) {
                 currentPlayerPosition = 0;
                 currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to player 0 at the end of the round
             }
@@ -63,8 +63,8 @@ void GameLoop::loop(vector<Player*>* players, int offset) {
  * @param currentPlayerPosition
  * @return
  */
-bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector<Player> &playerList) {
-    return currentPlayerPosition == playerList.size();
+bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector<Player*>* playerList) {
+    return currentPlayerPosition == playerList->size();
 }
 
 /**

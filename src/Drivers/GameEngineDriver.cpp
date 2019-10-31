@@ -12,46 +12,15 @@
 using std::cout;
 using std::vector;
 
-
-/////////////////////////////////////////////////////////////////////////////////
-//////////////////////////// Game Loop Construction /////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
-vector<Map::Country*> listOfCountries() {
-    auto* france = new Map::Country(0, "france", 0);
-    auto* germany = new Map::Country(1, "germany", 0);
-    auto* quebec = new Map::Country(2, "quebec", 0);
-
-    return {france, germany, quebec};
-}
-
-vector<Player> listOfPlayers(const vector<Map::Country *> &countryList) {
-    vector<Map::Country*> ownedCountries0 = {countryList[0]};
-    vector<Map::Country*> ownedCountries1 = {countryList[1]};
-    vector<Map::Country*> ownedCountries2 = {countryList[2]};
-
-    Hand emptyDeck = Hand();
-    DiceRoller emptyDice = DiceRoller();
-
-    Player player0 = Player(ownedCountries0, emptyDeck, emptyDice, 0);
-    Player player1 = Player(ownedCountries1, emptyDeck, emptyDice, 1);
-    Player player2 = Player(ownedCountries2, emptyDeck, emptyDice, 2);
-
-    return {player0, player1, player2};
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// Main method ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-    vector<Map::Country *> countryList = listOfCountries();
-    vector<Player> playerList = listOfPlayers(countryList);
-    GameLoop gameLoop = GameLoop(countryList, playerList);
 
     std::cout << "\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Running the game loop ----------------" << std::endl;
+    std::cout << "----------------- Running the game starter ----------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
@@ -69,14 +38,33 @@ int main() {
         }
     }
 
+    cout << "\nprint map to compare with output of game starter : \n";
+
+    map->printMap();
+
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> startPos(0,players->size()-1);
     const int STARTING_POS = startPos(rng);
 
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "----------------- Distributing armies ----------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
     GameStarter::distributeArmies(players,STARTING_POS);
-    gameLoop.loop(players,STARTING_POS);
+
+    cout << "\nprint map to see where armies went : \n";
 
     map->printMap();
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "----------------- Running the main game loop ----------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+    GameLoop gameLoop = GameLoop(map->getMapCountries(), players);
+    gameLoop.loop(players,STARTING_POS);
 
 }

@@ -35,13 +35,13 @@ private:
 
 class GameLoop {
     vector<Map::Country *>* allCountries;
-    vector<Player>* allPlayers;
+    vector<Player*>* allPlayers;
 
 public:
-    GameLoop(vector<Map::Country*> countryList, vector<Player> playerList);
+    GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
     void loop(vector<Player*>* players, int offset);
-    vector<Player> getAllPlayers () { return *allPlayers; }
-    static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player> &playerList);
+    vector<Player*> getAllPlayers () { return *allPlayers; }
+    static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player*>* playerList);
     static bool isGameDone (Player currentPlayer, const vector<Map::Country *> &countryList);
 };
 
