@@ -44,11 +44,11 @@ void GameLoop::loop(vector<Player*>* players) {
         cout << "\u001b[34m";
         currentPlayer.fortify();
 
-        gameNotDone = isGameDone(currentPlayer, *allCountries);
+        gameNotDone = isGameDone(currentPlayer);
 
         if (gameNotDone) {
             currentPlayerPosition++;
-            if (isRoundFinished(currentPlayerPosition, players)) {
+            if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
                 currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
             }
@@ -65,8 +65,8 @@ void GameLoop::loop(vector<Player*>* players) {
  * @param currentPlayerPosition
  * @return
  */
-bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector<Player*>* playerList) {
-    return currentPlayerPosition == playerList->size();
+bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
+    return currentPlayerPosition == allPlayers->size();
 }
 
 /**
@@ -74,8 +74,8 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector
  * @param currentPlayerPosition
  * @return
  */
-bool GameLoop::isGameDone(Player currentPlayer, const vector<Map::Country *> &countryList) {
-    return currentPlayer.getOwnedCountries()->size() != countryList.size();
+bool GameLoop::isGameDone(Player currentPlayer) {
+    return currentPlayer.getOwnedCountries()->size() != allCountries->size();
 }
 
 /**

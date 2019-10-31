@@ -41,8 +41,8 @@ public:
     GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
     void loop(vector<Player*>* players);
     vector<Player*> getAllPlayers () { return *allPlayers; }
-    static bool isRoundFinished (unsigned long currentPlayerPosition, const vector<Player*>* playerList);
-    static bool isGameDone (Player currentPlayer, const vector<Map::Country *> &countryList);
+    bool isRoundFinished (unsigned long currentPlayerPosition);
+    bool isGameDone (Player currentPlayer);
 };
 
 #endif //COMP_345_PROJ_GAMEENGINE_H
