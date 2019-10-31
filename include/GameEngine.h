@@ -20,6 +20,7 @@ public:
     void start();
 private:
     string chooseMap();
+    static int choosePlayerNumber();
 };
 
 

@@ -89,7 +89,8 @@ GameStarter::GameStarter(const vector<string>& fileNames) {
 
 void GameStarter::start() {
     string mapToLoad = chooseMap();
-
+    int numberOfPlayers = choosePlayerNumber();
+    cout << mapToLoad << numberOfPlayers;
 }
 
 string GameStarter::chooseMap() {
@@ -98,10 +99,10 @@ string GameStarter::chooseMap() {
         unsigned int numberMaps;
         do{
             cout << "please choose a map :\n";
-            numberMaps = 1;
+            numberMaps = 0;
             for(auto map : *mapList){
-                cout << numberMaps << " - " << *map << "\n";
                 numberMaps++;
+                cout << numberMaps << " - " << *map << "\n";
             }
             cin >> mapChoice;
             cin.clear();
@@ -110,4 +111,15 @@ string GameStarter::chooseMap() {
         return *(mapList->at(mapChoice - 1));
     }
     return "";
+}
+
+int GameStarter::choosePlayerNumber() {
+    unsigned int playerChoice;
+    do{
+        cout << "please choose a number of players between 2 and 6 :\n";
+        cin >> playerChoice;
+        cin.clear();
+        cin.ignore(512, '\n');
+    }while(playerChoice < 2 || playerChoice > 6 || isnan(playerChoice));
+    return int(playerChoice);
 }
