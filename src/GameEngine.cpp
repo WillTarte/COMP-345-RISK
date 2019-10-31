@@ -4,6 +4,7 @@
 
 #include "GameEngine.h"
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -74,4 +75,39 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition, const vector
  */
 bool GameLoop::isGameDone(Player currentPlayer, const vector<Map::Country *> &countryList) {
     return currentPlayer.getOwnedCountries()->size() != countryList.size();
+}
+
+/**
+ * GameStarter constructor
+ */
+GameStarter::GameStarter(const vector<string>& fileNames) {
+    mapList = new vector<string*>();
+    for(const auto& fileName : fileNames){
+        mapList->push_back(new string(fileName));
+    }
+}
+
+void GameStarter::start() {
+    string mapToLoad = chooseMap();
+
+}
+
+string GameStarter::chooseMap() {
+    if(!mapList->empty()){
+        unsigned int mapChoice;
+        unsigned int numberMaps;
+        do{
+            cout << "please choose a map :\n";
+            numberMaps = 1;
+            for(auto map : *mapList){
+                cout << numberMaps << " - " << *map << "\n";
+                numberMaps++;
+            }
+            cin >> mapChoice;
+            cin.clear();
+            cin.ignore(512, '\n');
+        }while(mapChoice < 1 || mapChoice > numberMaps || isnan(mapChoice));
+        return *(mapList->at(mapChoice - 1));
+    }
+    return "";
 }

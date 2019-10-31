@@ -13,6 +13,16 @@ using namespace std;
 #ifndef COMP_345_PROJ_GAMEENGINE_H
 #define COMP_345_PROJ_GAMEENGINE_H
 
+class GameStarter {
+    vector<string*>* mapList;
+public:
+    explicit GameStarter(const vector<string>& fileNames);
+    void start();
+private:
+    string chooseMap();
+};
+
+
 class GameLoop {
     vector<Map::Country *>* allCountries;
     vector<Player>* allPlayers;

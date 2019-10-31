@@ -54,4 +54,9 @@ int main() {
     std::cout << "\033[30m";
 
     gameLoop.loop();
+
+    cout << "\n";
+
+    GameStarter starter = GameStarter({"world.map","world2.map"});
+    starter.start();
 }
