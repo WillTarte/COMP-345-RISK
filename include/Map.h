@@ -51,7 +51,7 @@ public:
 private:
     std::vector<Continent*>* pMapContinents;
     std::vector<Country*>* pMapCountries;
-    void dfs(std::set<std::string>* visitedCountries,Country* countries);
+    static void dfs(std::set<std::string>* visitedCountries,Country* countries);
 };
 
 bool checkIfAdjacent(Map::Country& country1, Map::Country& country2);
