@@ -18,9 +18,16 @@ class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
     void start();
+    Map* getGameMap(){return gameMap;};
+    vector<Player*>* getGamePlayers(){return gamePlayers;};
+    Deck* getGameDeck(){return gameDeck;};
 private:
     string chooseMap();
     static int choosePlayerNumber();
+    static vector<Player*>* initPlayers(int numPlayers, Map map);
+    vector<Player*>* gamePlayers;
+    Map* gameMap;
+    Deck* gameDeck;
 };
 
 

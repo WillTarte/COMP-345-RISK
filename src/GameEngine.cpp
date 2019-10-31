@@ -80,30 +80,40 @@ bool GameLoop::isGameDone(Player currentPlayer, const vector<Map::Country *> &co
  * GameStarter constructor
  */
 GameStarter::GameStarter(const vector<std::string>& fileNames) {
+    gameMap = nullptr;
+    gameDeck = nullptr;
+    gamePlayers = nullptr;
     mapList = new vector<std::string*>();
     for(const auto& fileName : fileNames){
         mapList->push_back(new std::string(fileName));
     }
 }
 
+/**
+ * Main method of the starter
+ */
 void GameStarter::start() {
     auto* mapToLoad = new std::string(chooseMap());
-//    int numberOfPlayers = choosePlayerNumber();
-    MapLoader myLoader = MapLoader(*mapToLoad);
-    Map* playMap = myLoader.readMapFile();
+    int numberOfPlayers = choosePlayerNumber();
 
-    if(playMap == nullptr || !playMap->testConnected()){
+    MapLoader myLoader = MapLoader(*mapToLoad);
+    gameMap = myLoader.readMapFile();
+    if(gameMap == nullptr || !gameMap->testConnected()){
         cout << "\nThere was an error loading the game board. Try another mapfile.\n";
-        start();
         delete(mapToLoad);
+        start();
         return;
     }
-
-    playMap->printMap();
-
+    gamePlayers = initPlayers(numberOfPlayers,*gameMap);
+    gameDeck = new Deck(gameMap->getMapCountries()->size());
+    gameMap->printMap();
     delete(mapToLoad);
 }
 
+/**
+ * Prompts the user for a map
+ * @return name of the map file
+ */
 std::string GameStarter::chooseMap() {
     if(!mapList->empty()){
         unsigned int mapChoice;
@@ -124,6 +134,10 @@ std::string GameStarter::chooseMap() {
     return "";
 }
 
+/**
+ * Prompts the user for the number of players
+ * @return the number of players
+ */
 int GameStarter::choosePlayerNumber() {
     unsigned int playerChoice;
     do{
@@ -133,4 +147,33 @@ int GameStarter::choosePlayerNumber() {
         cin.ignore(512, '\n');
     }while(playerChoice < 2 || playerChoice > 6 || isnan(playerChoice));
     return int(playerChoice);
+}
+
+/**
+ * Creates the players and assigns countries to them
+ * @param numPlayers the number of players
+ * @param map the map object
+ * @return the vector of players
+ */
+vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
+    vector<vector<Map::Country*>> countriesPerPlayer;
+    countriesPerPlayer.reserve(numPlayers);
+    //split up the countries by the number of players
+    for(int i=0;i<numPlayers;i++){
+        countriesPerPlayer.emplace_back();
+    }
+    for(unsigned int i=0;i < map.getMapCountries()->size();i++){
+        Map::Country* currCountry = map.getMapCountries()->at(i);
+        currCountry->setPlayerOwnerID(int(i)%numPlayers);
+        countriesPerPlayer[i%numPlayers].push_back(currCountry);
+    }
+
+    auto* players = new vector<Player*>;
+    players->reserve(numPlayers);
+    //create the players with their respective list of countries created above
+    for(int i=0;i<numPlayers;i++){
+        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
+    }
+
+    return players;
 }

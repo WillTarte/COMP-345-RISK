@@ -13,7 +13,8 @@ class Map {
 public:
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
     std::string* pMapTitle;
-
+    void printMap();
+    bool testConnected();
     class Country{
     public:
         Country(int id, std::string name, int continent);
@@ -44,13 +45,12 @@ public:
         std::string* pCName;
         int* pCTroops;
     };
-
-    std::vector<Continent*>* pMapContinents;
-    std::vector<Country*>* pMapCountries;
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
-    void printMap();
-    bool testConnected();
+    std::vector<Country*>* getMapCountries(){return pMapCountries;};
+private:
+    std::vector<Continent*>* pMapContinents;
+    std::vector<Country*>* pMapCountries;
     void dfs(std::set<std::string>* visitedCountries,Country* countries);
 };
 

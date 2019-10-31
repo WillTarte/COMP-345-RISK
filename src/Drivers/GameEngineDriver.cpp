@@ -60,4 +60,14 @@ int main() {
 
     GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
     starter.start();
+
+    vector<Player*>* players = starter.getGamePlayers();
+
+    for(unsigned int i=0;i<players->size();i++){
+        for(unsigned int j=0;j<players->at(i)->getOwnedCountries()->size();j++){
+            cout << "player " << i << " owns country : " << players->at(i)->getOwnedCountries()->at(j)->getCountryName() << "\n";
+        }
+    }
+
+
 }

@@ -143,20 +143,21 @@ void Map::printMap() {
                   << "\n ######################## \n";
         for (auto& j : countriesInCurrContinent) {
             std::string currCountryName = j->getCountryName();
-            std::cout << currCountryName << " is adjacent to :\n";
-            for (auto& pAdjCountry : *j->pAdjCountries) {
-                std::string currAdjCountry = pAdjCountry->getCountryName();
-                std::cout << "     -" << currAdjCountry << "\n";
-            }
+            std::cout << currCountryName << " is owned by player " << j->getPlayerOwnerID() <<"\n";
+//            std::cout << currCountryName << " is adjacent to :\n";
+//            for (auto& pAdjCountry : *j->pAdjCountries) {
+//                std::string currAdjCountry = pAdjCountry->getCountryName();
+//                std::cout << "     -" << currAdjCountry << "\n";
+//            }
         }
     }
 
-    std::cout << "\n\n $$$$$$$$$$$$$$$$$$$$$$$$ \n TESTING MAP VALIDITY \n $$$$$$$$$$$$$$$$$$$$$$$$ \n\n";
-    if (testConnected()) {
-        std::cout << "MAP IS VALID";
-    } else {
-        std::cout << "MAP IS INVALID";
-    }
+//    std::cout << "\n\n $$$$$$$$$$$$$$$$$$$$$$$$ \n TESTING MAP VALIDITY \n $$$$$$$$$$$$$$$$$$$$$$$$ \n\n";
+//    if (testConnected()) {
+//        std::cout << "MAP IS VALID";
+//    } else {
+//        std::cout << "MAP IS INVALID";
+//    }
 }
 
 /**
