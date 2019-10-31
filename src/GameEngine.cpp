@@ -6,6 +6,8 @@
 #include <vector>
 #include <cmath>
 #include <MapLoader.h>
+#include <algorithm>
+#include <random>
 
 /**
  * Game loop constructor
@@ -20,25 +22,25 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
-void GameLoop::loop(vector<Player*>* players, int offset) {
+void GameLoop::loop(vector<Player*>* players) {
 
     bool gameNotDone = true;
-    int currentPlayerPosition = offset;
+    int currentPlayerPosition = 0;
     Player currentPlayer = *players->at(currentPlayerPosition);
 
     while (gameNotDone) {
         cout << "\u001b[31m";  // for demo purposes
-        cout << "Player " << currentPlayerPosition << " is reinforcing!" << endl;
+        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
         currentPlayer.reinforce();
 
         cout << "\u001b[33m";  // for demo purposes
-        cout << "Player " << currentPlayerPosition << " is attacking!" << endl;
+        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
         currentPlayer.attack();
 
         cout << "\u001b[34m";  // for demo purposes
-        cout << "Player " << currentPlayerPosition << " is fortifying!" << endl;
+        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
         currentPlayer.fortify();
 
@@ -48,12 +50,12 @@ void GameLoop::loop(vector<Player*>* players, int offset) {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition, players)) {
                 currentPlayerPosition = 0;
-                currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to player 0 at the end of the round
+                currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
             }
         }
     }
     cout << "\u001b[35m";
-    cout << "Player " << currentPlayerPosition << " owns all of the countries! They have won the game!!";
+    cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " owns all of the countries! They have won the game!!";
     cout << "\u001b[0m";
 }
 
@@ -174,7 +176,7 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
     for(int i=0;i<numPlayers;i++){
         players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
     }
-
+    std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;
 }
 
@@ -183,15 +185,15 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
  * @param players the players in the game
  * @param offset the offset constant that randomizes the order of play
  */
-void GameStarter::distributeArmies(vector<Player*>* players, int offset) {
+void GameStarter::distributeArmies(vector<Player*>* players) {
     int numberOfPlayers = players->size();
     int numberOfArmies = getNumberOfArmies(numberOfPlayers);
-    int currentPlayerPosition = offset;
+    int currentPlayerPosition = 0;
     Player currentPlayer = *players->at(currentPlayerPosition);
     int counter = 0;
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
-        cout << "Player " << currentPlayerPosition << " , please place your armies. Here is your list of countries :\n";
+        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
         for(unsigned int i=1;i<=currentPlayer.getOwnedCountries()->size();i++){
             cout << i << " - " << currentPlayer.getOwnedCountries()->at(i-1)->getCountryName() << "\n";
         }
