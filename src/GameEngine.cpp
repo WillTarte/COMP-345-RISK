@@ -204,7 +204,7 @@ void GameStarter::distributeArmies(vector<Player*>* players) {
         for(int i = 1; i <= numberOfArmies; i++){
             int countryToPlaceOn;
             do{
-                cout << "\nWhere do you place army number " << i << " army ?";
+                cout << "\nWhere do you place army number " << i;
                 cin >> countryToPlaceOn;
                 cin.clear();
                 cin.ignore(512, '\n');
