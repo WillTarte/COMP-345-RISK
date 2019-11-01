@@ -22,25 +22,25 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
-void GameLoop::loop(vector<Player*>* players) {
+void GameLoop::loop() {
 
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
-    Player currentPlayer = *players->at(currentPlayerPosition);
+    Player currentPlayer = *allPlayers->at(currentPlayerPosition);
 
     while (gameNotDone) {
         cout << "\u001b[31m";  // for demo purposes
-        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
+        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
         currentPlayer.reinforce();
 
         cout << "\u001b[33m";  // for demo purposes
-        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is attacking!" << endl;
+        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
         currentPlayer.attack();
 
         cout << "\u001b[34m";  // for demo purposes
-        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " is fortifying!" << endl;
+        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
         currentPlayer.fortify();
 
@@ -55,7 +55,7 @@ void GameLoop::loop(vector<Player*>* players) {
         }
     }
     cout << "\u001b[35m";
-    cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " owns all of the countries! They have won the game!!";
+    cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " owns all of the countries! They have won the game!!";
     cout << "\u001b[0m";
 }
 

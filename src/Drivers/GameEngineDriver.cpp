@@ -60,7 +60,7 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
     GameLoop gameLoop = GameLoop(map->getMapCountries(), players);
-    gameLoop.loop(players);
+    gameLoop.loop();
 
     delete(players);
     delete(map);

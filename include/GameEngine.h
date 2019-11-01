@@ -39,7 +39,7 @@ class GameLoop {
 
 public:
     GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
-    void loop(vector<Player*>* players);
+    void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
     bool isRoundFinished (unsigned long currentPlayerPosition);
     bool isGameDone (Player currentPlayer);
