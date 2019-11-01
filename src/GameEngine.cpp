@@ -108,6 +108,7 @@ void GameStarter::start() {
     }
     gamePlayers = initPlayers(numberOfPlayers,*gameMap);
     gameDeck = new Deck(gameMap->getMapCountries()->size());
+    gameDeck->createDeck();
     gameMap->printMap();
     delete(mapToLoad);
 }
