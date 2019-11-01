@@ -48,7 +48,7 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    GameStarter::distributeArmies(players);
+    starter.distributeArmies();
 
     cout << "\nprint map to see where armies went : \n";
 

@@ -20,7 +20,7 @@ public:
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
     Deck* getGameDeck(){return gameDeck;};
-    static void distributeArmies(vector<Player*>*);
+    void distributeArmies();
 private:
     vector<string*>* mapList;
     string chooseMap();

@@ -189,15 +189,15 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
  * @param players the players in the game
  * @param offset the offset constant that randomizes the order of play
  */
-void GameStarter::distributeArmies(vector<Player*>* players) {
-    int numberOfPlayers = players->size();
+void GameStarter::distributeArmies() {
+    int numberOfPlayers = gamePlayers->size();
     int numberOfArmies = getNumberOfArmies(numberOfPlayers);
     int currentPlayerPosition = 0;
-    Player currentPlayer = *players->at(currentPlayerPosition);
+    Player currentPlayer = *gamePlayers->at(currentPlayerPosition);
     int counter = 0;
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
-        cout << "Player " << players->at(currentPlayerPosition)->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
+        cout << "Player " << gamePlayers->at(currentPlayerPosition)->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
         for(unsigned int i = 1; i <= currentPlayer.getOwnedCountries()->size(); i++){
             cout << i << " - " << currentPlayer.getOwnedCountries()->at(i-1)->getCountryName() << "\n";
         }
@@ -215,7 +215,7 @@ void GameStarter::distributeArmies(vector<Player*>* players) {
         }
         currentPlayerPosition++;
         currentPlayerPosition = currentPlayerPosition % numberOfPlayers;
-        currentPlayer = *players->at(currentPlayerPosition);
+        currentPlayer = *gamePlayers->at(currentPlayerPosition);
         counter++;
     }
 }
