@@ -14,10 +14,12 @@ int main() {
                                                                 {"asia",   "4"}};
     std::vector<std::vector<std::string>> validCountryData = {{"1", "france",  "1"},
                                                               {"2", "germany", "1"},
-                                                              {"3", "russia",  "2"}};
+                                                              {"3", "russia",  "2"},
+                                                              {"4","dawd", "2"}};
     std::vector<std::vector<int>> validBorderData = {{1, 2},
                                                      {2, 1, 3},
-                                                     {3, 2}};
+                                                     {3, 2, 4},
+                                                     {4, 3}};
     //create map object with empty continents
     Map validMap = Map(validMapName, validContinentData);
     //add countries to map and continents
@@ -38,14 +40,20 @@ int main() {
                                                                   {"asia",   "4"}};
     std::vector<std::vector<std::string>> invalidCountryData = {{"1", "france",  "1"},
                                                                 {"2", "germany", "1"},
-                                                                {"3", "russia",  "2"}};
+                                                                {"3", "russia",  "2"},
+                                                                {"4", "kongo",  "1"},
+                                                                {"5", "lebanon",  "2"},
+                                                                {"6", "nepal",  "2"}};
     std::vector<std::vector<int>> invalidBorderData = {{1, 2},
-                                                       {2, 1},
-                                                       {3}};
+                                                       {2, 3},
+                                                       {3, 1},
+                                                       {4,5},
+                                                       {5,6},
+                                                       {6,4}};
     //create map object with empty continents
     Map invalidMap = Map(invalidMapName, invalidContinentData);
     //add countries to map and continents
-    for (auto& i : validCountryData) {
+    for (auto& i : invalidCountryData) {
         invalidMap.addNode(std::stoi(i[0]), i[1], std::stoi(i[2]));
     }
 
@@ -57,8 +65,9 @@ int main() {
     }
 
     //test maps
-    validMap.printMap();
-    invalidMap.printMap();
-
+//    validMap.printMap();
+//    invalidMap.printMap();
+    std::cout << "Testing valid map...\n Connected : " << validMap.testConnected() << "\n";
+    std::cout << "Testing invalid map...\n Connected : " << invalidMap.testConnected() << "\n";
     return 0;
 }

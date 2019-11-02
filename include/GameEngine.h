@@ -1,0 +1,60 @@
+//
+// Created by claul on 10/27/2019.
+//
+
+#include <vector>
+#include "Map.h"
+#include "Cards.h"
+#include "Dice.h"
+#include "Player.h"
+
+using namespace std;
+
+#ifndef COMP_345_PROJ_GAMEENGINE_H
+#define COMP_345_PROJ_GAMEENGINE_H
+
+class GameStarter {
+public:
+    explicit GameStarter(const vector<string>& fileNames);
+    void start();
+    Map* getGameMap(){return gameMap;};
+    vector<Player*>* getGamePlayers(){return gamePlayers;};
+    Deck* getGameDeck(){return gameDeck;};
+    void distributeArmies();
+private:
+    vector<string*>* mapList;
+    string chooseMap();
+    static int choosePlayerNumber();
+    static vector<Player*>* initPlayers(int numPlayers, Map map);
+    static int getNumberOfArmies(int numberOfPlayers);
+    vector<Player*>* gamePlayers;
+    Map* gameMap;
+    Deck* gameDeck;
+};
+
+
+class GameLoop {
+    public:
+        static GameLoop* m_instance;
+        static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+
+        static GameLoop* getInstance() {
+            if (m_instance == nullptr) {
+                std::cout << "GameLoop instance was not initialized. Call GameLoop::initInstance first." << std::endl;
+                return nullptr;
+            } else {
+                return m_instance;
+            }
+        }
+        void loop();
+        vector<Player*> getAllPlayers () { return *allPlayers; }
+        bool isRoundFinished (unsigned long currentPlayerPosition);
+        bool isGameDone (Player currentPlayer);
+
+    private:
+        vector<Map::Country *>* allCountries;
+        vector<Player*>* allPlayers;
+        GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+};
+
+#endif //COMP_345_PROJ_GAMEENGINE_H
