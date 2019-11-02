@@ -17,7 +17,8 @@ public:
     int attack();
     int fortify();
     Hand& getCards() { return *pCards; }
-    std::vector<Map::Country*>& getOwnedCountries() { return *pOwnedCountries; }
+    std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
+    void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
     DiceRoller& getDiceRoller() { return *pDiceRoller; }
     int getPlayerId() { return *pPlayerId; }
 

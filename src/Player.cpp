@@ -29,9 +29,9 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
  * @param country the country
  * @return true if the country is owned by the player
  */
-//static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
-//    return player.getPlayerId() == country.getPlayerOwnerID();
-//}
+static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
+    return player.getPlayerId() == country.getPlayerOwnerID();
+}
 
 /**
  * Checks if the number of attacking and defending dice are valid
@@ -42,11 +42,11 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
  * @param defendingArmies the number of armies on the defending country
  * @return true if the numbers of dice are valid
  */
-//static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
-//                                  const int defendingArmies) {
-//    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
-//           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
-//}
+static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
+                                  const int defendingArmies) {
+    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
+           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
+}
 
 /**
  * Exchanges a countries owner with a new owner
@@ -56,27 +56,23 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
  * @param country the country to exchange ownership of
  * @return true if the exchange succeeded
  */
-//static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingPlayer, Map::Country& country) {
-//
-//    country.setPlayerOwnerID(attackingPlayer.getPlayerId());
-//    for (unsigned long i = 0; i < defendingPlayer.getOwnedCountries().size(); i++) {
-//        if (defendingPlayer.getOwnedCountries().at(i)->getCountryName() == country.getCountryName()) {
-//            attackingPlayer.getOwnedCountries().push_back(defendingPlayer.getOwnedCountries().at(i));
-//            defendingPlayer.getOwnedCountries().erase(defendingPlayer.getOwnedCountries().begin() + i);
-//            return true;
-//        }
-//    }
-//    return false;
-//}
+static bool exchangeCountryOwnership(Player& attackingPlayer, Player& defendingPlayer, Map::Country& country) {
+
+    country.setPlayerOwnerID(attackingPlayer.getPlayerId());
+    for (unsigned long i = 0; i < defendingPlayer.getOwnedCountries()->size(); i++) {
+        if (defendingPlayer.getOwnedCountries()->at(i)->getCountryName() == country.getCountryName()) {
+            attackingPlayer.getOwnedCountries()->push_back(defendingPlayer.getOwnedCountries()->at(i));
+            defendingPlayer.getOwnedCountries()->erase(defendingPlayer.getOwnedCountries()->begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  * Makes this player attack another player's country.
  * If the defending country has no armies left, places 1 army of the attacking country on the newly acquired country.
- * @param fromCountry       the country to attack from
- * @param toCountry         the country to attack
- * @param defendingPlayer   the defending player
- * @param numAttackingDice  number of dice the attacking player should roll
- * @param numDefendingDice  number of dice the defending player should roll
+ * @returns An integer representing the success/failure of the action
  */
 int Player::attack() {
     /*
@@ -146,9 +142,7 @@ int Player::attack() {
 
 /**
  * Once per turn, this player can place a number of armies on one of his/her country
- *
- * @param countryToReinforce the country the player wishes to fortify
- * @param numArmies the number of armies to fortify with
+ * @returns An integer representing the success/failure of the action
  */
 int Player::reinforce() {
     /* Act of collecting new armies and placing them on the map
@@ -156,7 +150,7 @@ int Player::reinforce() {
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
-//TODO - implement the fortify method and fix the driver
+//TODO - implement the reinforce method and fix the driver
     /*
     Map::Country& countryToFortify, const int numArmies
 
@@ -176,10 +170,7 @@ int Player::reinforce() {
 
 /**
  * The act of moving armies between adjacent and owned countries
- *
- * @param fromCountry the country to take armies from
- * @param toCountry  the country to move those armies to
- * @param numArmies  the number of armies to move
+ * @returns An integer representing the success/failure of the action
  */
 int Player::fortify() {
     /*
@@ -187,7 +178,7 @@ int Player::fortify() {
      * fromCountry and toCountry have to be owned by this player and adjacent to each other.
      */
 
-    //TODO - implement the reinforce method and fix the driver
+    //TODO - implement the fortify method and fix the driver
     /*
     if (numArmies >= fromCountry.getNumberOfTroops()) {
         return PlayerAction::FAILED;
