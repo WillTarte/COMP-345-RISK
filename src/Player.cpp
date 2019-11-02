@@ -24,6 +24,21 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
 }
 
 /**
+ * Checks if the number of attacking and defending dice are valid
+ *
+ * @param numAttackingDice the number of attacking dice to roll
+ * @param numDefendingDice the number of defending dice to roll
+ * @param attackingArmies the number of armies on the attacking country
+ * @param defendingArmies the number of armies on the defending country
+ * @return true if the numbers of dice are valid
+ */
+static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
+                                  const int defendingArmies) {
+    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
+           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
+}
+
+/**
  * Exchanges a countries owner with a new owner
  *
  * @param attackingPlayer the player who won the country
@@ -260,7 +275,7 @@ int Player::attack() {
         Map::Country* toCountry = fromCountry->getAdjCountries()->at(toCountryIndex);
         if (fromCountry->getPlayerOwnerID() == toCountry->getPlayerOwnerID()) {
             std::cout << "\n[ATTACKER] You cannot attack your own country! Proceeding...\n\n";
-            this->attack();
+            continue;
         }
 
         /*USER CHOOSES HOW MANY DICE TO ROLL*/
