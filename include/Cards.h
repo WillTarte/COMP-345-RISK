@@ -18,6 +18,9 @@ class Deck;
 class Hand {
 public:
     Hand();
+    ~Hand();
+    Hand(const Hand& toCopy);
+    void operator=(Hand& rhs);
     std::vector<CardType>* getHand() { return handPointer; }
     static int exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards);
     static int armiesReceived();
@@ -28,6 +31,9 @@ private:
 class Deck {
 public:
     Deck(int numberCountries);
+    ~Deck();
+    Deck(const Deck& toCopy);
+    void operator=(Deck& rhs);
     int* getNumberOfCards() { return deckSize; }
     void setNumberOfCards(int newSize) { deckSize = new int(newSize); }
     std::vector<CardType>* getDeck() { return deckPointer; }

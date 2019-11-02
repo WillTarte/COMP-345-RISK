@@ -13,6 +13,9 @@
 class Player {
 public:
     Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, int playerId);
+    ~Player();
+    Player(const Player& toCopy);
+    void operator=(const Player& rhs);
     int reinforce();
     int attack();
     int fortify();

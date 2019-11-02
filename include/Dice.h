@@ -12,6 +12,9 @@ public:
 class DiceRoller {
 public:
     DiceRoller();
+    ~DiceRoller();
+    DiceRoller(const DiceRoller& toCopy);
+    void operator=(DiceRoller& rhs);
     std::vector<int> roll(int numDice);
     std::vector<double> getPercentages();
     int getDiceRolled() { return *diceRolled; }

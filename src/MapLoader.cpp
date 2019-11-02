@@ -8,12 +8,40 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include "../include/MapLoader.h"
 
+/**
+ * MapLoader constructor
+ * @param mapFile
+ */
 MapLoader::MapLoader(std::string mapFile) {
-    pMapFile = &mapFile;
+    pMapFile = new std::string(mapFile);
+}
+
+/**
+ * Map loader copy constructor
+ * @param toCopy
+ */
+MapLoader::MapLoader(const MapLoader &toCopy) {
+    pMapFile = new std::string();
+    *pMapFile = *toCopy.pMapFile;
+}
+
+/**
+ * MapLoader destructor
+ */
+MapLoader::~MapLoader() {
+    delete pMapFile;
+}
+
+/**
+ * assignment operator
+ */
+void MapLoader::operator=(MapLoader& rhs) {
+    this->pMapFile = rhs.pMapFile;
 }
 
 //TODO: For all valid lines in world map files, strip new lines (\n) and carriage returns (\r)
