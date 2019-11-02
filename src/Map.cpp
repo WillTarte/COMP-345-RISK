@@ -26,6 +26,16 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
     }
 }
 
+void Map::Country::operator=(Map::Country& rhs){
+    this->cyID = rhs.cyID;
+    this->cyName = rhs.cyName;
+    this->cyContinent = rhs.cyContinent;
+    this->pPlayerOwnerId = rhs.pPlayerOwnerId;
+    this->pNumberOfTroops = rhs.pNumberOfTroops;
+    this->pAdjCountries = rhs.pAdjCountries;
+}
+
+
 /**
  * Map destructor
  */

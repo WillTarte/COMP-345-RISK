@@ -17,23 +17,24 @@ public:
     bool testConnected();
     std::string* getMapTitle(){return pMapTitle;};
     class Country{
-    public:
-        Country(int id, std::string name, int continent);
-        ~Country();
-        std::vector<Country*>* getAdjCountries(){return pAdjCountries;};
-        std::string getCountryName() { return *cyName; }
-        void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
-        void setNumberOfTroops(int troops) { *pNumberOfTroops = troops; };
-        int getPlayerOwnerID(){ return *pPlayerOwnerId;};
-        int getNumberOfTroops(){ return *pNumberOfTroops;};
-        int getCountryContinent(){return *cyContinent;};
-    private:
-        int* cyID;
-        std::string* cyName;
-        int* cyContinent;
-        int* pPlayerOwnerId;
-        int* pNumberOfTroops;
-        std::vector<Country*>* pAdjCountries;
+        public:
+            Country(int id, std::string name, int continent);
+            void operator=(Country& rhs);
+            ~Country();
+            std::vector<Country*>* getAdjCountries(){return pAdjCountries;};
+            std::string getCountryName() { return *cyName; }
+            void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
+            void setNumberOfTroops(int troops) { *pNumberOfTroops = troops; };
+            int getPlayerOwnerID(){ return *pPlayerOwnerId;};
+            int getNumberOfTroops(){ return *pNumberOfTroops;};
+            int getCountryContinent(){return *cyContinent;};
+        private:
+            int* cyID;
+            std::string* cyName;
+            int* cyContinent;
+            int* pPlayerOwnerId;
+            int* pNumberOfTroops;
+            std::vector<Country*>* pAdjCountries;
     };
 
     class Continent {

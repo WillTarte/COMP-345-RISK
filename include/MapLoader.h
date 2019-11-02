@@ -14,6 +14,7 @@ class MapLoader {
 public:
     explicit MapLoader(std::string mapFile);
     ~MapLoader();
+    void operator=(MapLoader& rhs);
     std::string* pMapFile;
     void setMapFile(std::string newMapFile);
     Map* readMapFile();

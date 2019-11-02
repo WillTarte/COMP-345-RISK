@@ -23,6 +23,18 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
 }
 
 /**
+ * Assignment operator for Player class
+ * @param rhs the right hand side of the expression
+ * @return ???
+ */
+void Player::operator=(const Player& rhs){
+    this->pOwnedCountries = rhs.pOwnedCountries;
+    this->pPlayerId = rhs.pPlayerId;
+    this->pDiceRoller = rhs.pDiceRoller;
+    this->pCards = rhs.pCards;
+}
+
+/**
  * Player destructor
  */
 Player::~Player() {

@@ -22,6 +22,12 @@ Deck::Deck(int amountCountries) {
     discardPointer = new std::vector<CardType>;
 }
 
+void Deck::operator=(Deck& rhs) {
+    this->deckPointer = rhs.deckPointer;
+    this->deckSize = rhs.deckSize;
+    this->discardPointer = rhs.discardPointer;
+}
+
 /**
  * Deck destructor
  */
@@ -36,6 +42,10 @@ Deck::~Deck() {
  */
 Hand::Hand() {
     handPointer = new std::vector<CardType>;
+}
+
+void Hand::operator=(Hand& rhs) {
+    this->handPointer = rhs.handPointer;
 }
 
 /**

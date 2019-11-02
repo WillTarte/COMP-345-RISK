@@ -19,6 +19,11 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
     allPlayers = playerList;
 }
 
+void GameLoop::operator=(GameLoop& rhs){
+    this->allCountries = rhs.allCountries;
+    this->allPlayers = rhs.allPlayers;
+}
+
 /**
  * Game loop destructor
  */
@@ -98,6 +103,13 @@ GameStarter::GameStarter(const vector<std::string>& fileNames) {
     for(const auto& fileName : fileNames){
         mapList->push_back(new std::string(fileName));
     }
+}
+
+void GameStarter::operator=(GameStarter& rhs) {
+    this->gameDeck = rhs.gameDeck;
+    this->gameMap = rhs.gameMap;
+    this->gamePlayers = rhs.gamePlayers;
+    this->mapList = rhs.mapList;
 }
 
 /**
@@ -225,7 +237,6 @@ void GameStarter::distributeArmies() {
             do{
                 cout << "\nWhere do you place army number " << i;
                 cin >> countryToPlaceOn;
-                countryToPlaceOn = 1;
                 cin.clear();
                 cin.ignore(512, '\n');
             }while(countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) || isnan(countryToPlaceOn));

@@ -21,6 +21,10 @@ MapLoader::MapLoader(std::string mapFile) {
     pMapFile = new std::string(mapFile);
 }
 
+void MapLoader::operator=(MapLoader& rhs) {
+    this->pMapFile = rhs.pMapFile;
+}
+
 /**
  * MapLoader destructor
  */

@@ -16,6 +16,11 @@ DiceRoller::DiceRoller() : diceRolled(new int(0)), history(new std::vector<int>)
     }
 }
 
+void DiceRoller::operator=(DiceRoller& rhs) {
+    this->diceRolled = rhs.diceRolled;
+    this->history = rhs.history;
+}
+
 DiceRoller::~DiceRoller() {
     delete diceRolled;
     delete history;

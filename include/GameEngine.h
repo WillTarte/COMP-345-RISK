@@ -16,6 +16,7 @@ using namespace std;
 class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
+    void operator=(GameStarter& rhs);
     ~GameStarter();
     void start();
     Map* getGameMap(){return gameMap;};
@@ -40,6 +41,7 @@ class GameLoop {
 
 public:
     GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+    void operator=(GameLoop& rhs);
     ~GameLoop();
     void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
