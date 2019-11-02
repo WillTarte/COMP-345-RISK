@@ -20,6 +20,14 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
 }
 
 /**
+ * Game loop destructor
+ */
+GameLoop::~GameLoop() {
+    delete allCountries;
+    delete allPlayers;
+}
+
+/**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
 void GameLoop::loop() {
@@ -92,6 +100,16 @@ GameStarter::GameStarter(const vector<std::string>& fileNames) {
 }
 
 /**
+ * Gamestarter destructor
+ */
+ GameStarter::~GameStarter() {
+     delete gameMap;
+     delete gameDeck;
+     delete gamePlayers;
+     delete mapList;
+ }
+
+/**
  * Main method of the starter
  */
 void GameStarter::start() {
@@ -106,7 +124,7 @@ void GameStarter::start() {
         start();
         return;
     }
-    gamePlayers = initPlayers(numberOfPlayers,*gameMap);
+    gamePlayers = initPlayers(numberOfPlayers, gameMap);
     gameDeck = new Deck(gameMap->getMapCountries()->size());
     gameDeck->createDeck();
     gameMap->printMap();
@@ -158,7 +176,7 @@ int GameStarter::choosePlayerNumber() {
  * @param map the map object
  * @return the vector of players
  */
-vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
+vector<Player*>* GameStarter::initPlayers(int numPlayers, Map* map){
     vector<vector<Map::Country*>> countriesPerPlayer;
     countriesPerPlayer.reserve(numPlayers);
     //split up the countries by the number of players
@@ -166,7 +184,7 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map map){
         countriesPerPlayer.emplace_back();
     }
     //randomize map countries
-    vector<Map::Country*>* randomizedCountries = map.getMapCountries();
+    vector<Map::Country*>* randomizedCountries = map->getMapCountries();
     std::shuffle(randomizedCountries->begin(), randomizedCountries->end(), std::mt19937(std::random_device()()));
     for(unsigned int i = 0; i < randomizedCountries->size(); i++){
         Map::Country* currCountry = randomizedCountries->at(i);

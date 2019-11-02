@@ -13,6 +13,7 @@ class string;
 class MapLoader {
 public:
     explicit MapLoader(std::string mapFile);
+    ~MapLoader();
     std::string* pMapFile;
     void setMapFile(std::string newMapFile);
     Map* readMapFile();

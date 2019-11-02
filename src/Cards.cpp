@@ -23,10 +23,26 @@ Deck::Deck(int amountCountries) {
 }
 
 /**
+ * Deck destructor
+ */
+Deck::~Deck() {
+    delete deckSize;
+    delete deckPointer;
+    delete discardPointer;
+}
+
+/**
  * Hand Constructor
  */
 Hand::Hand() {
     handPointer = new std::vector<CardType>;
+}
+
+/**
+ * Hand Destructor
+ */
+Hand::~Hand() {
+    delete handPointer;
 }
 
 /**

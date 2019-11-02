@@ -23,6 +23,16 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
 }
 
 /**
+ * Player destructor
+ */
+Player::~Player() {
+    delete pOwnedCountries;
+    delete pCards;
+    delete pDiceRoller;
+    delete pPlayerId;
+}
+
+/**
  * Checks if the passed country is owned by the passed player
  *
  * @param player the player
