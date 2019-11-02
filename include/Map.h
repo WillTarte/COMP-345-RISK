@@ -13,6 +13,8 @@ class Map {
 public:
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
     ~Map();
+    Map(const Map& toCopy);
+    void operator=(Map& rhs);
     void printMap();
     bool testConnected();
     std::string* getMapTitle(){return pMapTitle;};
@@ -41,6 +43,8 @@ public:
     public:
         Continent(std::string cname, int troops);
         ~Continent();
+        Continent(Map::Continent& toCopy);
+        void operator=(Continent& rhs);
         std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         void setCountry(Map::Country* c);
         std::string getContinentName() { return *pCName; }

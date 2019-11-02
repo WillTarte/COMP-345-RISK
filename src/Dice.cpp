@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include "../include/Dice.h"
+using namespace std;
 
 ////////////////////////////////////////////////////////////
 /////////////////      DICEROLLER METHODS      /////////////
@@ -16,14 +17,32 @@ DiceRoller::DiceRoller() : diceRolled(new int(0)), history(new std::vector<int>)
     }
 }
 
-void DiceRoller::operator=(DiceRoller& rhs) {
-    this->diceRolled = rhs.diceRolled;
-    this->history = rhs.history;
-}
-
+/**
+ * DiceRoller destructor
+ */
 DiceRoller::~DiceRoller() {
     delete diceRolled;
     delete history;
+}
+
+/**
+ * DiceRoller copy constructor
+ * @param toCopy
+ */
+DiceRoller::DiceRoller(const DiceRoller &toCopy) {
+    diceRolled = new int();
+    history = new vector<int>;
+    *diceRolled = *toCopy.diceRolled;
+    *history = *toCopy.history;
+};
+
+/**
+ * assignment operator
+ * @param rhs
+ */
+void DiceRoller::operator=(DiceRoller& rhs) {
+    this->diceRolled = rhs.diceRolled;
+    this->history = rhs.history;
 }
 
 /**

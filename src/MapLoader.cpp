@@ -21,8 +21,13 @@ MapLoader::MapLoader(std::string mapFile) {
     pMapFile = new std::string(mapFile);
 }
 
-void MapLoader::operator=(MapLoader& rhs) {
-    this->pMapFile = rhs.pMapFile;
+/**
+ * Map loader copy constructor
+ * @param toCopy
+ */
+MapLoader::MapLoader(const MapLoader &toCopy) {
+    pMapFile = new std::string();
+    *pMapFile = *toCopy.pMapFile;
 }
 
 /**
@@ -30,6 +35,13 @@ void MapLoader::operator=(MapLoader& rhs) {
  */
 MapLoader::~MapLoader() {
     delete pMapFile;
+}
+
+/**
+ * assignment operator
+ */
+void MapLoader::operator=(MapLoader& rhs) {
+    this->pMapFile = rhs.pMapFile;
 }
 
 //TODO: For all valid lines in world map files, strip new lines (\n) and carriage returns (\r)

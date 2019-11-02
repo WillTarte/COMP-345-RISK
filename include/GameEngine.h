@@ -16,8 +16,9 @@ using namespace std;
 class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
-    void operator=(GameStarter& rhs);
     ~GameStarter();
+    GameStarter(const GameStarter& toCopy);
+    void operator=(GameStarter& rhs);
     void start();
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
@@ -41,8 +42,9 @@ class GameLoop {
 
 public:
     GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
-    void operator=(GameLoop& rhs);
     ~GameLoop();
+    GameLoop(const GameLoop& toCopy);
+    void operator=(GameLoop& rhs);
     void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
     bool isRoundFinished (unsigned long currentPlayerPosition);

@@ -8,6 +8,8 @@
 #include <MapLoader.h>
 #include <algorithm>
 #include <random>
+#include <string>
+using namespace std;
 
 /**
  * Game loop constructor
@@ -19,11 +21,6 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
     allPlayers = playerList;
 }
 
-void GameLoop::operator=(GameLoop& rhs){
-    this->allCountries = rhs.allCountries;
-    this->allPlayers = rhs.allPlayers;
-}
-
 /**
  * Game loop destructor
  */
@@ -31,6 +28,25 @@ GameLoop::~GameLoop() {
     delete allCountries;
     delete allPlayers;
 }
+
+/**
+ * game loop copy constructor
+ */
+GameLoop::GameLoop(const GameLoop &toCopy) {
+    allCountries = new vector<Map::Country*>;
+    allPlayers = new vector<Player*>;
+    *allCountries = *toCopy.allCountries;
+    *allPlayers = *toCopy.allPlayers;
+}
+
+/**
+ * assignment operator
+ */
+void GameLoop::operator=(GameLoop& rhs){
+    this->allCountries = rhs.allCountries;
+    this->allPlayers = rhs.allPlayers;
+}
+
 
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
@@ -105,11 +121,20 @@ GameStarter::GameStarter(const vector<std::string>& fileNames) {
     }
 }
 
-void GameStarter::operator=(GameStarter& rhs) {
-    this->gameDeck = rhs.gameDeck;
-    this->gameMap = rhs.gameMap;
-    this->gamePlayers = rhs.gamePlayers;
-    this->mapList = rhs.mapList;
+/**
+ * GameStarter copy constructor
+ * @param toCopy
+ */
+GameStarter::GameStarter(const GameStarter &toCopy) {
+    gameMap = nullptr;
+    gameDeck = nullptr;
+    gamePlayers = nullptr;
+    mapList = new vector<std::string*>();
+
+    *gameMap = *toCopy.gameMap;
+    *gameDeck = *toCopy.gameDeck;
+    *gamePlayers = *toCopy.gamePlayers;
+    *mapList = *toCopy.mapList;
 }
 
 /**
@@ -121,6 +146,13 @@ void GameStarter::operator=(GameStarter& rhs) {
      delete gamePlayers;
      delete mapList;
  }
+
+void GameStarter::operator=(GameStarter& rhs) {
+    this->gameDeck = rhs.gameDeck;
+    this->gameMap = rhs.gameMap;
+    this->gamePlayers = rhs.gamePlayers;
+    this->mapList = rhs.mapList;
+}
 
 /**
  * Main method of the starter
