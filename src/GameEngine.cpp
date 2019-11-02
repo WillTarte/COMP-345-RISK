@@ -11,6 +11,8 @@
 #include <string>
 using namespace std;
 
+GameLoop* GameLoop::m_instance = nullptr;
+
 /**
  * Game loop constructor
  * @param countryList - the list of all countries in the game

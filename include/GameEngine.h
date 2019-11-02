@@ -49,7 +49,7 @@ class GameLoop {
         bool isGameDone (Player* currentPlayer);
 
     private:
-        inline static GameLoop* m_instance;
+        static GameLoop* m_instance;
         vector<Map::Country *>* allCountries;
         vector<Player*>* allPlayers;
         GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
