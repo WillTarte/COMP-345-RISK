@@ -28,6 +28,13 @@ MapLoader::~MapLoader() {
     delete pMapFile;
 }
 
+/**
+ * MapLoader destructor
+ */
+MapLoader::~MapLoader() {
+    delete pMapFile;
+}
+
 //TODO: For all valid lines in world map files, strip new lines (\n) and carriage returns (\r)
 Map* MapLoader::readMapFile() {
     //create file stream to read file line by line
