@@ -18,6 +18,7 @@ class Deck;
 class Hand {
 public:
     Hand();
+    ~Hand();
     std::vector<CardType>* getHand() { return handPointer; }
     static int exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards);
     static int armiesReceived();
@@ -28,6 +29,7 @@ private:
 class Deck {
 public:
     Deck(int numberCountries);
+    ~Deck();
     int* getNumberOfCards() { return deckSize; }
     void setNumberOfCards(int newSize) { deckSize = new int(newSize); }
     std::vector<CardType>* getDeck() { return deckPointer; }

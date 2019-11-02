@@ -12,12 +12,14 @@
 class Map {
 public:
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
+    ~Map();
     void printMap();
     bool testConnected();
     std::string* getMapTitle(){return pMapTitle;};
     class Country{
     public:
         Country(int id, std::string name, int continent);
+        ~Country();
         std::vector<Country*>* getAdjCountries(){return pAdjCountries;};
         std::string getCountryName() { return *cyName; }
         void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
@@ -37,6 +39,7 @@ public:
     class Continent {
     public:
         Continent(std::string cname, int troops);
+        ~Continent();
         std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         void setCountry(Map::Country* c);
         std::string getContinentName() { return *pCName; }

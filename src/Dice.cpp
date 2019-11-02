@@ -16,6 +16,11 @@ DiceRoller::DiceRoller() : diceRolled(new int(0)), history(new std::vector<int>)
     }
 }
 
+DiceRoller::~DiceRoller() {
+    delete diceRolled;
+    delete history;
+}
+
 /**
  * Roll <n> dice and return the results in sorted order
  */

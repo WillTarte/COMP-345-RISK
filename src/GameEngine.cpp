@@ -20,6 +20,14 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
 }
 
 /**
+ * Game loop destructor
+ */
+GameLoop::~GameLoop() {
+    delete allCountries;
+    delete allPlayers;
+}
+
+/**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
 void GameLoop::loop() {
@@ -90,6 +98,16 @@ GameStarter::GameStarter(const vector<std::string>& fileNames) {
         mapList->push_back(new std::string(fileName));
     }
 }
+
+/**
+ * Gamestarter destructor
+ */
+ GameStarter::~GameStarter() {
+     delete gameMap;
+     delete gameDeck;
+     delete gamePlayers;
+     delete mapList;
+ }
 
 /**
  * Main method of the starter

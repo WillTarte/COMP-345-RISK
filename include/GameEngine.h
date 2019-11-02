@@ -16,6 +16,7 @@ using namespace std;
 class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
+    ~GameStarter();
     void start();
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
@@ -39,6 +40,7 @@ class GameLoop {
 
 public:
     GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+    ~GameLoop();
     void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
     bool isRoundFinished (unsigned long currentPlayerPosition);

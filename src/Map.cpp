@@ -27,6 +27,15 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
 }
 
 /**
+ * Map destructor
+ */
+Map::~Map() {
+    delete pMapTitle;
+    delete pMapContinents;
+    delete pMapCountries;
+}
+
+/**
  * Continent constructor, subclass of Map
  *
  * @param cname the continent name
@@ -36,6 +45,15 @@ Map::Continent::Continent(std::string cname, int troops) {
     pCName = new std::string(std::move(cname));
     pCTroops = new int(troops);
     pCountriesInContinent = new std::vector<Country*>;
+}
+
+/**
+ * Continent destructor
+ */
+Map::Continent::~Continent() {
+    delete pCName;
+    delete pCTroops;
+    delete pCountriesInContinent;
 }
 
 /**
@@ -64,6 +82,18 @@ Map::Country::Country(int id, std::string name, int continent) {
     //I dont know what to do with those
     pPlayerOwnerId = new int(0);
     pNumberOfTroops = new int(0);
+}
+
+/**
+ * Country destructor
+ */
+Map::Country::~Country() {
+    delete cyID;
+    delete cyName;
+    delete cyContinent;
+    delete pAdjCountries;
+    delete pPlayerOwnerId;
+    delete pNumberOfTroops;
 }
 
 /**
