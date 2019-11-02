@@ -16,6 +16,9 @@ using namespace std;
 class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
+    ~GameStarter();
+    GameStarter(const GameStarter& toCopy);
+    void operator=(GameStarter& rhs);
     void start();
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
@@ -25,7 +28,7 @@ private:
     vector<string*>* mapList;
     string chooseMap();
     static int choosePlayerNumber();
-    static vector<Player*>* initPlayers(int numPlayers, Map map);
+    static vector<Player*>* initPlayers(int numPlayers, Map* map);
     static int getNumberOfArmies(int numberOfPlayers);
     vector<Player*>* gamePlayers;
     Map* gameMap;
@@ -35,16 +38,18 @@ private:
 
 class GameLoop {
     public:
-    inline static GameLoop* m_instance;
+        ~GameLoop();
+        GameLoop(const GameLoop& toCopy) = delete;
+        void operator=(GameLoop& rhs) = delete;
         static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
-
         static GameLoop* getInstance();
         void loop();
         vector<Player*> getAllPlayers () { return *allPlayers; }
         bool isRoundFinished (unsigned long currentPlayerPosition);
-        bool isGameDone (Player currentPlayer);
+        bool isGameDone (Player* currentPlayer);
 
     private:
+        inline static GameLoop* m_instance;
         vector<Map::Country *>* allCountries;
         vector<Player*>* allPlayers;
         GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);

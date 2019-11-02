@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utility>
 #include <GameEngine.h>
+using std::vector;
 
 /**
  * Player constructor
@@ -21,6 +22,53 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller
     pCards = new Hand(cards);
     pDiceRoller = new DiceRoller(diceRoller);
     pPlayerId = new int(playerId);
+}
+
+/**
+ * Player destructor
+ */
+Player::~Player() {
+    delete pOwnedCountries;
+    delete pCards;
+    delete pDiceRoller;
+    delete pPlayerId;
+}
+
+/**
+ * Player copy constructor
+ * @param toCopy
+ */
+Player::Player(const Player &toCopy) {
+    pOwnedCountries = new vector<Map::Country*>;
+    pCards = new Hand();
+    pDiceRoller = new DiceRoller();
+    pPlayerId = new int(*toCopy.pPlayerId);
+    *pOwnedCountries = *toCopy.pOwnedCountries;
+    *pCards = *toCopy.pCards;
+    *pDiceRoller = *toCopy.pDiceRoller;
+}
+
+/**
+ * Assignment operator for Player class
+ * @param rhs the right hand side of the expression
+ * @return ???
+ */
+void Player::operator=(const Player& rhs){
+    this->pOwnedCountries = rhs.pOwnedCountries;
+    this->pPlayerId = rhs.pPlayerId;
+    this->pDiceRoller = rhs.pDiceRoller;
+    this->pCards = rhs.pCards;
+}
+
+/**
+ * Checks if the passed country is owned by the passed player
+ *
+ * @param player the player
+ * @param country the country
+ * @return true if the country is owned by the player
+ */
+static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
+    return player.getPlayerId() == country.getPlayerOwnerID();
 }
 
 /**
