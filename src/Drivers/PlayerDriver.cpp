@@ -203,12 +203,10 @@ bool test_Player_fortify(bool verbose = false) {
     return success;
 }
 */
-bool test_Player_attack(bool verbose = false) {
+bool test_Player_attack() {
 
     // Arrange
     const int numArmies = 4;
-    const int numDefendingDice = 1;
-    const int numAttackingDice = 3;
     bool success = true;
     std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     std::vector<Map::Country*> ownedCountries2 = std::vector<Map::Country*>();
@@ -231,25 +229,10 @@ bool test_Player_attack(bool verbose = false) {
     std::vector<Map::Country*> countries = {pCountry1, pCountry2};
     std::vector<Player*> players = {&player1, &player2};
     GameLoop::initInstance(&countries, &players);
-    GameLoop::getInstance();
 
-
+    // Act & Assert
     if (player1.attack() == PlayerAction::FAILED) {
         success = false;
-    }
-
-    if (verbose) {
-        std::cout << "\n" << "\033[35m";
-        std::cout << "player1 attacked player2's " << country2.getCountryName() << std::endl;
-        std::cout << "player1 is using " << numAttackingDice << " dice " << " and player2 is using " << numDefendingDice
-                  << std::endl;
-        std::cout << "player1's " << pCountry1->getCountryName() << " had " << numArmies << std::endl;
-        std::cout << "player2's " << pCountry2->getCountryName() << " had " << numArmies - 3 << std::endl;
-        std::cout << "player1's " << pCountry1->getCountryName() << " now has " << pCountry1->getNumberOfTroops()
-                  << std::endl;
-        std::cout << "player2's " << pCountry2->getCountryName() << " now has " << pCountry2->getNumberOfTroops()
-                  << std::endl;
-        std::cout << "\033[31m";
     }
 
     return success;
@@ -309,7 +292,7 @@ int main() {
 
     std::cout << assert("Player", "getDiceRoller", test_Player_getDiceRoller(true)) << std::endl;
 
-    std::cout << assert("Player", "attack", test_Player_attack(true)) << std::endl;
+    std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
 
     //std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 

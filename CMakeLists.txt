@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(COMP-345-proj)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 add_compile_options(
         -Wall
@@ -22,8 +22,14 @@ add_executable(Cards-driver)
 add_executable(Dice-driver)
 add_executable(Map-driver)
 add_executable(Map-Loader-driver)
-add_executable(Player-driver)
-add_executable(Game-engine-driver)
+add_executable(Player-driver "src/Drivers/PlayerDriver.cpp")
+add_executable(Game-engine-driver "src/Drivers/GameEngineDriver.cpp")
+
+#add_library(player STATIC "include/Player.h" "src/Player.cpp")
+#add_library(gameEngine STATIC "include/GameEngine.h" "src/GameEngine.cpp")
+
+#target_link_libraries(player PRIVATE gameEngine)
+#target_link_libraries(gameEngine PRIVATE player)
 
 target_include_directories(Cards-driver PRIVATE "include")
 target_sources(Cards-driver PRIVATE "src/Cards.cpp" "src/Drivers/CardsDriver.cpp")

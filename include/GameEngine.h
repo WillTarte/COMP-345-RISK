@@ -35,7 +35,7 @@ private:
 
 class GameLoop {
     public:
-        static GameLoop* m_instance;
+    inline static GameLoop* m_instance;
         static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
 
         static GameLoop* getInstance();

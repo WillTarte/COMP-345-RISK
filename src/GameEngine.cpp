@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <random>
 
-
 /**
  * Game loop constructor
  * @param countryList - the list of all countries in the game
