@@ -19,7 +19,7 @@ int main() {
 
     std::cout << "\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Running the game starter ----------------" << std::endl;
+    std::cout << "---------------- Running the game starter --------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
@@ -28,8 +28,8 @@ int main() {
     GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
     starter.start();
 
-    for(unsigned int i = 0; i < starter.getGamePlayers()->size(); i++){
-        for(unsigned int j = 0 ; j <starter.getGamePlayers()->at(i)->getOwnedCountries()->size(); j++){
+    for(unsigned long i = 0; i < starter.getGamePlayers()->size(); i++){
+        for(unsigned long j = 0 ; j <starter.getGamePlayers()->at(i)->getOwnedCountries()->size(); j++){
             cout << "player " << i << " owns country : " << starter.getGamePlayers()->at(i)->getOwnedCountries()->at(j)->getCountryName() << "\n";
         }
     }
@@ -40,7 +40,16 @@ int main() {
 
     std::cout << "\n\n\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Distributing armies ----------------" << std::endl;
+    std::cout << "-------------------------- Deck ------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
+    cout << "Number of cards in the deck: " << *starter.getGameDeck()->getNumberOfCards() << endl;
+    cout << "Number of countries in the map: " << starter.getGameMap()->getMapCountries()->size() << endl;
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "------------------ Distributing armies -----------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
@@ -52,12 +61,12 @@ int main() {
 
     std::cout << "\n\n\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Running the main game loop ----------------" << std::endl;
+    std::cout << "--------------- Running the main game loop -------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    auto* v = new vector<Map::Country*>(*starter.getGameMap()->getMapCountries());
-    auto* p = new vector<Player*>(*starter.getGamePlayers());
+    auto* countryList = new vector<Map::Country*>(*starter.getGameMap()->getMapCountries());
+    auto* playerList = new vector<Player*>(*starter.getGamePlayers());
     GameLoop::initInstance(v, p);
     GameLoop::getInstance()->loop();
 
