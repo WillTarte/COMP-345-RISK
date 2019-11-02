@@ -34,23 +34,23 @@ void GameLoop::loop() {
 
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
-    Player currentPlayer = *allPlayers->at(currentPlayerPosition);
+    Player* currentPlayer = allPlayers->at(currentPlayerPosition);
 
     while (gameNotDone) {
         cout << "\u001b[31m";  // for demo purposes
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
-        currentPlayer.reinforce();
+        currentPlayer->reinforce();
 
         cout << "\u001b[33m";  // for demo purposes
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
-        currentPlayer.attack();
+        currentPlayer->attack();
 
         cout << "\u001b[34m";  // for demo purposes
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
-        currentPlayer.fortify();
+        currentPlayer->fortify();
 
         gameNotDone = isGameDone(currentPlayer);
 
@@ -58,13 +58,14 @@ void GameLoop::loop() {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
-                currentPlayer.setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
+                currentPlayer->setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
             }
         }
     }
     cout << "\u001b[35m";
     cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " owns all of the countries! They have won the game!!";
     cout << "\u001b[0m";
+    cout.flush();
 }
 
 /**
@@ -82,8 +83,8 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @param currentPlayerPosition
  * @return
  */
-bool GameLoop::isGameDone(Player currentPlayer) {
-    return currentPlayer.getOwnedCountries()->size() != allCountries->size();
+bool GameLoop::isGameDone(Player* currentPlayer) {
+    return currentPlayer->getOwnedCountries()->size() != allCountries->size();
 }
 
 /**
@@ -211,29 +212,30 @@ void GameStarter::distributeArmies() {
     int numberOfPlayers = gamePlayers->size();
     int numberOfArmies = getNumberOfArmies(numberOfPlayers);
     int currentPlayerPosition = 0;
-    Player currentPlayer = *gamePlayers->at(currentPlayerPosition);
+    //Player currentPlayer = gamePlayers->at(currentPlayerPosition);
     int counter = 0;
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
         cout << "Player " << gamePlayers->at(currentPlayerPosition)->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
-        for(unsigned int i = 1; i <= currentPlayer.getOwnedCountries()->size(); i++){
-            cout << i << " - " << currentPlayer.getOwnedCountries()->at(i-1)->getCountryName() << "\n";
+        for(unsigned int i = 1; i <= gamePlayers->at(currentPlayerPosition)->getOwnedCountries()->size(); i++){
+            cout << i << " - " << gamePlayers->at(currentPlayerPosition)->getOwnedCountries()->at(i-1)->getCountryName() << "\n";
         }
         for(int i = 1; i <= numberOfArmies; i++){
             int countryToPlaceOn;
             do{
                 cout << "\nWhere do you place army number " << i;
                 cin >> countryToPlaceOn;
+                countryToPlaceOn = 1;
                 cin.clear();
                 cin.ignore(512, '\n');
-            }while(countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer.getOwnedCountries()->size()) || isnan(countryToPlaceOn));
+            }while(countryToPlaceOn < 1 || countryToPlaceOn > int(gamePlayers->at(currentPlayerPosition)->getOwnedCountries()->size()) || isnan(countryToPlaceOn));
             //increment the number of troops on the selected country
-            Map::Country* currCountry = currentPlayer.getOwnedCountries()->at(countryToPlaceOn-1);
+            Map::Country* currCountry = gamePlayers->at(currentPlayerPosition)->getOwnedCountries()->at(countryToPlaceOn-1);
             currCountry->setNumberOfTroops(currCountry->getNumberOfTroops()+1);
         }
         currentPlayerPosition++;
         currentPlayerPosition = currentPlayerPosition % numberOfPlayers;
-        currentPlayer = *gamePlayers->at(currentPlayerPosition);
+        //currentPlayer = *gamePlayers->at(currentPlayerPosition);
         counter++;
     }
 }

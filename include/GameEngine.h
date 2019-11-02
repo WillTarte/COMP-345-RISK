@@ -44,7 +44,7 @@ public:
     void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
     bool isRoundFinished (unsigned long currentPlayerPosition);
-    bool isGameDone (Player currentPlayer);
+    bool isGameDone (Player* currentPlayer);
 };
 
 #endif //COMP_345_PROJ_GAMEENGINE_H
