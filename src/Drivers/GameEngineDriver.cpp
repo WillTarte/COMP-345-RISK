@@ -25,7 +25,7 @@ int main() {
 
     cout << "\n";
 
-    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
+    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map","dwad",""});
     starter.start();
 
     vector<Player*>* players = starter.getGamePlayers();
