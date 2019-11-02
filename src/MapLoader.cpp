@@ -20,6 +20,9 @@ MapLoader::MapLoader(std::string mapFile) {
 Map* MapLoader::readMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
+    if(!infile || infile.peek() == EOF){
+        return nullptr;
+    }
     std::string line;
 
     //declare map info
@@ -200,7 +203,6 @@ bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>*
             return false;
         }
     }
-    return false;
 }
 
 bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std::string>* lineWords, const int* lineCount,
