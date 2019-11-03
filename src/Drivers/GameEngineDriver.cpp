@@ -19,7 +19,7 @@ int main() {
 
     std::cout << "\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Running the game starter ----------------" << std::endl;
+    std::cout << "---------------- Running the game starter --------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
@@ -28,23 +28,28 @@ int main() {
     GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
     starter.start();
 
-    vector<Player*>* players = starter.getGamePlayers();
-    Map* map = starter.getGameMap();
-    Deck* deck = starter.getGameDeck();
-
-    for(unsigned int i = 0; i < players->size(); i++){
-        for(unsigned int j = 0 ; j < players->at(i)->getOwnedCountries()->size(); j++){
-            cout << "player " << i << " owns country : " << players->at(i)->getOwnedCountries()->at(j)->getCountryName() << "\n";
+    for(unsigned long i = 0; i < starter.getGamePlayers()->size(); i++){
+        for(unsigned long j = 0 ; j <starter.getGamePlayers()->at(i)->getOwnedCountries()->size(); j++){
+            cout << "player " << i << " owns country : " << starter.getGamePlayers()->at(i)->getOwnedCountries()->at(j)->getCountryName() << "\n";
         }
     }
 
     cout << "\nprint map to compare with output of game starter : \n";
 
-    map->printMap();
+    starter.getGameMap()->printMap();
 
     std::cout << "\n\n\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Distributing armies ----------------" << std::endl;
+    std::cout << "-------------------------- Deck ------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
+    cout << "Number of cards in the deck: " << *starter.getGameDeck()->getNumberOfCards() << endl;
+    cout << "Number of countries in the map: " << starter.getGameMap()->getMapCountries()->size() << endl;
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "------------------ Distributing armies -----------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
@@ -52,18 +57,18 @@ int main() {
 
     cout << "\nprint map to see where armies went : \n";
 
-    map->printMap();
+    starter.getGameMap()->printMap();
 
     std::cout << "\n\n\033[34m";
     std::cout << "--------------------------------------------------------" << std::endl;
-    std::cout << "----------------- Running the main game loop ----------------" << std::endl;
+    std::cout << "--------------- Running the main game loop -------------" << std::endl;
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
-    GameLoop gameLoop = GameLoop(map->getMapCountries(), players);
+
+    auto* countryList = new vector<Map::Country*>(*starter.getGameMap()->getMapCountries());
+    auto* playerList = new vector<Player*>(*starter.getGamePlayers());
+    GameLoop gameLoop = GameLoop(countryList, playerList);
     gameLoop.loop();
 
-    delete(players);
-    delete(map);
-    delete(deck);
-
+    return 0;
 }
