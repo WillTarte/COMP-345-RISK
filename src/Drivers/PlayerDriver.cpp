@@ -216,7 +216,7 @@ bool test_Player_attack() {
     country1.setPlayerOwnerID(1);
     country2.setPlayerOwnerID(2);
     country1.setNumberOfTroops(numArmies);
-    country2.setNumberOfTroops(numArmies - 3);
+    country2.setNumberOfTroops(numArmies - 2);
     Map::Country* pCountry1 = &country1;
     Map::Country* pCountry2 = &country2;
     ownedCountries1.push_back(pCountry1);

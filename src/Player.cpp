@@ -237,7 +237,7 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
             }
         } else {
             // attacker loses 1 army
-            std::cout << "\nAttacker lost 1 army!";
+            std::cout << "\nAttacker lost 1 army!" << std::endl;
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - 1);
         }
     }
@@ -354,7 +354,7 @@ int Player::attack() {
         /*ATTACKER CHOOSES HOW MANY DICE TO ROLL*/
         numAttackingDice = getNumAttackingDice(this, fromCountry);
 
-        /*ATTACKER CHOOSES HOW MANY DICE TO ROLL*/
+        /*DEFENDER CHOOSES HOW MANY DICE TO ROLL*/
         numDefendingDice = getNumDefendingDice(toCountry);
 
         /* GET THE DEFENDING PLAYER */
