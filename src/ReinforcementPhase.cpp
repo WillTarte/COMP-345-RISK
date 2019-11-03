@@ -2,11 +2,12 @@
 #include "GameEngine.h"
 #include "Map.h"
 #include <vector>
+#include <iostream>
 
 ReinforcementPhase::ReinforcementPhase(Player player, Map map) {
     this->player = &player;
     this->map = &map;
-    this->numberOfArmies = 0;
+    this->numberOfArmies = new int(0);
 }
 
 int ReinforcementPhase::getNumberOfArmies() {
@@ -22,12 +23,26 @@ int ReinforcementPhase::getNumberOfArmies() {
     return *numberOfArmies;
 }
 
-void ReinforcementPhase::placeArmies() {}
+void ReinforcementPhase::placeArmies() {
+    std::cout << "Place your armies:" << std::endl;
+
+    int troops, place = 0;
+    for (auto *country : *player->getOwnedCountries()) {
+        std::cout << "Troops remaining: " << numberOfArmies << std::endl;
+        std::cout << country->getCountryName() << ": ";
+        std::cin >> place;
+        std::cout << std::endl;
+
+        troops = country->getNumberOfTroops();
+        country->setNumberOfTroops(troops + place);
+        numberOfArmies -= place;
+    }
+}
 
 int ReinforcementPhase::countriesOwned() {
     auto countries = 0;
 
-    for (auto* country : *map->getMapCountries()) {
+    for (auto *country : *map->getMapCountries()) {
         if (country->getPlayerOwnerID() == player->getPlayerId()) {
             countries++;
         }
@@ -42,11 +57,11 @@ int ReinforcementPhase::countriesOwned() {
 
 int ReinforcementPhase::continentControlValue() {
     auto value = 0;
-    for (Map::Continent* cont : *map->getMapContinents()) {
+    for (Map::Continent *cont : *map->getMapContinents()) {
         bool fullControl = true;
 
         // Check if player controls all countries in continent
-        for (Map::Country* country : *cont->getCountriesInContinent()) {
+        for (Map::Country *country : *cont->getCountriesInContinent()) {
             if (player->getPlayerId() != country->getPlayerOwnerID()) {
                 fullControl = false;
                 break;
@@ -76,7 +91,6 @@ int ReinforcementPhase::continentControlValue() {
 }
 
 int ReinforcementPhase::cardExchange() {
-    auto exchange = 0;
-
-    return exchange;
+//    return player->getCards().armiesReceived();
+    return 0;
 }
