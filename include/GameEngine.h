@@ -47,6 +47,7 @@ public:
     void operator=(GameLoop& rhs);
     void loop();
     vector<Player*> getAllPlayers () { return *allPlayers; }
+    vector<Map::Country*> getAllCountries () { return *allCountries; }
     bool isRoundFinished (unsigned long currentPlayerPosition);
     bool isGameDone (Player* currentPlayer);
 };
