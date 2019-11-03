@@ -17,6 +17,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world2.map
         ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/worldEmpty.map
         ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/otherWorkingMap.map
+        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 add_executable(Cards-driver "src/Drivers/CardsDriver.cpp")
 add_executable(Dice-driver "src/Drivers/DiceDriver.cpp")

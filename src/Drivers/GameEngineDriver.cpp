@@ -25,7 +25,7 @@ int main() {
 
     cout << "\n";
 
-    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
+    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map", "otherWorkingMap.map"});
     starter.start();
 
     for(unsigned long i = 0; i < starter.getGamePlayers()->size(); i++){
