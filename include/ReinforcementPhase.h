@@ -7,17 +7,14 @@
 
 class ReinforcementPhase {
 public:
-    ReinforcementPhase(Player player,
-            std::vector<Map::Country> countries,
-            std::vector<Map::Continent> continents);
+    ReinforcementPhase(Player player, Map map);
     int getNumberOfArmies();
     void placeArmies();
 
 private:
     int* numberOfArmies;
     Player* player;
-    std::vector<Map::Country>* countries;
-    std::vector<Map::Continent>* continents;
+    Map* map;
     int countriesOwned();
     int continentControlValue();
     int cardExchange();

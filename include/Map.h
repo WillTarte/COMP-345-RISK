@@ -54,9 +54,12 @@ public:
         std::string* pCName;
         int* pCTroops;
     };
+
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
     std::vector<Country*>* getMapCountries(){return pMapCountries;};
+    std::vector<Continent*>* getMapContinents(){return pMapContinents;};
+
 private:
     std::string* pMapTitle;
     std::vector<Continent*>* pMapContinents;
