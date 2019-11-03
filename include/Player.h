@@ -12,15 +12,13 @@
 
 class Player {
 public:
-    Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, int playerId);
+    Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, int playerId);
     ~Player();
     Player(const Player& toCopy);
     void operator=(const Player& rhs);
     int reinforce();
     int attack();
     int fortify();
-
-    /* Getters & Setters */
     Hand& getCards() { return *pCards; }
     std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
     void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
@@ -28,7 +26,6 @@ public:
     int getPlayerId() { return *pPlayerId; }
 
 private:
-    // Helper Method for attacking
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;

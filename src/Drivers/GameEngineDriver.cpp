@@ -69,6 +69,7 @@ int main() {
     auto* playerList = new vector<Player*>(*starter.getGamePlayers());
     GameLoop::initInstance(countryList, playerList);
     GameLoop::getInstance()->loop();
+    GameLoop::resetInstance();
 
     return 0;
 }

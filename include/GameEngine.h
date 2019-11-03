@@ -39,6 +39,7 @@ private:
 class GameLoop {
     public:
         ~GameLoop();
+        static void resetInstance();
         GameLoop(const GameLoop& toCopy) = delete;
         void operator=(GameLoop& rhs) = delete;
         static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
@@ -49,7 +50,7 @@ class GameLoop {
         bool isGameDone (Player* currentPlayer);
 
     private:
-        static GameLoop* m_instance;
+        static GameLoop* gameLoopInstance;
         vector<Map::Country *>* allCountries;
         vector<Player*>* allPlayers;
         GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);

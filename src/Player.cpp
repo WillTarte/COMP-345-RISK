@@ -4,10 +4,9 @@
 
 #include "../include/Player.h"
 #include "../include/Map.h"
+#include "../include/GameEngine.h"
 #include <iostream>
 #include <utility>
-#include <GameEngine.h>
-using std::vector;
 
 /**
  * Player constructor
@@ -17,7 +16,7 @@ using std::vector;
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId) {
+Player::Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, const int playerId) {
     pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
     pCards = new Hand(cards);
     pDiceRoller = new DiceRoller(diceRoller);
@@ -61,32 +60,6 @@ void Player::operator=(const Player& rhs){
 }
 
 /**
- * Checks if the passed country is owned by the passed player
- *
- * @param player the player
- * @param country the country
- * @return true if the country is owned by the player
- */
-static bool checkOwnedByPlayer(Player& player, Map::Country& country) {
-    return player.getPlayerId() == country.getPlayerOwnerID();
-}
-
-/**
- * Checks if the number of attacking and defending dice are valid
- *
- * @param numAttackingDice the number of attacking dice to roll
- * @param numDefendingDice the number of defending dice to roll
- * @param attackingArmies the number of armies on the attacking country
- * @param defendingArmies the number of armies on the defending country
- * @return true if the numbers of dice are valid
- */
-static bool checkValidDiceNumbers(const int numAttackingDice, const int numDefendingDice, const int attackingArmies,
-                                  const int defendingArmies) {
-    return numAttackingDice < attackingArmies || numAttackingDice > 0 || numAttackingDice <= 3
-           || numDefendingDice <= defendingArmies || numDefendingDice > 0 || numDefendingDice <= 2;
-}
-
-/**
  * Exchanges a countries owner with a new owner
  *
  * @param attackingPlayer the player who won the country
@@ -113,13 +86,95 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player* defendingP
  * @param countries vector of countries
  */
 static void showCountries(std::vector<Map::Country*> countries) {
-    for (auto& ct: countries) {
-        std::cout << "You own: " << ct->getCountryName() << " with " << ct->getNumberOfTroops() << " armies." << std::endl;
+    for (auto& country: countries) {
+        std::cout << "You own: " << country->getCountryName() << " with " << country->getNumberOfTroops() << " armies." << std::endl;
         std::cout << "\tNeighbours: " << std::endl;
-        for(auto& nb: *ct->getAdjCountries()) {
-            std::cout << "\t\tName: " << nb->getCountryName() << " Armies: " << nb->getNumberOfTroops() << " Owned by: Player " << nb->getPlayerOwnerID() << std::endl;
+        for(auto& neighbour: *country->getAdjCountries()) {
+            std::cout << "\t\tName: " << neighbour->getCountryName() << " Armies: " << neighbour->getNumberOfTroops() << " Owned by: Player " << neighbour->getPlayerOwnerID() << std::endl;
         }
     }
+}
+
+static int getAttackingCountry(Player* attacker) {
+
+    int fromCountryIndex = 0;
+    do {
+        std::cin.clear();
+        showCountries(*attacker->getOwnedCountries());
+        std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
+                  << attacker->getOwnedCountries()->size() - 1 << ")";
+        std::cin >> fromCountryIndex;
+        if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail()) {
+            std::cout << "\nInvalid Input. Please try again.\n";
+            continue;
+        }
+    } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail());
+    return fromCountryIndex;
+}
+
+static int getDefendingCountry(Map::Country* fromCountry) {
+
+    int toCountryIndex = 0;
+    do {
+        std::cin.clear();
+        std::cout << "\nCountry " << fromCountry->getCountryName() << " has "
+                  << fromCountry->getAdjCountries()->size()
+                  << " neighbour(s):\n";
+        for (auto& neighbour: *fromCountry->getAdjCountries()) {
+            std::cout << "\t\tName: " << neighbour->getCountryName() << " Armies: " << neighbour->getNumberOfTroops()
+                      << " Owned by: Player " << neighbour->getPlayerOwnerID() << std::endl;
+        }
+        std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
+                  << fromCountry->getAdjCountries()->size() - 1 << ")";
+        std::cin >> toCountryIndex;
+        if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1 || cin.fail()) {
+            std::cout << "\nInvalid Input. Please try again.\n";
+            continue;
+        }
+    } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1 || cin.fail());
+    return toCountryIndex;
+}
+
+static int getNumAttackingDice(Player* attacker, Map::Country* fromCountry) {
+
+    int numAttackingDice = 0;
+    do {
+        std::cin.clear();
+        std::cout << "[ATTACKER] How many dice will Player " << attacker->getPlayerId() << " roll?(1 to ";
+        if (fromCountry->getNumberOfTroops() > 3) {
+            std::cout << "3)";
+        } else {
+            std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
+        }
+        std::cin >> numAttackingDice;
+        if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
+            numAttackingDice > 3 || cin.fail()) {
+            std::cout << "\nInvalid Input. Please try again.\n";
+            continue;
+        }
+    } while (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
+             numAttackingDice > 3 || cin.fail());
+    return numAttackingDice;
+}
+
+static int getNumDefendingDice(Map::Country* toCountry) {
+
+    int numDefendingDice = 0;
+    do {
+        std::cin.clear();
+        std::cout << "[DEFENDER] How many dice will Player " << toCountry->getPlayerOwnerID() << " roll?(1 to ";
+        if (toCountry->getNumberOfTroops() >= 2) {
+            std::cout << "2)";
+        } else {
+            std::cout << "1)";
+        }
+        std::cin >> numDefendingDice;
+        if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() || cin.fail()) {
+            std::cout << "\nInvalid Input. Please try again.\n";
+            continue;
+        }
+    } while (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() || cin.fail());
+    return numDefendingDice;
 }
 
 /**
@@ -140,8 +195,6 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
      * 4. If the defending country loses all its armies, the attacking country has to place
      * at least 1 of the attacking armies on the conquered country, up to all but one army
      */
-
-    //TODO - implement the attack method and fix the driver
 
     // Roll
     std::vector<int> attackingRolls = this->getDiceRoller().roll(numAttackingDice);
@@ -170,7 +223,7 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
                         cin >> newArmies;
-                        if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1) {
+                        if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1 || cin.fail()) {
                             cout << "\nInvalid number! Try again." << std::endl;
                             continue;
                         } else {
@@ -258,10 +311,10 @@ int Player::fortify() {
 int Player::attack() {
 
     char playerChoice = 0;
-    int fromCountryIndex = -1;
-    int toCountryIndex = -1;
-    int numAttackingDice = -1;
-    int numDefendingDice = -1;
+    int fromCountryIndex;
+    int toCountryIndex;
+    int numAttackingDice;
+    int numDefendingDice;
 
     /* USER DECISION TO ATTACK OR NOT*/
     do {
@@ -273,22 +326,10 @@ int Player::attack() {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-        /*---------------------------------------------*/
 
         if (playerChoice == 'y') {
             /*USER CHOOSES FROM WHICH COUNTRY TO ATTACK*/
-            do {
-                std::cin.clear();
-                showCountries(*this->pOwnedCountries);
-                std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
-                          << this->getOwnedCountries()->size() - 1 << ")";
-                std::cin >> fromCountryIndex;
-                if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1) {
-                    std::cout << "\nInvalid Input. Please try again.\n";
-                    continue;
-                }
-            } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1);
-            /*---------------------------------------------*/
+            fromCountryIndex = getAttackingCountry(this);
         } else {
             return PlayerAction::ABORTED;
         }
@@ -298,27 +339,11 @@ int Player::attack() {
         if (fromCountry->getNumberOfTroops() < 2) {
             std::cout << "Country " << fromCountry->getCountryName()
                       << " does not have enough armies to attack. Choose a different country. Proceeding...\n";
-            this->attack();
+            continue;
         }
 
         /* USER CHOOSES WHICH COUNTRY TO ATTACK*/
-        do {
-            std::cout << "\nCountry " << fromCountry->getCountryName() << " has "
-                      << fromCountry->getAdjCountries()->size()
-                      << " neighbour(s):\n";
-            for (auto& nb: *fromCountry->getAdjCountries()) {
-                std::cout << "\t\tName: " << nb->getCountryName() << " Armies: " << nb->getNumberOfTroops()
-                          << " Owned by: Player " << nb->getPlayerOwnerID() << std::endl;
-            }
-            std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
-                      << fromCountry->getAdjCountries()->size() - 1 << ")";
-            std::cin >> toCountryIndex;
-            if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1) {
-                std::cout << "\nInvalid Input. Please try again.\n";
-                continue;
-            }
-        } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1);
-        /*---------------------------------------------*/
+        toCountryIndex = getDefendingCountry(fromCountry);
 
         Map::Country* toCountry = fromCountry->getAdjCountries()->at(toCountryIndex);
         if (fromCountry->getPlayerOwnerID() == toCountry->getPlayerOwnerID()) {
@@ -326,39 +351,11 @@ int Player::attack() {
             continue;
         }
 
-        /*USER CHOOSES HOW MANY DICE TO ROLL*/
-        do {
-            std::cout << "[ATTACKER] How many dice will Player " << this->getPlayerId() << " roll?(1 to ";
-            if (fromCountry->getNumberOfTroops() > 3) {
-                std::cout << "3)";
-            } else {
-                std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
-            }
-            std::cin >> numAttackingDice;
-            if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
-                numAttackingDice > 3) {
-                std::cout << "\nInvalid Input. Please try again.\n";
-                continue;
-            }
-        } while (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
-                 numAttackingDice > 3);
-        /*---------------------------------------------*/
+        /*ATTACKER CHOOSES HOW MANY DICE TO ROLL*/
+        numAttackingDice = getNumAttackingDice(this, fromCountry);
 
-        /*USER CHOOSES HOW MANY DICE TO ROLL*/
-        do {
-            std::cout << "[DEFENDER] How many dice will Player " << toCountry->getPlayerOwnerID() << " roll?(1 to ";
-            if (toCountry->getNumberOfTroops() >= 2) {
-                std::cout << "2)";
-            } else {
-                std::cout << "1)";
-            }
-            std::cin >> numDefendingDice;
-            if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > fromCountry->getNumberOfTroops()) {
-                std::cout << "\nInvalid Input. Please try again.\n";
-                continue;
-            }
-        } while (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > fromCountry->getNumberOfTroops());
-        /*---------------------------------------------*/
+        /*ATTACKER CHOOSES HOW MANY DICE TO ROLL*/
+        numDefendingDice = getNumDefendingDice(toCountry);
 
         /* GET THE DEFENDING PLAYER */
         Player* defendingPlayer = nullptr;
@@ -371,7 +368,6 @@ int Player::attack() {
         if (defendingPlayer == nullptr) {
             return PlayerAction::FAILED;
         }
-        /*---------------------------------------------*/
 
         if (this->executeAttack(fromCountry, toCountry, defendingPlayer, numAttackingDice, numDefendingDice) ==
             PlayerAction::SUCCEEDED) {

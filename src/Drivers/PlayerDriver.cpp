@@ -1,14 +1,15 @@
 //
 // Created by William Tarte on 10/8/2019.
 //
+#include "../include/GameEngine.h"
+#include "../include/Map.h"
+#include "../include/Cards.h"
+#include "../include/Dice.h"
+#include "../include/Player.h"
 #include <iostream>
 #include <vector>
-#include <Map.h>
-#include <Cards.h>
-#include <Dice.h>
-#include <Player.h>
 #include <iterator>
-#include <GameEngine.h>
+
 
 //TODO - fix the driver using the new attack, fortify, and reinforce methods
 

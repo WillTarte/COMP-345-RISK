@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-GameLoop* GameLoop::m_instance = nullptr;
+GameLoop* GameLoop::gameLoopInstance = nullptr;
 
 /**
  * Game loop constructor
@@ -24,19 +24,19 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
 }
 
 void GameLoop::initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList) {
-    if(GameLoop::m_instance == nullptr) {
-        GameLoop::m_instance = new GameLoop(countryList, playerList);
+    if(GameLoop::gameLoopInstance == nullptr) {
+        GameLoop::gameLoopInstance = new GameLoop(countryList, playerList);
     } else {
         std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
     }
 }
 
 GameLoop* GameLoop::getInstance() {
-    if (m_instance == nullptr) {
+    if (gameLoopInstance == nullptr) {
         std::cout << "GameLoop instance was not initialized. Call GameLoop::initInstance first." << std::endl;
         return nullptr;
     } else {
-        return m_instance;
+        return gameLoopInstance;
     }
 }
 
@@ -46,6 +46,11 @@ GameLoop* GameLoop::getInstance() {
 GameLoop::~GameLoop() {
     delete allCountries;
     delete allPlayers;
+}
+
+void GameLoop::resetInstance() {
+    delete gameLoopInstance;
+    gameLoopInstance = nullptr;
 }
 
 /**
