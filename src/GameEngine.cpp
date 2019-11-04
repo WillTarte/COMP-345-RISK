@@ -11,42 +11,47 @@
 #include <string>
 using namespace std;
 
+GameLoop* GameLoop::gameLoopInstance = nullptr;
+
 /**
  * Game loop constructor
  * @param countryList - the list of all countries in the game
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
-GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerList) {
-    allCountries = countryList;
+GameLoop::GameLoop(Map* map, vector<Player*>* playerList) {
+    gameMap = map;
     allPlayers = playerList;
+}
+
+void GameLoop::initInstance(Map* map, vector<Player*>* playerList) {
+    if(GameLoop::gameLoopInstance == nullptr) {
+        GameLoop::gameLoopInstance = new GameLoop(map, playerList);
+    } else {
+        std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
+    }
+}
+
+GameLoop* GameLoop::getInstance() {
+    if (gameLoopInstance == nullptr) {
+        std::cout << "GameLoop instance was not initialized. Call GameLoop::initInstance first." << std::endl;
+        return nullptr;
+    } else {
+        return gameLoopInstance;
+    }
 }
 
 /**
  * Game loop destructor
  */
 GameLoop::~GameLoop() {
-    delete allCountries;
+    delete gameMap;
     delete allPlayers;
 }
 
-/**
- * game loop copy constructor
- */
-GameLoop::GameLoop(const GameLoop &toCopy) {
-    allCountries = new vector<Map::Country*>;
-    allPlayers = new vector<Player*>;
-    *allCountries = *toCopy.allCountries;
-    *allPlayers = *toCopy.allPlayers;
+void GameLoop::resetInstance() {
+    delete gameLoopInstance;
+    gameLoopInstance = nullptr;
 }
-
-/**
- * assignment operator
- */
-void GameLoop::operator=(GameLoop& rhs){
-    this->allCountries = rhs.allCountries;
-    this->allPlayers = rhs.allPlayers;
-}
-
 
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
@@ -55,9 +60,12 @@ void GameLoop::loop() {
 
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
-    Player* currentPlayer = allPlayers->at(currentPlayerPosition);
+    Player* currentPlayer = nullptr;
 
     while (gameNotDone) {
+
+        currentPlayer = allPlayers->at(currentPlayerPosition);
+
         cout << "\u001b[31m";  // for demo purposes
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
@@ -79,7 +87,7 @@ void GameLoop::loop() {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
-                currentPlayer->setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
+                currentPlayer->setOwnedCountries(gameMap->getMapCountries()); // for demo - give all countries to first player at the end of the round
             }
         }
     }
@@ -105,7 +113,7 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @return
  */
 bool GameLoop::isGameDone(Player* currentPlayer) {
-    return currentPlayer->getOwnedCountries()->size() != allCountries->size();
+    return currentPlayer->getOwnedCountries()->size() != gameMap->getMapCountries()->size();
 }
 
 /**

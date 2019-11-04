@@ -1,16 +1,18 @@
 //
 // Created by William Tarte on 10/8/2019.
 //
+#include "../include/GameEngine.h"
+#include "../include/Map.h"
+#include "../include/Cards.h"
+#include "../include/Dice.h"
+#include "../include/Player.h"
 #include <iostream>
 #include <vector>
-#include <Map.h>
-#include <Cards.h>
-#include <Dice.h>
-#include <Player.h>
 #include <iterator>
 
+
 //TODO - fix the driver using the new attack, fortify, and reinforce methods
-/*
+
 bool test_Player_Constructor() {
 
     // Arrange
@@ -36,7 +38,7 @@ bool test_Player_Constructor() {
     Player player1 = Player(ownedCountries1, cards, diceRoller, playerId);
 
     // Assert
-    if (player1.getOwnedCountries().empty() || player1.getCards().getHand()->empty() ||
+    if (player1.getOwnedCountries()->empty() || player1.getCards().getHand()->empty() ||
         playerId != player1.getPlayerId()) {
         success = false;
     }
@@ -62,13 +64,13 @@ bool test_Player_getOwnedCountries(bool verbose = false) {
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 0);
 
     // Assert
-    if (player1.getOwnedCountries().empty()) {
+    if (player1.getOwnedCountries()->empty()) {
         success = false;
     }
     if (verbose) {
         std::cout << "\033[35m";
         std::cout << "\nThe player owns countries: ";
-        for (auto& i : player1.getOwnedCountries()) {
+        for (auto& i : *player1.getOwnedCountries()) {
             std::cout << i->getCountryName() << " ";
         }
         std::cout << "\033[31m" << std::endl;
@@ -153,6 +155,7 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     return success;
 }
 
+/*
 bool test_Player_fortify(bool verbose = false) {
 
     // Arrange
@@ -200,13 +203,11 @@ bool test_Player_fortify(bool verbose = false) {
 
     return success;
 }
-
-bool test_Player_attack(bool verbose = false) {
+*/
+bool test_Player_attack() {
 
     // Arrange
     const int numArmies = 4;
-    const int numDefendingDice = 1;
-    const int numAttackingDice = 3;
     bool success = true;
     std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
     std::vector<Map::Country*> ownedCountries2 = std::vector<Map::Country*>();
@@ -215,39 +216,29 @@ bool test_Player_attack(bool verbose = false) {
     country1.setPlayerOwnerID(1);
     country2.setPlayerOwnerID(2);
     country1.setNumberOfTroops(numArmies);
-    country2.setNumberOfTroops(numArmies - 3);
+    country2.setNumberOfTroops(numArmies - 2);
     Map::Country* pCountry1 = &country1;
     Map::Country* pCountry2 = &country2;
     ownedCountries1.push_back(pCountry1);
     ownedCountries2.push_back(pCountry2);
-    country1.pAdjCountries->push_back(pCountry2);
-    country2.pAdjCountries->push_back(pCountry1);
+    country1.getAdjCountries()->push_back(pCountry2);
+    country2.getAdjCountries()->push_back(pCountry1);
 
-    // Act & Assert
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
     Player player2 = Player(ownedCountries2, Hand(), DiceRoller(), 2);
 
-    if (player1.attack(country1, country2, player2, numAttackingDice, numDefendingDice) == PlayerAction::FAILED) {
-        success = false;
-    }
+    std::vector<Map::Country*> countries = {pCountry1, pCountry2};
+    std::vector<Player*> players = {&player1, &player2};
+    GameLoop::initInstance(&countries, &players);
 
-    if (verbose) {
-        std::cout << "\n" << "\033[35m";
-        std::cout << "player1 attacked player2's " << country2.getCountryName() << std::endl;
-        std::cout << "player1 is using " << numAttackingDice << " dice " << " and player2 is using " << numDefendingDice
-                  << std::endl;
-        std::cout << "player1's " << pCountry1->getCountryName() << " had " << numArmies << std::endl;
-        std::cout << "player2's " << pCountry2->getCountryName() << " had " << numArmies - 3 << std::endl;
-        std::cout << "player1's " << pCountry1->getCountryName() << " now has " << pCountry1->getNumberOfTroops()
-                  << std::endl;
-        std::cout << "player2's " << pCountry2->getCountryName() << " now has " << pCountry2->getNumberOfTroops()
-                  << std::endl;
-        std::cout << "\033[31m";
+    // Act & Assert
+    if (player1.attack() == PlayerAction::FAILED) {
+        success = false;
     }
 
     return success;
 }
-
+/*
 bool test_Player_reinforce(bool verbose = false) {
 
     // Arrange
@@ -278,7 +269,7 @@ bool test_Player_reinforce(bool verbose = false) {
 
     return success;
 }
-
+ */
 ////////////////////////////////////////////////////////////
 ////////////////////// Run Tests ///////////////////////////
 ////////////////////////////////////////////////////////////
@@ -302,11 +293,10 @@ int main() {
 
     std::cout << assert("Player", "getDiceRoller", test_Player_getDiceRoller(true)) << std::endl;
 
-    std::cout << assert("Player", "attack", test_Player_attack(true)) << std::endl;
+    std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
 
-    std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
+    //std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 
-    std::cout << assert("Player", "fortify", test_Player_fortify(true)) << std::endl;
+    //std::cout << assert("Player", "fortify", test_Player_fortify(true)) << std::endl;
 
 }
- */
