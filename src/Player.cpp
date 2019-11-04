@@ -261,7 +261,7 @@ int Player::reinforce() {
     auto cardExchange = [](Player player) {
         auto exchange = new std::vector<CardType>();
 
-        if (player.getCards().getHand()->size() >= 5) {
+        if (player.getCards().getHand()->size() > 5) {
             std::cout << "You have more than 4 cards in your hand, so you must exchange at least once" << std::endl;
             std::cout << "What cards would you like to exchange?" << std::endl;
 
