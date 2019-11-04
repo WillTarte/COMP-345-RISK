@@ -309,19 +309,7 @@ int Player::reinforce() {
             }
 
             if (fullControl) {
-                auto name = cont->getContinentName();
-                if (name == "Asia")
-                    value += 7;
-                if (name == "North America")
-                    value += 5;
-                if (name == "Europe")
-                    value += 5;
-                if (name == "Africa")
-                    value += 3;
-                if (name == "South America")
-                    value += 2;
-                if (name == "Australia")
-                    value += 2;
+                value += cont->getpCTroops();
             }
         }
 
