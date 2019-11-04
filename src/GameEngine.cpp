@@ -241,7 +241,7 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map* map){
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
     for(int i = 0; i < numPlayers; i++){
-        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
+        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i, *map));
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;
