@@ -29,7 +29,6 @@ private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
-    static Map* gameMap;
     DiceRoller* pDiceRoller;
     const int* pPlayerId;
 };

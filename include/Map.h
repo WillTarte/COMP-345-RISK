@@ -59,11 +59,15 @@ public:
     void addEdge(int from, int to);
     std::vector<Country*>* getMapCountries(){return pMapCountries;};
     std::vector<Continent*>* getMapContinents(){return pMapContinents;};
+    static Map* getMapInstance();
+    static void resetInstance();
+    static void initInstance(Map* map);
 
 private:
     std::string* pMapTitle;
     std::vector<Continent*>* pMapContinents;
     std::vector<Country*>* pMapCountries;
+    static Map* mapInstance;
     static bool testIndividualGraph(std::vector<Country*>* toTest, bool isContinent);
     static void dfs(std::set<std::string>* visitedCountries,Country* countries, bool continentTest);
 };

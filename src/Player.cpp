@@ -298,7 +298,7 @@ int Player::reinforce() {
 
     auto continentControlValue = [](Player player) {
         auto value = 0;
-        for (auto* cont : *Player::gameMap->getMapContinents()) {
+        for (auto* cont : *Map::getMapInstance()->getMapContinents()) {
             auto fullControl = true;
 
             for (auto* country : *cont->getCountriesInContinent()) {

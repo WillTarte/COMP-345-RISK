@@ -12,6 +12,7 @@
 using namespace std;
 
 GameLoop* GameLoop::gameLoopInstance = nullptr;
+Map* Map::mapInstance = nullptr;
 
 /**
  * Game loop constructor
@@ -174,10 +175,13 @@ void GameStarter::start() {
         start();
         return;
     }
+    Map::initInstance(gameMap);
+
     gamePlayers = initPlayers(numberOfPlayers, gameMap);
     gameDeck = new Deck(gameMap->getMapCountries()->size());
     gameDeck->createDeck();
     gameMap->printMap();
+
     delete(mapToLoad);
 }
 

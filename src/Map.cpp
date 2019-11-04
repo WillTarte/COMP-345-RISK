@@ -60,6 +60,24 @@ void::Map::operator=(Map& rhs) {
     this->pMapCountries = rhs.pMapCountries;
 }
 
+Map* Map::getMapInstance() {
+    if (mapInstance == nullptr) {
+        return nullptr;
+    }
+
+    return  mapInstance;
+}
+
+void Map::resetInstance() {
+    delete mapInstance;
+    mapInstance = nullptr;
+}
+
+void Map::initInstance(Map* map) {
+    delete mapInstance;
+    mapInstance = nullptr;
+}
+
 /**
  * Continent constructor, subclass of Map
  *
