@@ -4,6 +4,7 @@
 
 #include "../include/Player.h"
 #include "../include/Map.h"
+#include "../include/Cards.h"
 #include <iostream>
 #include <utility>
 using std::vector;
@@ -189,6 +190,38 @@ int Player::reinforce() {
      * 2. Place received armies on the map
      */
 
+    auto cardExchange = [](Player player) {
+        auto exchange = new std::vector<CardType>();
+
+        if (player.getCards().getHand()->size() >= 5) {
+            std::cout << "You have more than 4 cards in your hand, so you must exchange at least once" << std::endl;
+            std::cout << "What cards would you like to exchange?" << std::endl;
+
+            int artillery = 0;
+            int infantry = 0;
+            int cavalry = 0;
+            for (auto card : *player.getCards().getHand()) {
+                switch (card) {
+                    case CardType::ARTILLERY: artillery++;
+                    case CardType::INFANTRY: infantry++;
+                    case CardType::CAVALRY: cavalry++;
+                    default: {
+                        return 0;
+                    }
+                }
+            }
+
+            std::cout << "You hand is: " << std::endl;
+            std::cout << artillery << " artillery" << std::endl;
+            std::cout << cavalry << " cavalry" << std::endl;
+            std::cout << infantry << " infantry" << std::endl;
+
+
+        }
+
+        return 0;
+    };
+
     auto countriesOwned = [](Player player) {
         auto countries = player.getOwnedCountries()->size();
 
@@ -227,17 +260,9 @@ int Player::reinforce() {
         return value;
     };
 
-    auto cardExchange = [](Player player) {
-        if (player.getCards().getHand()->size() > 5) {
-            //this->getCards().exchange(this->getCards())
-        }
-
-        return 0;
-    };
-
-    auto newArmies = countriesOwned(*this) +
-            continentControlValue(*this) +
-            cardExchange(*this);
+    auto newArmies = cardExchange(*this) +
+            countriesOwned(*this) +
+            continentControlValue(*this);
 
     std::cout << "Place your armies:" << std::endl;
 
@@ -253,22 +278,7 @@ int Player::reinforce() {
         newArmies -= place;
     }
 
-//TODO - implement the reinforce method and fix the driver
-    /*
-    Map::Country& countryToFortify, const int numArmies
-
-    if (!checkOwnedByPlayer(*this, countryToReinforce)) {
-        return PlayerAction::FAILED;
-    }
-
-    countryToReinforce.setNumberOfTroops(countryToReinforce.getNumberOfTroops() + numArmies);
-    std::cout << "\nPlayer " << countryToReinforce.getPlayerOwnerID() << " has fortified "
-              << countryToReinforce.getCountryName() << std::endl;
-
     return PlayerAction::SUCCEEDED;
-    */
-
-    return 0;
 }
 
 /**
