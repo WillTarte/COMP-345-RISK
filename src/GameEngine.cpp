@@ -11,6 +11,8 @@
 #include <string>
 using namespace std;
 
+GameLoop* GameLoop::gameLoopInstance = nullptr;
+
 /**
  * Game loop constructor
  * @param countryList - the list of all countries in the game
@@ -21,6 +23,23 @@ GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerL
     allPlayers = playerList;
 }
 
+void GameLoop::initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList) {
+    if(GameLoop::gameLoopInstance == nullptr) {
+        GameLoop::gameLoopInstance = new GameLoop(countryList, playerList);
+    } else {
+        std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
+    }
+}
+
+GameLoop* GameLoop::getInstance() {
+    if (gameLoopInstance == nullptr) {
+        std::cout << "GameLoop instance was not initialized. Call GameLoop::initInstance first." << std::endl;
+        return nullptr;
+    } else {
+        return gameLoopInstance;
+    }
+}
+
 /**
  * Game loop destructor
  */
@@ -29,24 +48,10 @@ GameLoop::~GameLoop() {
     delete allPlayers;
 }
 
-/**
- * game loop copy constructor
- */
-GameLoop::GameLoop(const GameLoop &toCopy) {
-    allCountries = new vector<Map::Country*>;
-    allPlayers = new vector<Player*>;
-    *allCountries = *toCopy.allCountries;
-    *allPlayers = *toCopy.allPlayers;
+void GameLoop::resetInstance() {
+    delete gameLoopInstance;
+    gameLoopInstance = nullptr;
 }
-
-/**
- * assignment operator
- */
-void GameLoop::operator=(GameLoop& rhs){
-    this->allCountries = rhs.allCountries;
-    this->allPlayers = rhs.allPlayers;
-}
-
 
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn

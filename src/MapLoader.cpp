@@ -110,8 +110,8 @@ Map* MapLoader::readMapFile() {
                 }
             } else {
                 //unknown mode error, will be ignored, non-critical
-                std::cout << "Line " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode.\n";
-                std::cout << " :: " << line;
+                std::cout << "Line " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
+                std::cout << " ::  " << line;
             }
         }
         delete (pLineWords);

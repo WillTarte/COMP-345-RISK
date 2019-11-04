@@ -12,8 +12,7 @@
 
 class Player {
 public:
-    Player(std::vector<Map::Country*> ownedCountries,
-            Hand cards, DiceRoller diceRoller, int playerId, Map map);
+    Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, int playerId);
     ~Player();
     Player(const Player& toCopy);
     void operator=(const Player& rhs);
@@ -27,6 +26,7 @@ public:
     int getPlayerId() { return *pPlayerId; }
 
 private:
+    int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
     static Map* gameMap;
@@ -37,6 +37,7 @@ private:
 enum PlayerAction {
     FAILED = -1,
     SUCCEEDED = 1,
+    ABORTED = 0
 };
 
 #endif //COMP_345_PROJ_PLAYER_H
