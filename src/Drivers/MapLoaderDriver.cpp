@@ -4,13 +4,13 @@
 
 int main() {
     //init loader
-    const std::string MAP1 = "world.map";
+    const std::string MAP1 = "otherWorkingMap.map";
     MapLoader myLoader = MapLoader(MAP1);
 
     //create first (valid) map
     std::cout << "creating map 1 (valid)\n";
     Map* firstMap = myLoader.readMapFile();
-    std::cout << "map 1 creation completed.\n";
+    std::cout << "\nmap 1 creation completed.\n";
     if (firstMap) {
         firstMap->printMap();
     }

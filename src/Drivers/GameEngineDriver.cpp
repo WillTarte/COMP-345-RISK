@@ -25,7 +25,7 @@ int main() {
 
     cout << "\n";
 
-    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map"});
+    GameStarter starter = GameStarter({"world.map","world2.map","worldEmpty.map", "otherWorkingMap.map"});
     starter.start();
 
     for(unsigned long i = 0; i < starter.getGamePlayers()->size(); i++){
@@ -67,8 +67,9 @@ int main() {
 
     auto* countryList = new vector<Map::Country*>(*starter.getGameMap()->getMapCountries());
     auto* playerList = new vector<Player*>(*starter.getGamePlayers());
-    GameLoop gameLoop = GameLoop(countryList, playerList);
-    gameLoop.loop();
+    GameLoop::initInstance(countryList, playerList);
+    GameLoop::getInstance()->loop();
+    GameLoop::resetInstance();
 
     return 0;
 }
