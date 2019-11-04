@@ -17,19 +17,19 @@ public:
     void operator=(Map& rhs);
     void printMap();
     bool testConnected();
-    std::string* getMapTitle(){return pMapTitle;};
+    inline std::string* getMapTitle(){return pMapTitle;};
     class Country{
         public:
             Country(int id, std::string name, int continent);
             void operator=(Country& rhs);
             ~Country();
-            std::vector<Country*>* getAdjCountries(){return pAdjCountries;};
-            std::string getCountryName() { return *cyName; }
-            void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
-            void setNumberOfTroops(int troops) { *pNumberOfTroops = troops; };
-            int getPlayerOwnerID(){ return *pPlayerOwnerId;};
-            int getNumberOfTroops(){ return *pNumberOfTroops;};
-            int getCountryContinent(){return *cyContinent;};
+            inline std::vector<Country*>* getAdjCountries(){return pAdjCountries;};
+            inline std::string getCountryName() { return *cyName; }
+            inline void setPlayerOwnerID(int id) { *pPlayerOwnerId = id; }
+            inline void setNumberOfTroops(int troops) { *pNumberOfTroops = troops; };
+            inline int getPlayerOwnerID(){ return *pPlayerOwnerId;};
+            inline int getNumberOfTroops(){ return *pNumberOfTroops;};
+            inline int getCountryContinent(){return *cyContinent;};
         private:
             int* cyID;
             std::string* cyName;
@@ -45,9 +45,10 @@ public:
         ~Continent();
         Continent(Map::Continent& toCopy);
         void operator=(Continent& rhs);
-        std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         void setCountry(Map::Country* c);
-        std::string getContinentName() { return *pCName; }
+        inline std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
+        inline std::string getContinentName() { return *pCName; }
+        inline int getpCTroops() { return *pCTroops; }
 
     private:
         std::vector<Country*>* pCountriesInContinent;
@@ -57,9 +58,9 @@ public:
 
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
-    std::vector<Country*>* getMapCountries(){return pMapCountries;};
-    std::vector<Continent*>* getMapContinents(){return pMapContinents;};
-    static Map* getMapInstance();
+    inline std::vector<Country*>* getMapCountries(){return pMapCountries;};
+    inline std::vector<Continent*>* getMapContinents(){return pMapContinents;};
+    inline static Map* getMapInstance();
     static void resetInstance();
     static void initInstance(Map* map);
 
