@@ -16,11 +16,12 @@ using std::vector;
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId) {
+Player::Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, const int playerId, Map map) {
     pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
     pCards = new Hand(cards);
     pDiceRoller = new DiceRoller(diceRoller);
     pPlayerId = new int(playerId);
+    Player::gameMap = new Map(map);
 }
 
 /**
@@ -187,6 +188,71 @@ int Player::reinforce() {
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
+
+    auto countriesOwned = [](Player player) {
+        auto countries = player.getOwnedCountries()->size();
+
+        return countries < 9 ? 3 : countries / 3;
+    };
+
+    auto continentControlValue = [](Player player) {
+        auto value = 0;
+        for (auto* cont : *Player::gameMap->getMapContinents()) {
+            auto fullControl = true;
+
+            for (auto* country : *cont->getCountriesInContinent()) {
+                if (player.getPlayerId() != country->getPlayerOwnerID()) {
+                    fullControl = false;
+                    break;
+                }
+            }
+
+            if (fullControl) {
+                auto name = cont->getContinentName();
+                if (name == "Asia")
+                    value += 7;
+                if (name == "North America")
+                    value += 5;
+                if (name == "Europe")
+                    value += 5;
+                if (name == "Africa")
+                    value += 3;
+                if (name == "South America")
+                    value += 2;
+                if (name == "Australia")
+                    value += 2;
+            }
+        }
+
+        return value;
+    };
+
+    auto cardExchange = [](Player player) {
+        if (player.getCards().getHand()->size() > 5) {
+            //this->getCards().exchange(this->getCards())
+        }
+
+        return 0;
+    };
+
+    auto newArmies = countriesOwned(*this) +
+            continentControlValue(*this) +
+            cardExchange(*this);
+
+    std::cout << "Place your armies:" << std::endl;
+
+    int troops, place = 0;
+    for (auto *country : *this->getOwnedCountries()) {
+        std::cout << "Troops remaining: " << newArmies << std::endl;
+        std::cout << country->getCountryName() << ": ";
+        std::cin >> place;
+        std::cout << std::endl;
+
+        troops = country->getNumberOfTroops();
+        country->setNumberOfTroops(troops + place);
+        newArmies -= place;
+    }
+
 //TODO - implement the reinforce method and fix the driver
     /*
     Map::Country& countryToFortify, const int numArmies

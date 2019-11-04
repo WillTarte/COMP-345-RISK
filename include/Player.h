@@ -12,7 +12,8 @@
 
 class Player {
 public:
-    Player(std::vector<Map::Country*> ownedCountries, Hand cards, DiceRoller diceRoller, int playerId);
+    Player(std::vector<Map::Country*> ownedCountries,
+            Hand cards, DiceRoller diceRoller, int playerId, Map map);
     ~Player();
     Player(const Player& toCopy);
     void operator=(const Player& rhs);
@@ -28,6 +29,7 @@ public:
 private:
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
+    static Map* gameMap;
     DiceRoller* pDiceRoller;
     const int* pPlayerId;
 };
