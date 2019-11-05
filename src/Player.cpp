@@ -261,11 +261,13 @@ int Player::fortify() {
                       << " countries. Which country do you want to move armies from ? (choose 0 to "
                       << this->getOwnedCountries()->size() - 1 << " ) ";
             std::cin >> fromCountryIndex;
-            if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1) {
+            //new condition
+            if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 || this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1) {
                 std::cout << "\nInvalid input. Try again.\n";
                 continue;
             }
-        } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1);
+            //new condition
+        } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 || this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
     } else {
         return PlayerAction::ABORTED;
     }
@@ -287,12 +289,13 @@ int Player::fortify() {
         std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ") ";
         std::cin >> ctryToFortIndex;
+
         if (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
-        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID() || fromCountry->getAdjCountries() == 0) {
-            std::cout << "\nEither you don't own this country or the country had no neighbours.\n"
+        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID() || fromCountry->getAdjCountries()->empty()) {
+            std::cout << "\nEither you don't own this country or the country has no neighbours.\n"
                       << "Skip turn.\n" << std::endl;
             return -1;
         }
