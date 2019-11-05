@@ -9,25 +9,28 @@
 #include <algorithm>
 #include <random>
 #include <string>
+#include <experimental/filesystem>
 using namespace std;
+namespace fs = std::experimental::filesystem;
 
 GameLoop* GameLoop::gameLoopInstance = nullptr;
-Deck* GameLoop::gameDeck = nullptr;
-Map* Map::mapInstance = nullptr;
+static std::string MAPDIR = "../references/";
 
 /**
  * Game loop constructor
  * @param countryList - the list of all countries in the game
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
-GameLoop::GameLoop(Map* map, vector<Player*>* playerList) {
+GameLoop::GameLoop(Map* map, vector<Player*>* playerList, Deck* deck) {
     gameMap = map;
     allPlayers = playerList;
+    gameDeck = deck;
+    allCountries = map->getMapCountries();
 }
 
-void GameLoop::initInstance(Map* map, vector<Player*>* playerList) {
+void GameLoop::initInstance(Map* map, vector<Player*>* playerList, Deck* deck) {
     if(GameLoop::gameLoopInstance == nullptr) {
-        GameLoop::gameLoopInstance = new GameLoop(map, playerList);
+        GameLoop::gameLoopInstance = new GameLoop(map, playerList, deck);
     } else {
         std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
     }
@@ -167,7 +170,7 @@ void GameStarter::operator=(GameStarter& rhs) {
 /**
  * Main method of the starter
  */
-void GameStarter::start() {
+ void GameLoop::start() {
     auto* mapToLoad = new std::string(chooseMap());
     int numberOfPlayers = choosePlayerNumber();
 
@@ -185,8 +188,7 @@ void GameStarter::start() {
     gameDeck->createDeck();
     gameMap->printMap();
 
-    Map::initInstance(gameMap);
-    GameLoop::initGameDeck(gameDeck);
+
     delete(mapToLoad);
 }
 
@@ -194,8 +196,8 @@ void GameStarter::start() {
  * Prompts the user for a map
  * @return name of the map file
  */
-std::string GameStarter::chooseMap() {
-    if(!mapList->empty()){
+static std::string chooseMap() {
+    /*if(!mapList->empty()){
         unsigned int mapChoice;
         unsigned int numberMaps;
         do{
@@ -211,8 +213,14 @@ std::string GameStarter::chooseMap() {
         }while(mapChoice < 1 || mapChoice > numberMaps || isnan(mapChoice));
         return *(mapList->at(mapChoice - 1));
     }
-    return "";
+    return "";*/
+    vector<std::string> mapList = vector<std::string>();
+    for (const auto & entry : fs::directory_iterator(MAPDIR)) {
+       if(entry.)
+    }
+
 }
+
 
 /**
  * Prompts the user for the number of players

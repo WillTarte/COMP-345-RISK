@@ -36,7 +36,6 @@ Map::Map(const Map& toCopy) {
     pMapTitle = new string();
     pMapContinents = new vector<Continent*>;
     pMapCountries = new vector<Country*>;
-    std::cout << *toCopy.getMapTitle();
     *pMapTitle = *toCopy.pMapTitle;
     *pMapContinents = *toCopy.pMapContinents;
     *pMapCountries = *toCopy.pMapCountries;
@@ -59,26 +58,6 @@ void::Map::operator=(Map& rhs) {
     this->pMapTitle = rhs.pMapTitle;
     this->pMapContinents = rhs.pMapContinents;
     this->pMapCountries = rhs.pMapCountries;
-}
-
-Map* Map::getMapInstance() {
-    if (mapInstance == nullptr) {
-        return nullptr;
-    }
-    return  mapInstance;
-}
-
-void Map::resetInstance() {
-    delete mapInstance;
-    mapInstance = nullptr;
-}
-
-void Map::initInstance(Map* map) {
-    if(Map::mapInstance == nullptr) {
-        Map::mapInstance = new Map(*map);
-    } else {
-        std::cout << "Tried to create an instance of Map, but one already exists!" << std::endl;
-    }
 }
 
 /**
@@ -123,16 +102,6 @@ void Map::Continent::operator=(Map::Continent& rhs) {
     this->pCName = rhs.pCName;
     this->pCTroops = rhs.pCTroops;
     this->pCountriesInContinent = rhs.pCountriesInContinent;
-}
-
-/**
- * add a country to this continent, it does not create a copy of the country, it only adds its pointer to a list
- * of pointers. It is used to keep track of which nodes compose each subgraph.
- *
- * @param c the country to add
- */
-void Map::Continent::setCountry(Map::Country* c) {
-    pCountriesInContinent->push_back(c);
 }
 
 /**
@@ -187,7 +156,7 @@ Map::Country* Map::addNode(int id, std::string name, int continent) {
     //add node to graph (overall graph)
     pMapCountries->push_back(thisCountry);
     //add node to relevant subgraph
-    (*pMapContinents)[continent - 1]->setCountry(thisCountry);
+    (*pMapContinents)[continent - 1]->addCountry(thisCountry);
     return thisCountry;
 }
 

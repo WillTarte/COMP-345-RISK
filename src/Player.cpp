@@ -179,6 +179,96 @@ static int getNumDefendingDice(Map::Country* toCountry) {
 }
 
 /**
+ * The act of moving armies between adjacent and owned countries
+ *
+ * @param fromCountry the country to take armies from
+ * @param countryToFortify  the country the player wants to fortify
+ * @param numArmies  the number of armies to move
+ */
+int Player::executeFortify(Map::Country& fromCountry, Map::Country& countryToFortify, int numArmies) {
+    /*
+     * Act of moving armies between this player's owned countries.
+     * fromCountry and countryToFortify have to be owned by this player and adjacent to each other.
+     */
+
+    fromCountry.setNumberOfTroops(fromCountry.getNumberOfTroops() - numArmies);
+    countryToFortify.setNumberOfTroops(countryToFortify.getNumberOfTroops() + numArmies);
+    std::cout << "\nPlayer " << this->getPlayerId() << " has fortified " << countryToFortify.getCountryName() << " from "
+              << fromCountry.getCountryName() << std::endl;
+    return PlayerAction::SUCCEEDED;
+}
+
+int Player::fortify() {
+
+    char playerChoice = 0;
+    int fromCountryIndex = -1;
+    int ctryToFortIndex = -1;
+    int numArmies = -1;
+
+    do {
+        std::cin.clear();
+        std::cout << "\nDo you wish to fortify a country this turn (y/n)? ";
+        std::cin >> playerChoice;
+        if (playerChoice != 'y' && playerChoice != 'n') {
+            std::cout << "\nInvalid input. Try again.\n";
+            continue;
+        }
+    } while (playerChoice != 'y' && playerChoice != 'n');
+
+    if (playerChoice == 'y') {
+        do {
+            std::cin.clear();
+            showCountries(*this->getOwnedCountries());
+            std::cout << "\nYou own " << this->getOwnedCountries()->size()
+                      << " countries. Which country do you want to move armies from ? (choose 0 to "
+                      << this->getOwnedCountries()->size() - 1 << " ) ";
+            std::cin >> fromCountryIndex;
+            //new condition
+            if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 || this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1) {
+                std::cout << "\nInvalid input. Try again.\n";
+                continue;
+            }
+            //new condition
+        } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 || this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
+    } else {
+        return PlayerAction::ABORTED;
+    }
+
+    Map::Country* fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
+    do {
+        std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
+                  << " How many would you like to move ? (1 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
+        std::cin >> numArmies;
+        if (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1) {
+            std::cout << "\nInvalid input. Try again.\n";
+            continue;
+        }
+    } while (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1);
+
+    do {
+        std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size()
+                  << " neighbours\n";\
+        std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
+                  << fromCountry->getAdjCountries()->size() - 1 << ") ";
+        std::cin >> ctryToFortIndex;
+
+        if (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1) {
+            std::cout << "\nInvalid input. Try again.\n";
+            continue;
+        }
+        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID() || fromCountry->getAdjCountries()->empty()) {
+            std::cout << "\nEither you don't own this country or the country has no neighbours.\n"
+                      << "Skip turn.\n" << std::endl;
+            return -1;
+        }
+    } while (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1 || getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID());
+
+    Map::Country* countryToFortify = fromCountry->getAdjCountries()->at(ctryToFortIndex);
+
+    return this->executeFortify(*fromCountry, *countryToFortify, numArmies);
+}
+
+/**
  * Private helper Method to execute the logic of the Player attack() behavior.
  *
  * @param fromCountry the country to attack from
@@ -387,37 +477,6 @@ int Player::reinforce() {
     }
 
     return PlayerAction::SUCCEEDED;
-}
-
-/**
- * The act of moving armies between adjacent and owned countries
- * @returns An integer representing the success/failure of the action
- */
-int Player::fortify() {
-    /*
-     * Act of moving armies between this player's owned countries.
-     * fromCountry and toCountry have to be owned by this player and adjacent to each other.
-     */
-
-    //TODO - implement the fortify method and fix the driver
-    /*
-    if (numArmies >= fromCountry.getNumberOfTroops()) {
-        return PlayerAction::FAILED;
-    }
-
-    if (!checkIfAdjacent(fromCountry, toCountry) || !checkOwnedByPlayer(*this, fromCountry) ||
-        !checkOwnedByPlayer(*this, toCountry)) {
-        return PlayerAction::FAILED;
-    }
-
-    fromCountry.setNumberOfTroops(fromCountry.getNumberOfTroops() - numArmies);
-    toCountry.setNumberOfTroops(toCountry.getNumberOfTroops() + numArmies);
-    std::cout << "\nPlayer " << this->getPlayerId() << " has reinforced " << toCountry.getCountryName() << " from "
-              << fromCountry.getCountryName() << std::endl;
-    return PlayerAction::SUCCEEDED;
-     */
-
-    return 0;
 }
 
 /**
