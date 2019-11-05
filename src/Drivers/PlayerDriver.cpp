@@ -229,7 +229,6 @@ bool test_Player_attack() {
 
     std::vector<Map::Country*> countries = {pCountry1, pCountry2};
     std::vector<Player*> players = {&player1, &player2};
-    GameLoop::initInstance(&countries, &players);
 
     // Act & Assert
     if (player1.attack() == PlayerAction::FAILED) {
@@ -238,10 +237,8 @@ bool test_Player_attack() {
 
     return success;
 }
-/*
-bool test_Player_reinforce(bool verbose = false) {
 
-    // Arrange
+bool test_Player_reinforce(bool verbose = false) {
     bool success = true;
     const int numArmies = 4;
     const int numFortify = 10;
@@ -255,7 +252,7 @@ bool test_Player_reinforce(bool verbose = false) {
     // Act & Assert
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
 
-    if (player1.reinforce(country1, numFortify) == PlayerAction::FAILED) {
+    if (player1.reinforce() == PlayerAction::FAILED) {
         success = false;
     }
 
@@ -269,7 +266,7 @@ bool test_Player_reinforce(bool verbose = false) {
 
     return success;
 }
- */
+
 ////////////////////////////////////////////////////////////
 ////////////////////// Run Tests ///////////////////////////
 ////////////////////////////////////////////////////////////
@@ -295,7 +292,7 @@ int main() {
 
     std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
 
-    //std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
+    std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 
     //std::cout << assert("Player", "fortify", test_Player_fortify(true)) << std::endl;
 
