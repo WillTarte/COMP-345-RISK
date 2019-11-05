@@ -10,9 +10,6 @@
 #include <vector>
 #include <iterator>
 
-
-//TODO - fix the driver using the new attack, fortify, and reinforce methods
-
 bool test_Player_Constructor() {
 
     // Arrange
@@ -38,7 +35,7 @@ bool test_Player_Constructor() {
     Player player1 = Player(ownedCountries1, cards, diceRoller, playerId);
 
     // Assert
-    if (player1.getOwnedCountries()->empty() || player1.getCards().getHand()->empty() ||
+    if (player1.getOwnedCountries()->empty() || player1.getCards()->getHand()->empty() ||
         playerId != player1.getPlayerId()) {
         success = false;
     }
@@ -95,13 +92,13 @@ bool test_Player_getHand(bool verbose = false) {
     Player player1 = Player(ownedCountries1, cards, DiceRoller(), 1);
 
     // Assert
-    if (player1.getCards().getHand()->empty()) {
+    if (player1.getCards()->getHand()->empty()) {
         success = false;
     }
 
     if (verbose) {
         std::cout << "\n" << "\033[35m";
-        for (auto& i : *player1.getCards().getHand()) {
+        for (auto& i : *player1.getCards()->getHand()) {
             switch ((int) i) {
                 case 0:
                     std::cout << "player1 has a card " << "INFANTRY" << std::endl;
@@ -129,10 +126,10 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
 
     // Assert
-    if (player1.getDiceRoller().roll(1).empty()
-        || player1.getDiceRoller().roll(2).size() != 2
-        || player1.getDiceRoller().getHistory().empty()
-        || player1.getDiceRoller().getPercentages().empty()) {
+    if (player1.getDiceRoller()->roll(1).empty()
+        || player1.getDiceRoller()->roll(2).size() != 2
+        || player1.getDiceRoller()->getHistory().empty()
+        || player1.getDiceRoller()->getPercentages().empty()) {
 
         success = false;
     }
@@ -140,24 +137,31 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     if (verbose) {
         std::cout << "\n" << "\033[35m";
         std::cout << "player1 rolled ";
-        std::vector<int> rolls = player1.getDiceRoller().roll(1);
+        std::vector<int> rolls = player1.getDiceRoller()->roll(1);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << std::endl;
         std::cout << "player1 rolled ";
-        rolls = player1.getDiceRoller().roll(2);
+        rolls = player1.getDiceRoller()->roll(2);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << std::endl;
         std::cout << "player1 rolled ";
-        rolls = player1.getDiceRoller().roll(3);
+        rolls = player1.getDiceRoller()->roll(3);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << "\033[31m\n";
     }
     return success;
 }
 
-/*
 bool test_Player_fortify(bool verbose = false) {
 
+    bool success = true;
+    GameLoop::start();
+    GameLoop::getInstance()->distributeArmies(); // because you need armies to fortify
+
+    if (GameLoop::getInstance()->getAllPlayers()->at(0)->fortify() == PlayerAction::FAILED) {
+        success = false;
+    }
+    /*
     // Arrange
     const int numArmies = 4;
     bool success = true;
@@ -188,102 +192,62 @@ bool test_Player_fortify(bool verbose = false) {
     }
     if (country1.getNumberOfTroops() >= numArmies) {
         success = false;
-    }
+    }*/
 
     if (verbose) {
+        Map::Country* c1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0);
+        Map::Country* c2 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(1);
         std::cout << "\033[35m";
-        std::cout << "Country " << country1.getCountryName() << " had " << numArmies << " armies" << std::endl;
-        std::cout << "Country " << country1.getCountryName() << " now has " << country1.getNumberOfTroops() << " armies"
+        std::cout << "Country " << c1->getCountryName() << " had " << " x armies" << std::endl;
+        std::cout << "Country " << c1->getCountryName() << " now has " << c1->getNumberOfTroops() << " armies"
                   << std::endl;
-        std::cout << "Country " << country2.getCountryName() << " had " << 0 << " armies" << std::endl;
-        std::cout << "Country " << country2.getCountryName() << " now has " << country2.getNumberOfTroops() << " armies"
+        std::cout << "Country " << c2->getCountryName() << " had " << " x armies" << std::endl;
+        std::cout << "Country " << c2->getCountryName() << " now has " << c2->getNumberOfTroops() << " armies"
                   << std::endl;
         std::cout << "\033[31m";
     }
 
     return success;
 }
-*/
+
 bool test_Player_attack() {
 
     // Arrange
-    const int numArmies = 4;
     bool success = true;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    std::vector<Map::Country*> ownedCountries2 = std::vector<Map::Country*>();
-    Map::Country country1 = Map::Country(0, "country1", 1);
-    Map::Country country2 = Map::Country(1, "country2", 1);
-    country1.setPlayerOwnerID(1);
-    country2.setPlayerOwnerID(2);
-    country1.setNumberOfTroops(numArmies);
-    country2.setNumberOfTroops(numArmies - 2);
-    Map::Country* pCountry1 = &country1;
-    Map::Country* pCountry2 = &country2;
-    ownedCountries1.push_back(pCountry1);
-    ownedCountries2.push_back(pCountry2);
-    country1.getAdjCountries()->push_back(pCountry2);
-    country2.getAdjCountries()->push_back(pCountry1);
-
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
-    Player player2 = Player(ownedCountries2, Hand(), DiceRoller(), 2);
-
-    std::vector<Map::Country*> countries = {pCountry1, pCountry2};
-    std::vector<Player*> players = {&player1, &player2};
-
-    // Act & Assert
-    if (player1.attack() == PlayerAction::FAILED) {
+    GameLoop::start();
+    GameLoop::getInstance()->distributeArmies(); // because you need armies to attack
+    if (GameLoop::getInstance()->getAllPlayers()->at(0)->attack() == PlayerAction::FAILED) {
         success = false;
     }
 
     return success;
 }
 
+
 bool test_Player_reinforce(bool verbose = false) {
+
+    // Arrange
     bool success = true;
-    const int numArmies = 4;
-
-    auto continents = std::vector<Map::Continent*>();
-    auto continent = Map::Continent("North America", numArmies);
-    auto* canada = new Map::Country(0, "Canada", 0);
-    continent.addCountry(canada);
-    continents.push_back(&continent);
-    auto* countries = new vector<Map::Country*>();
-    countries->push_back(canada);
-
-    auto* name = new std::string("test");
-    Map map = Map(*name, continents);
-    map.setMapCountries(countries);
-
-
-    map.getMapCountries()->reserve(1);
-    map.getMapCountries()->push_back(continent.getCountriesInContinent()->at(0));
-
-    Map::initInstance(&map);
-    std::cout << "inited map" << std::endl;
-
-    Deck deck = Deck(10);
-    deck.createDeck();
-    GameLoop::initGameDeck(&deck);
-    Hand hand = Hand();
-    hand.getHand()->push_back(CardType::ARTILLERY);
-    hand.getHand()->push_back(CardType::ARTILLERY);
-    hand.getHand()->push_back(CardType::ARTILLERY);
-    hand.getHand()->push_back(CardType::ARTILLERY);
-
-    // Act & Assert
-    Player player1 = Player(*map.getMapCountries(), hand, DiceRoller(), 1);
-
-    if (player1.reinforce() == PlayerAction::FAILED) {
+    GameLoop::start();
+    //GameLoop::getInstance()->distributeArmies();
+    Hand* pHand = GameLoop::getInstance()->getAllPlayers()->at(0)->getCards();
+    pHand->getHand()->push_back(CardType::CAVALRY);
+    pHand->getHand()->push_back(CardType::CAVALRY);
+    pHand->getHand()->push_back(CardType::CAVALRY);
+    pHand->getHand()->push_back(CardType::CAVALRY);
+    pHand->getHand()->push_back(CardType::CAVALRY);
+    if (GameLoop::getInstance()->getAllPlayers()->at(0)->reinforce() == PlayerAction::FAILED) {
         success = false;
     }
 
-    auto country1 = *map.getMapCountries()[0][0];
     if (verbose) {
-        std::cout << "\033[35m";
-        std::cout << "player1's " << country1.getCountryName() << " had " << numArmies << " armies" << std::endl;
-        std::cout << "player1's " << country1.getCountryName() << " now has " << country1.getNumberOfTroops()
-                  << " armies" << std::endl;
-        std::cout << "\033[31m";
+        for (auto* c: *GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()) {
+            std::cout << "\033[35m";
+            std::cout << "player1's " << c->getCountryName() << " had " << "x" << " armies" << std::endl;
+            std::cout << "player1's " << c->getCountryName() << " now has " << c->getNumberOfTroops()
+                      << " armies" << std::endl;
+            std::cout << "\033[31m";
+        }
     }
 
     return success;
@@ -312,10 +276,10 @@ int main() {
 
     std::cout << assert("Player", "getDiceRoller", test_Player_getDiceRoller(true)) << std::endl;
 
-    // std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
+    std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
 
     std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 
-    //std::cout << assert("Player", "fortify", test_Player_fortify(true)) << std::endl;
+    std::cout << assert("Player", "fortify", test_Player_fortify(true)) << std::endl;
 
 }

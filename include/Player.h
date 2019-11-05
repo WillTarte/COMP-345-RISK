@@ -19,11 +19,14 @@ public:
     int reinforce();
     int attack();
     int fortify();
-    inline Hand& getCards() { return *pCards; }
+
+    inline Hand* getCards() { return pCards; }
     inline std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
     inline void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
-    inline DiceRoller& getDiceRoller() { return *pDiceRoller; }
-    inline int getPlayerId() { return *pPlayerId; }
+
+    inline DiceRoller* getDiceRoller() { return pDiceRoller; }
+
+    inline int getPlayerId() const { return *pPlayerId; }
 
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);

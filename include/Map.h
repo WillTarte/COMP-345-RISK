@@ -51,7 +51,6 @@ public:
         ~Continent();
         Continent(Map::Continent& toCopy);
         void operator=(Continent& rhs);
-        void setCountry(Map::Country* c);
         inline std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         inline std::string getContinentName() { return *pCName; }
         inline int getpCTroops() { return *pCTroops; }
@@ -69,19 +68,13 @@ public:
 
     inline void setMapCountries(std::vector<Country*>* c) { pMapCountries = c; }
     inline std::vector<Continent*>* getMapContinents(){return pMapContinents;};
-    static Map* getMapInstance();
-    static void resetInstance();
-    static void initInstance(Map* map);
 
 private:
     std::string* pMapTitle;
     std::vector<Continent*>* pMapContinents;
     std::vector<Country*>* pMapCountries;
-    static Map* mapInstance;
     static bool testIndividualGraph(std::vector<Country*>* toTest, bool isContinent);
     static void dfs(std::set<std::string>* visitedCountries,Country* countries, bool continentTest);
 };
-
-bool checkIfAdjacent(Map::Country& country1, Map::Country& country2);
 
 #endif //COMP_345_PROJ_MAP_H
