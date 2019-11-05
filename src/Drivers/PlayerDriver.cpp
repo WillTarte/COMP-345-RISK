@@ -241,21 +241,43 @@ bool test_Player_attack() {
 bool test_Player_reinforce(bool verbose = false) {
     bool success = true;
     const int numArmies = 4;
-    const int numFortify = 10;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    Map::Country country1 = Map::Country(0, "country1", 1);
-    country1.setPlayerOwnerID(1);
-    country1.setNumberOfTroops(numArmies);
-    Map::Country* pCountry1 = &country1;
-    ownedCountries1.push_back(pCountry1);
+
+    auto continents = std::vector<Map::Continent*>();
+    auto continent = Map::Continent("North America", numArmies);
+    auto* canada = new Map::Country(0, "Canada", 0);
+    continent.addCountry(canada);
+    continents.push_back(&continent);
+    auto* countries = new vector<Map::Country*>();
+    countries->push_back(canada);
+
+    auto* name = new std::string("test");
+    Map map = Map(*name, continents);
+    map.setMapCountries(countries);
+
+
+    map.getMapCountries()->reserve(1);
+    map.getMapCountries()->push_back(continent.getCountriesInContinent()->at(0));
+
+    Map::initInstance(&map);
+    std::cout << "inited map" << std::endl;
+
+    Deck deck = Deck(10);
+    deck.createDeck();
+    GameLoop::initGameDeck(&deck);
+    Hand hand = Hand();
+    hand.getHand()->push_back(CardType::ARTILLERY);
+    hand.getHand()->push_back(CardType::ARTILLERY);
+    hand.getHand()->push_back(CardType::ARTILLERY);
+    hand.getHand()->push_back(CardType::ARTILLERY);
 
     // Act & Assert
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
+    Player player1 = Player(*map.getMapCountries(), hand, DiceRoller(), 1);
 
     if (player1.reinforce() == PlayerAction::FAILED) {
         success = false;
     }
 
+    auto country1 = *map.getMapCountries()[0][0];
     if (verbose) {
         std::cout << "\033[35m";
         std::cout << "player1's " << country1.getCountryName() << " had " << numArmies << " armies" << std::endl;
@@ -290,7 +312,7 @@ int main() {
 
     std::cout << assert("Player", "getDiceRoller", test_Player_getDiceRoller(true)) << std::endl;
 
-    std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
+    // std::cout << assert("Player", "attack", test_Player_attack()) << std::endl;
 
     std::cout << assert("Player", "reinforce", test_Player_reinforce(true)) << std::endl;
 

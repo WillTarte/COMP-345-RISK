@@ -32,10 +32,11 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
  * Map copy constructor
  * @param toCopy
  */
-Map::Map(const Map &toCopy) {
+Map::Map(const Map& toCopy) {
     pMapTitle = new string();
     pMapContinents = new vector<Continent*>;
     pMapCountries = new vector<Country*>;
+    std::cout << *toCopy.getMapTitle();
     *pMapTitle = *toCopy.pMapTitle;
     *pMapContinents = *toCopy.pMapContinents;
     *pMapCountries = *toCopy.pMapCountries;
@@ -64,7 +65,6 @@ Map* Map::getMapInstance() {
     if (mapInstance == nullptr) {
         return nullptr;
     }
-
     return  mapInstance;
 }
 
@@ -267,6 +267,11 @@ void Map::printMap() {
             std::cout << currCountryName << " is owned by player " << j->getPlayerOwnerID() <<" and has " << j->getNumberOfTroops() << " troops \n";
         }
     }
+}
+
+Map::Map(std::string& mapTitle, vector<Continent*> continents) {
+    pMapTitle = &mapTitle;
+    pMapContinents = &continents;
 }
 
 /**

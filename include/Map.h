@@ -11,13 +11,19 @@
 
 class Map {
 public:
+    class Continent;
+    class Country;
+
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
+
+    Map(std::string& mapTitle, std::vector<Continent*> continents);
     ~Map();
     Map(const Map& toCopy);
     void operator=(Map& rhs);
     void printMap();
     bool testConnected();
-    inline std::string* getMapTitle(){return pMapTitle;};
+
+    inline std::string* getMapTitle() const { return pMapTitle; };
     class Country{
         public:
             Country(int id, std::string name, int continent);
@@ -49,6 +55,7 @@ public:
         inline std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         inline std::string getContinentName() { return *pCName; }
         inline int getpCTroops() { return *pCTroops; }
+        inline void addCountry(Country* country) { pCountriesInContinent->push_back(country); }
 
     private:
         std::vector<Country*>* pCountriesInContinent;
@@ -59,6 +66,8 @@ public:
     Map::Country* addNode(int id, std::string name, int continent);
     void addEdge(int from, int to);
     inline std::vector<Country*>* getMapCountries(){return pMapCountries;};
+
+    inline void setMapCountries(std::vector<Country*>* c) { pMapCountries = c; }
     inline std::vector<Continent*>* getMapContinents(){return pMapContinents;};
     static Map* getMapInstance();
     static void resetInstance();
