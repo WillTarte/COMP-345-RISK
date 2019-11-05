@@ -68,6 +68,7 @@ public:
     static Map* getMapInstance();
     static void resetInstance();
     static void initInstance(Map* map);
+    void setMapCountries(std::vector<Country*>* countries){ pMapCountries = countries;}
 
 private:
     std::string* pMapTitle;
