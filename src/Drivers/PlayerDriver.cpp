@@ -243,10 +243,16 @@ bool test_Player_reinforce(bool verbose = false) {
     const int numArmies = 4;
 
     auto continents = std::vector<Map::Continent*>();
-    auto continent = Map::Continent("North America", numArmies);
-    continent.addCountry(new Map::Country(0, "Canada", 0));
+    auto countries = std::vector<Map::Country*>();
 
-    Map map = Map("test", continents);
+    auto continent = new Map::Continent("North America", numArmies);
+    auto country = new Map::Country(0, "Canada", 0);
+
+    continents.push_back(continent);
+    countries.push_back(country);
+    continent->addCountry(country);
+
+    Map map = Map("test", continents, countries);
     Map::initInstance(&map);
 
     // Act & Assert

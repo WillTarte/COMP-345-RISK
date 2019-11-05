@@ -41,6 +41,12 @@ Map::Map(const Map &toCopy) {
     *pMapCountries = *toCopy.pMapCountries;
 }
 
+Map::Map(std::string mapTitle, vector<Continent*> continents, vector<Country*> countries) {
+    pMapTitle = &mapTitle;
+    pMapContinents = &continents;
+    pMapCountries = &countries;
+}
+
 /**
  * Map destructor
  */
@@ -74,7 +80,7 @@ void Map::resetInstance() {
 
 void Map::initInstance(Map* map) {
     if(Map::mapInstance == nullptr) {
-        Map::mapInstance = new Map(*map);
+        Map::mapInstance = map;
     } else {
         std::cout << "Tried to create an instance of Map, but one already exists!" << std::endl;
     }
@@ -268,10 +274,6 @@ void Map::printMap() {
     }
 }
 
-Map::Map(std::string mapTitle, vector<Continent*> continents) {
-    pMapTitle = &mapTitle;
-    pMapContinents = &continents;
-}
 
 /**
  * Checks if two countries are adjacent, by country name

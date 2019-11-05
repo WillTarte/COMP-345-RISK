@@ -15,7 +15,7 @@ public:
     class Country;
 
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
-    Map(std::string mapTitle, std::vector<Continent*> continents);
+    Map(std::string mapTitle, std::vector<Continent*> continents, std::vector<Country*> countries);
     ~Map();
     Map(const Map& toCopy);
     void operator=(Map& rhs);

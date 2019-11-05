@@ -256,11 +256,11 @@ int Player::reinforce() {
      * 2. Place received armies on the map
      */
 
-    auto cardExchange = [](Player player) {
+    auto cardExchange = [](Player* player) {
         auto output = 0;
 
         while (true) {
-            if (player.getCards().getHand()->size() > 5) {
+            if (player->getCards().getHand()->size() > 5) {
                 std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
             }
             else {
@@ -268,9 +268,7 @@ int Player::reinforce() {
                 std::cout << "Would you like to exchange cards? (Y/n)";
                 std::cin >> input;
                 std::cin.clear();
-                std::cout << "'" << input << "'" << std::endl;
                 if (input == "n" || input == "N") {
-                    std::cout << "Here";
                     break;
                 }
             }
@@ -280,7 +278,7 @@ int Player::reinforce() {
             auto types = std::vector<int>(3);
             types.reserve(3);
             types[0] = 0, types[1] = 0, types[2] = 0;
-            for (auto card : *player.getCards().getHand()) {
+            for (auto card : *player->getCards().getHand()) {
                 switch (card) {
                     case CardType::INFANTRY: types[0]++; break;
                     case CardType::ARTILLERY: types[1]++; break;
@@ -325,7 +323,7 @@ int Player::reinforce() {
                 }
             }
 
-            auto out = Hand::exchange(player.getCards(), GameLoop::getGameDeck(), *exchange);
+            auto out = Hand::exchange(player->getCards(), GameLoop::getGameDeck(), *exchange);
             if (out == -1) {
                 std::cout << "An error occurred while exchanging your cards." << std::endl;
                 return -1;
@@ -338,19 +336,19 @@ int Player::reinforce() {
         return output;
     };
 
-    auto countriesOwned = [](Player player) {
-        auto countries = player.getOwnedCountries()->size();
+    auto countriesOwned = [](Player* player) {
+        auto countries = player->getOwnedCountries()->size();
 
         return countries < 9 ? 3 : countries / 3;
     };
 
-    auto continentControlValue = [](Player player) {
+    auto continentControlValue = [](Player* player) {
         auto value = 0;
         for (auto* cont : *Map::getMapInstance()->getMapContinents()) {
             auto fullControl = true;
 
             for (auto* country : *cont->getCountriesInContinent()) {
-                if (player.getPlayerId() != country->getPlayerOwnerID()) {
+                if (player->getPlayerId() != country->getPlayerOwnerID()) {
                     fullControl = false;
                     break;
                 }
@@ -364,14 +362,14 @@ int Player::reinforce() {
         return value;
     };
 
-    auto exchange = cardExchange(*this);
+    auto exchange = cardExchange(this);
     if (exchange < 0) {
         return PlayerAction::FAILED;
     }
 
     auto newArmies = exchange +
-            countriesOwned(*this) +
-            continentControlValue(*this);
+            countriesOwned(this) +
+            continentControlValue(this);
 
     std::cout << "Place your armies:" << std::endl;
 
