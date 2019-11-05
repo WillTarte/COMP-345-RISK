@@ -11,7 +11,11 @@
 
 class Map {
 public:
+    class Continent;
+    class Country;
+
     Map(std::string mapTitle,std::vector<std::vector<std::string>> ctd);
+    Map(std::string mapTitle, std::vector<Continent*> continents);
     ~Map();
     Map(const Map& toCopy);
     void operator=(Map& rhs);
@@ -49,6 +53,7 @@ public:
         inline std::vector<Country*>* getCountriesInContinent(){return pCountriesInContinent;};
         inline std::string getContinentName() { return *pCName; }
         inline int getpCTroops() { return *pCTroops; }
+        inline void addCountry(Country* country) { pCountriesInContinent->push_back(country); }
 
     private:
         std::vector<Country*>* pCountriesInContinent;

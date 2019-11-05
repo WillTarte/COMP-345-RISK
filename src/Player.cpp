@@ -258,9 +258,8 @@ int Player::reinforce() {
 
     auto cardExchange = [](Player player) {
         auto output = 0;
-        auto exchanging = true;
 
-        while (exchanging) {
+        while (true) {
             if (player.getCards().getHand()->size() > 5) {
                 std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
             }
@@ -268,15 +267,18 @@ int Player::reinforce() {
                 string input = "";
                 std::cout << "Would you like to exchange cards? (Y/n)";
                 std::cin >> input;
-                if (!(input == "\n" || input[0] == 'y' || input[0] == 'Y')) {
-                    exchanging = false;
+                std::cin.clear();
+                std::cout << "'" << input << "'" << std::endl;
+                if (input == "n" || input == "N") {
+                    std::cout << "Here";
                     break;
                 }
             }
 
             std::cout << "What cards would you like to exchange?" << std::endl;
 
-            auto types = std::vector<int>();
+            auto types = std::vector<int>(3);
+            types.reserve(3);
             types[0] = 0, types[1] = 0, types[2] = 0;
             for (auto card : *player.getCards().getHand()) {
                 switch (card) {
@@ -294,34 +296,38 @@ int Player::reinforce() {
             std::cout << types[1] << " artillery, and ";
             std::cout << types[2] << " cavalry" << std::endl;
 
-            auto exchange = std::vector<CardType>();
+            auto* exchange = new std::vector<CardType>();
             auto remaining = 3;
-            for (auto i = 0 ; i <= 2 ; i++) {
-                if (types[i] > 0) {
-                    auto input = 0;
-                    do {
-                        std::cout << "How many " << (i == 0 ? "artillery" : i == 1 ? "infantry" : "cavalry");
-                        std::cout << " would you like to exchange?";
-                        std::cin >> input;
-                        if (input > remaining) {
-                            std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
-                        }
-                        else if (input > types[i]) {
-                            std::cout << "You cannot exchange more cards of a given type than you have in your hand.";
-                        }
-                        else {
-                            for (auto i = 0 ; i < input ; i++, remaining--) {
-                                exchange.push_back((CardType) i);
-                            }
 
-                        }
-                    } while (input > types[i] || input > remaining);
+            while (remaining > 0) {
+                std::cout << "You must pick " << remaining << " more cards to exchange" << std::endl;
+                for (auto i = 0 ; i <= 2 ; i++) {
+                    if (types[i] > 0) {
+                        auto input = 0;
+                        do {
+                            std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
+                            std::cout << " would you like to exchange?";
+                            std::cin >> input;
+                            if (input > remaining) {
+                                std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
+                            }
+                            else if (input > types[i]) {
+                                std::cout << "You cannot exchange more cards of a given type than you have in your hand.";
+                            }
+                            else {
+                                for (auto j = 0 ; j < input ; j++, remaining--) {
+                                    exchange->push_back((CardType) j);
+                                }
+
+                            }
+                        } while ((input > types[i] || input > remaining) && remaining != 0);
+                    }
                 }
             }
 
-            auto out = Hand::exchange(player.getCards(), GameLoop::getGameDeck(), exchange);
+            auto out = Hand::exchange(player.getCards(), GameLoop::getGameDeck(), *exchange);
             if (out == -1) {
-                std::cout << "An error occured while exchanging your cards." << std::endl;
+                std::cout << "An error occurred while exchanging your cards." << std::endl;
                 return -1;
             }
             else {
@@ -359,7 +365,7 @@ int Player::reinforce() {
     };
 
     auto exchange = cardExchange(*this);
-    if (exchange == -1) {
+    if (exchange < 0) {
         return PlayerAction::FAILED;
     }
 

@@ -64,7 +64,6 @@ Map* Map::getMapInstance() {
     if (mapInstance == nullptr) {
         return nullptr;
     }
-
     return  mapInstance;
 }
 
@@ -267,6 +266,11 @@ void Map::printMap() {
             std::cout << currCountryName << " is owned by player " << j->getPlayerOwnerID() <<" and has " << j->getNumberOfTroops() << " troops \n";
         }
     }
+}
+
+Map::Map(std::string mapTitle, vector<Continent*> continents) {
+    pMapTitle = &mapTitle;
+    pMapContinents = &continents;
 }
 
 /**

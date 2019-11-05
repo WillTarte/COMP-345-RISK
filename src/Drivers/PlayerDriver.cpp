@@ -241,21 +241,22 @@ bool test_Player_attack() {
 bool test_Player_reinforce(bool verbose = false) {
     bool success = true;
     const int numArmies = 4;
-    const int numFortify = 10;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    Map::Country country1 = Map::Country(0, "country1", 1);
-    country1.setPlayerOwnerID(1);
-    country1.setNumberOfTroops(numArmies);
-    Map::Country* pCountry1 = &country1;
-    ownedCountries1.push_back(pCountry1);
+
+    auto continents = std::vector<Map::Continent*>();
+    auto continent = Map::Continent("North America", numArmies);
+    continent.addCountry(new Map::Country(0, "Canada", 0));
+
+    Map map = Map("test", continents);
+    Map::initInstance(&map);
 
     // Act & Assert
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
+    Player player1 = Player(*map.getMapCountries(), Hand(), DiceRoller(), 1);
 
     if (player1.reinforce() == PlayerAction::FAILED) {
         success = false;
     }
 
+    auto country1 = *map.getMapCountries()[0][0];
     if (verbose) {
         std::cout << "\033[35m";
         std::cout << "player1's " << country1.getCountryName() << " had " << numArmies << " armies" << std::endl;
