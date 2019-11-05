@@ -65,9 +65,9 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    auto* countryList = new vector<Map::Country*>(*starter.getGameMap()->getMapCountries());
+    auto* map = new Map(*starter.getGameMap());
     auto* playerList = new vector<Player*>(*starter.getGamePlayers());
-    GameLoop::initInstance(countryList, playerList);
+    GameLoop::initInstance(map, playerList);
     GameLoop::getInstance()->loop();
     GameLoop::resetInstance();
 
