@@ -27,6 +27,7 @@ public:
 
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
+    int executeFortify(Map::Country& fromCountry, Map::Country& countryToFortify, int numArmies);
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
     DiceRoller* pDiceRoller;
