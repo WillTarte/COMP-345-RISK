@@ -12,6 +12,7 @@
 using namespace std;
 
 GameLoop* GameLoop::gameLoopInstance = nullptr;
+Deck* GameLoop::gameDeck = nullptr;
 Map* Map::mapInstance = nullptr;
 
 /**
