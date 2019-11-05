@@ -287,12 +287,18 @@ int Player::fortify() {
         std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ") ";
         std::cin >> ctryToFortIndex;
+
+        //doesn't work
+        if (fromCountry->getAdjCountries()->at(ctryToFortIndex)->getNumberOfTroops() <= 1) {
+            std::cout << "\nThis country does not have enough armies.\n" << std::endl;
+            return -1;
+        }
         if (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
         if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID() || fromCountry->getAdjCountries() == 0) {
-            std::cout << "\nEither you don't own this country or the country had no neighbours.\n"
+            std::cout << "\nEither you don't own this country or the country has no neighbours.\n"
                       << "Skip turn.\n" << std::endl;
             return -1;
         }
