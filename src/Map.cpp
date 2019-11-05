@@ -74,8 +74,11 @@ void Map::resetInstance() {
 }
 
 void Map::initInstance(Map* map) {
-    delete mapInstance;
-    mapInstance = nullptr;
+    if(Map::mapInstance == nullptr) {
+        Map::mapInstance = new Map(*map);
+    } else {
+        std::cout << "Tried to create an instance of Map, but one already exists!" << std::endl;
+    }
 }
 
 /**

@@ -175,13 +175,14 @@ void GameStarter::start() {
         start();
         return;
     }
-    Map::initInstance(gameMap);
 
     gamePlayers = initPlayers(numberOfPlayers, gameMap);
     gameDeck = new Deck(gameMap->getMapCountries()->size());
     gameDeck->createDeck();
     gameMap->printMap();
 
+    Map::initInstance(gameMap);
+    GameLoop::initGameDeck(gameDeck);
     delete(mapToLoad);
 }
 
@@ -250,7 +251,7 @@ vector<Player*>* GameStarter::initPlayers(int numPlayers, Map* map){
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
     for(int i = 0; i < numPlayers; i++){
-        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i, *map));
+        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;

@@ -9,8 +9,6 @@
 #include <iostream>
 #include <utility>
 
-using namespace std;
-
 /**
  * Player constructor
  *
@@ -259,20 +257,32 @@ int Player::reinforce() {
      */
 
     auto cardExchange = [](Player player) {
-        auto exchange = new std::vector<CardType>();
+        auto output = 0;
+        auto exchanging = true;
 
-        if (player.getCards().getHand()->size() > 5) {
-            std::cout << "You have more than 4 cards in your hand, so you must exchange at least once" << std::endl;
+        while (exchanging) {
+            if (player.getCards().getHand()->size() > 5) {
+                std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
+            }
+            else {
+                string input = "";
+                std::cout << "Would you like to exchange cards? (Y/n)";
+                std::cin >> input;
+                if (!(input == "\n" || input[0] == 'y' || input[0] == 'Y')) {
+                    exchanging = false;
+                    break;
+                }
+            }
+
             std::cout << "What cards would you like to exchange?" << std::endl;
 
-            int artillery = 0;
-            int infantry = 0;
-            int cavalry = 0;
+            auto types = std::vector<int>();
+            types[0] = 0, types[1] = 0, types[2] = 0;
             for (auto card : *player.getCards().getHand()) {
                 switch (card) {
-                    case CardType::ARTILLERY: artillery++;
-                    case CardType::INFANTRY: infantry++;
-                    case CardType::CAVALRY: cavalry++;
+                    case CardType::INFANTRY: types[0]++; break;
+                    case CardType::ARTILLERY: types[1]++; break;
+                    case CardType::CAVALRY: types[2]++; break;
                     default: {
                         return 0;
                     }
@@ -280,14 +290,39 @@ int Player::reinforce() {
             }
 
             std::cout << "You hand is: " << std::endl;
-            std::cout << artillery << " artillery" << std::endl;
-            std::cout << cavalry << " cavalry" << std::endl;
-            std::cout << infantry << " infantry" << std::endl;
+            std::cout << types[0] << " infantry, ";
+            std::cout << types[1] << " artillery, and ";
+            std::cout << types[2] << " cavalry" << std::endl;
 
+            auto exchange = std::vector<CardType>();
+            auto remaining = 3;
+            for (auto i = 0 ; i <= 2 ; i++) {
+                if (types[i] > 0) {
+                    auto input = 0;
+                    do {
+                        std::cout << "How many " << (i == 0 ? "artillery" : i == 1 ? "infantry" : "cavalry");
+                        std::cout << " would you like to exchange?";
+                        std::cin >> input;
+                        if (input > remaining) {
+                            std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
+                        }
+                        else if (input > types[i]) {
+                            std::cout << "You cannot exchange more cards of a given type than you have in your hand.";
+                        }
+                        else {
+                            for (auto i = 0 ; i < input ; i++, remaining--) {
+                                exchange.push_back((CardType) i);
+                            }
 
+                        }
+                    } while (input > types[i] || input > remaining);
+                }
+            }
+
+            Hand::exchange(player.getCards(), GameLoop::getGameDeck(), exchange);
         }
 
-        return 0;
+        return output;
     };
 
     auto countriesOwned = [](Player player) {
