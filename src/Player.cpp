@@ -88,12 +88,18 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player* defendingP
 static void showCountries(const std::vector<Map::Country*>& countries) {
     std::cout << "\nYour owned countries: \n";
     //Print all the player's owned countries so they are reminded what they have in order to choose
+    int idCount = 0;
+    int idAdj;
     for (const auto i : countries){
+        std::cout << idCount << ". ";
         std::cout << i->getCountryName() << " with ";
         std::cout << i->getNumberOfTroops() << " armies and ";
         std::cout << i->getAdjCountries()->size() << " adjacent country/ies ; \n";
+        idCount++;
+        idAdj = 0;
         for (auto& pAdjCountry : *i->getAdjCountries()) {
-            std::cout << "    - " << pAdjCountry->getCountryName() << " (owned by Player " << pAdjCountry->getPlayerOwnerID() << ")\n";
+            std::cout << "    - " << idAdj << ". " << pAdjCountry->getCountryName() << " (owned by Player " << pAdjCountry->getPlayerOwnerID() << ")\n";
+            idAdj++;
         }
     }
 }
