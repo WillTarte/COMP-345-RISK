@@ -267,13 +267,13 @@ int Player::fortify() {
     Map::Country* fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
     do {
         std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
-                  << " How many would you like to move ? (0 to " << fromCountry->getNumberOfTroops() - 2 << ") ";
+                  << " How many would you like to move ? (0 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
         std::cin >> numArmies;
-        if (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 2) {
+        if (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
-    } while (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 2);
+    } while (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 1);
 
     do {
         std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size()
