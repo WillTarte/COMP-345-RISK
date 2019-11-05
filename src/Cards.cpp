@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "../include/Cards.h"
+using namespace std;
 
 namespace globalHandVariables {
     int tradedSetsCount = 1;
@@ -23,10 +24,65 @@ Deck::Deck(int amountCountries) {
 }
 
 /**
+ * Deck destructor
+ */
+Deck::~Deck() {
+    delete deckSize;
+    delete deckPointer;
+    delete discardPointer;
+}
+
+/**
+ * Deck copy constructor
+ * @param toCopy
+ */
+Deck::Deck(const Deck &toCopy) {
+    deckSize = new int();
+    deckPointer = new vector<CardType>;
+    discardPointer = new vector<CardType>;
+    *deckSize = *toCopy.deckSize;
+    *deckPointer = *toCopy.deckPointer;
+    *discardPointer = *toCopy.discardPointer;
+}
+
+/**
+ * assignment operator
+ */
+void Deck::operator=(Deck& rhs) {
+    this->deckPointer = rhs.deckPointer;
+    this->deckSize = rhs.deckSize;
+    this->discardPointer = rhs.discardPointer;
+}
+
+/**
  * Hand Constructor
  */
 Hand::Hand() {
     handPointer = new std::vector<CardType>;
+}
+
+/**
+ * Hand Destructor
+ */
+Hand::~Hand() {
+    delete handPointer;
+}
+
+/**
+ * Hand copy constructor
+ * @param toCopy
+ */
+Hand::Hand(const Hand &toCopy) {
+    handPointer = new std::vector<CardType>;
+    *handPointer = *toCopy.handPointer;
+}
+
+/**
+ * assignment operator
+ * @param rhs
+ */
+void Hand::operator=(Hand& rhs) {
+    this->handPointer = rhs.handPointer;
 }
 
 /**

@@ -1,0 +1,22 @@
+; Risk map
+
+name Other Working Map
+
+[continents]
+;name numberOfArmy
+Europe 2
+Asia 4
+
+[countries]
+; id name continent
+1 France 1
+2 Germany 1
+3 Russia 2
+4 China 2
+
+[borders]
+; country neighbour neighbour neighbour
+1 2
+2 1 3
+3 2 4
+4 3

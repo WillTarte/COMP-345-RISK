@@ -16,6 +16,9 @@ using namespace std;
 class GameStarter {
 public:
     explicit GameStarter(const vector<string>& fileNames);
+    ~GameStarter();
+    GameStarter(const GameStarter& toCopy);
+    void operator=(GameStarter& rhs);
     void start();
     Map* getGameMap(){return gameMap;};
     vector<Player*>* getGamePlayers(){return gamePlayers;};
@@ -25,7 +28,7 @@ private:
     vector<string*>* mapList;
     string chooseMap();
     static int choosePlayerNumber();
-    static vector<Player*>* initPlayers(int numPlayers, Map map);
+    static vector<Player*>* initPlayers(int numPlayers, Map* map);
     static int getNumberOfArmies(int numberOfPlayers);
     vector<Player*>* gamePlayers;
     Map* gameMap;
@@ -34,15 +37,24 @@ private:
 
 
 class GameLoop {
-    vector<Map::Country *>* allCountries;
-    vector<Player*>* allPlayers;
+    public:
+        ~GameLoop();
+        static void resetInstance();
+        GameLoop(const GameLoop& toCopy) = delete;
+        void operator=(GameLoop& rhs) = delete;
+        static void initInstance(Map* gameMap, vector<Player*>* playerList);
+        static GameLoop* getInstance();
+        void loop();
+        vector<Player*> getAllPlayers () { return *allPlayers; }
+        Map* getGameMap() { return gameMap; }
+        bool isRoundFinished (unsigned long currentPlayerPosition);
+        bool isGameDone (Player* currentPlayer);
 
-public:
-    GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
-    void loop();
-    vector<Player*> getAllPlayers () { return *allPlayers; }
-    bool isRoundFinished (unsigned long currentPlayerPosition);
-    bool isGameDone (Player currentPlayer);
+    private:
+        static GameLoop* gameLoopInstance;
+        Map* gameMap;
+        vector<Player*>* allPlayers;
+        GameLoop(Map* map, vector<Player*>* playerList);
 };
 
 #endif //COMP_345_PROJ_GAMEENGINE_H
