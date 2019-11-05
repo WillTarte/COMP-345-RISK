@@ -291,7 +291,10 @@ int Player::fortify() {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
-    } while (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1);
+        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID()) {
+            std::cout << "\nYou don't own this country !\nTry again.\n";
+        }
+    } while (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1 || getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID());
 
     Map::Country* countryToFortify = fromCountry->getAdjCountries()->at(ctryToFortIndex);
 
