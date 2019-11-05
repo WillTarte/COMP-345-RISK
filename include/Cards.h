@@ -21,7 +21,7 @@ public:
     ~Hand();
     Hand(const Hand& toCopy);
     void operator=(Hand& rhs);
-    std::vector<CardType>* getHand() { return handPointer; }
+    inline std::vector<CardType>* getHand() { return handPointer; }
     static int exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards);
     static int armiesReceived();
 private:
@@ -36,8 +36,8 @@ public:
     void operator=(Deck& rhs);
     int* getNumberOfCards() { return deckSize; }
     void setNumberOfCards(int newSize) { deckSize = new int(newSize); }
-    std::vector<CardType>* getDeck() { return deckPointer; }
-    std::vector<CardType>* getDiscard() { return discardPointer; }
+    inline std::vector<CardType>* getDeck() { return deckPointer; }
+    inline std::vector<CardType>* getDiscard() { return discardPointer; }
     void createDeck();
     std::vector<CardType> populateDeck();
     void draw(Hand& userHand);

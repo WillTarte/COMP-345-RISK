@@ -60,7 +60,7 @@ public:
     void addEdge(int from, int to);
     inline std::vector<Country*>* getMapCountries(){return pMapCountries;};
     inline std::vector<Continent*>* getMapContinents(){return pMapContinents;};
-    inline static Map* getMapInstance();
+    static Map* getMapInstance();
     static void resetInstance();
     static void initInstance(Map* map);
 

@@ -45,13 +45,16 @@ class GameLoop {
         static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
         static GameLoop* getInstance();
         void loop();
-    vector<Map::Country*> getAllCountries () { return *allCountries; }
-        vector<Player*> getAllPlayers () { return *allPlayers; }
-        bool isRoundFinished (unsigned long currentPlayerPosition);
         bool isGameDone (Player* currentPlayer);
+        bool isRoundFinished (unsigned long currentPlayerPosition);
+        inline vector<Map::Country*> getAllCountries () { return *allCountries; }
+        inline vector<Player*> getAllPlayers () { return *allPlayers; }
+        inline static Deck getGameDeck() { return *gameDeck; }
+        inline static void initGameDeck(Deck* deck) { gameDeck = deck; }
 
-    private:
+private:
         static GameLoop* gameLoopInstance;
+        static Deck* gameDeck;
         vector<Map::Country *>* allCountries;
         vector<Player*>* allPlayers;
         GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
