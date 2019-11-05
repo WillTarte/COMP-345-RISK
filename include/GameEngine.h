@@ -45,11 +45,9 @@ class GameLoop {
         static void initInstance(Map* gameMap, vector<Player*>* playerList);
         static GameLoop* getInstance();
         void loop();
-        vector<Player*> getAllPlayers () { return *allPlayers; }
         Map* getGameMap() { return gameMap; }
         bool isRoundFinished (unsigned long currentPlayerPosition);
         bool isGameDone (Player* currentPlayer);
-        bool isRoundFinished (unsigned long currentPlayerPosition);
         inline vector<Map::Country*> getAllCountries () { return *allCountries; }
         inline vector<Player*> getAllPlayers () { return *allPlayers; }
         inline static Deck getGameDeck() { return *gameDeck; }
