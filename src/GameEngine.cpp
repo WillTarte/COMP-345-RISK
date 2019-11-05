@@ -20,14 +20,14 @@ Map* Map::mapInstance = nullptr;
  * @param countryList - the list of all countries in the game
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
-GameLoop::GameLoop(vector<Map::Country *>* countryList, vector<Player*>* playerList) {
-    allCountries = countryList;
+GameLoop::GameLoop(Map* map, vector<Player*>* playerList) {
+    gameMap = map;
     allPlayers = playerList;
 }
 
-void GameLoop::initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList) {
+void GameLoop::initInstance(Map* map, vector<Player*>* playerList) {
     if(GameLoop::gameLoopInstance == nullptr) {
-        GameLoop::gameLoopInstance = new GameLoop(countryList, playerList);
+        GameLoop::gameLoopInstance = new GameLoop(map, playerList);
     } else {
         std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
     }
@@ -46,7 +46,7 @@ GameLoop* GameLoop::getInstance() {
  * Game loop destructor
  */
 GameLoop::~GameLoop() {
-    delete allCountries;
+    delete gameMap;
     delete allPlayers;
 }
 
@@ -62,9 +62,12 @@ void GameLoop::loop() {
 
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
-    Player* currentPlayer = allPlayers->at(currentPlayerPosition);
+    Player* currentPlayer = nullptr;
 
     while (gameNotDone) {
+
+        currentPlayer = allPlayers->at(currentPlayerPosition);
+
         cout << "\u001b[31m";  // for demo purposes
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
@@ -86,7 +89,7 @@ void GameLoop::loop() {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
-                currentPlayer->setOwnedCountries(allCountries); // for demo - give all countries to first player at the end of the round
+                currentPlayer->setOwnedCountries(gameMap->getMapCountries()); // for demo - give all countries to first player at the end of the round
             }
         }
     }
@@ -112,7 +115,7 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @return
  */
 bool GameLoop::isGameDone(Player* currentPlayer) {
-    return currentPlayer->getOwnedCountries()->size() != allCountries->size();
+    return currentPlayer->getOwnedCountries()->size() != gameMap->getMapCountries()->size();
 }
 
 /**

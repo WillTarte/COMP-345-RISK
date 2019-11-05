@@ -42,9 +42,12 @@ class GameLoop {
         static void resetInstance();
         GameLoop(const GameLoop& toCopy) = delete;
         void operator=(GameLoop& rhs) = delete;
-        static void initInstance(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+        static void initInstance(Map* gameMap, vector<Player*>* playerList);
         static GameLoop* getInstance();
         void loop();
+        vector<Player*> getAllPlayers () { return *allPlayers; }
+        Map* getGameMap() { return gameMap; }
+        bool isRoundFinished (unsigned long currentPlayerPosition);
         bool isGameDone (Player* currentPlayer);
         bool isRoundFinished (unsigned long currentPlayerPosition);
         inline vector<Map::Country*> getAllCountries () { return *allCountries; }
@@ -56,8 +59,9 @@ private:
         static GameLoop* gameLoopInstance;
         static Deck* gameDeck;
         vector<Map::Country *>* allCountries;
+        Map* gameMap;
         vector<Player*>* allPlayers;
-        GameLoop(vector<Map::Country*>* countryList, vector<Player*>* playerList);
+        GameLoop(Map* map, vector<Player*>* playerList);
 };
 
 #endif //COMP_345_PROJ_GAMEENGINE_H
