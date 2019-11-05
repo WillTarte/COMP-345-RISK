@@ -291,8 +291,10 @@ int Player::fortify() {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
-        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID()) {
-            std::cout << "\nYou don't own this country !\nTry again.\n";
+        if (getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID() || fromCountry->getAdjCountries() == 0) {
+            std::cout << "\nEither you don't own this country or the country had no neighbours.\n"
+                      << "Skip turn.\n" << std::endl;
+            return -1;
         }
     } while (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1 || getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID());
 
