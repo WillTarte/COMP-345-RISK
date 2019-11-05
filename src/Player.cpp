@@ -319,7 +319,14 @@ int Player::reinforce() {
                 }
             }
 
-            Hand::exchange(player.getCards(), GameLoop::getGameDeck(), exchange);
+            auto out = Hand::exchange(player.getCards(), GameLoop::getGameDeck(), exchange);
+            if (out == -1) {
+                std::cout << "An error occured while exchanging your cards." << std::endl;
+                return -1;
+            }
+            else {
+                output += out;
+            }
         }
 
         return output;
@@ -351,7 +358,12 @@ int Player::reinforce() {
         return value;
     };
 
-    auto newArmies = cardExchange(*this) +
+    auto exchange = cardExchange(*this);
+    if (exchange == -1) {
+        return PlayerAction::FAILED;
+    }
+
+    auto newArmies = exchange +
             countriesOwned(*this) +
             continentControlValue(*this);
 
