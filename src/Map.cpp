@@ -117,7 +117,6 @@ Map::Country::Country(int id, std::string name, int continent) {
     // each country only has one continent (-1 because we transform continent count to continent index)
     cyContinent = new int(continent - 1);
     pAdjCountries = new std::vector<Country*>;
-    //I dont know what to do with those
     pPlayerOwnerId = new int(-1);
     pNumberOfTroops = new int(0);
 }

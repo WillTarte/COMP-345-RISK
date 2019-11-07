@@ -32,7 +32,7 @@ bool test_Player_Constructor() {
     bool success = true;
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, diceRoller, playerId);
+    Player player1 = Player(ownedCountries1, &cards, &diceRoller, playerId);
 
     // Assert
     if (player1.getOwnedCountries()->empty() || player1.getCards()->getHand()->empty() ||
@@ -56,9 +56,11 @@ bool test_Player_getOwnedCountries(bool verbose = false) {
     ownedCountries1.push_back(pCountry1);
     ownedCountries1.push_back(pCountry2);
     ownedCountries1.push_back(pCountry3);
+    Hand cards = Hand();
+    DiceRoller diceRoller = DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 0);
+    Player player1 = Player(ownedCountries1, &cards, &diceRoller, 0);
 
     // Assert
     if (player1.getOwnedCountries()->empty()) {
@@ -87,9 +89,10 @@ bool test_Player_getHand(bool verbose = false) {
     deck.draw(cards);
     deck.draw(cards);
     deck.draw(cards);
+    DiceRoller diceRoller = DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, DiceRoller(), 1);
+    Player player1 = Player(ownedCountries1, &cards, &diceRoller, 1);
 
     // Assert
     if (player1.getCards()->getHand()->empty()) {
@@ -121,9 +124,11 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     // Arrange
     bool success = true;
     std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
+    Hand cards = Hand();
+    DiceRoller diceRoller = DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
+    Player player1 = Player(ownedCountries1, &cards, &diceRoller, 1);
 
     // Assert
     if (player1.getDiceRoller()->roll(1).empty()
@@ -158,6 +163,9 @@ bool test_Player_fortify(bool verbose = false) {
     GameLoop::start();
     GameLoop::getInstance()->distributeArmies(); // because you need armies to fortify
 
+    int numArmiesC1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0)->getNumberOfTroops();
+    int numArmiesC2 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(1)->getNumberOfTroops();
+
     if (GameLoop::getInstance()->getAllPlayers()->at(0)->fortify() == PlayerAction::FAILED) {
         success = false;
     }
@@ -166,10 +174,10 @@ bool test_Player_fortify(bool verbose = false) {
         Map::Country* c1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0);
         Map::Country* c2 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(1);
         std::cout << "\033[35m";
-        std::cout << "Country " << c1->getCountryName() << " had " << " x armies" << std::endl;
+        std::cout << "Country " << c1->getCountryName() << " had " << numArmiesC1 << " armies" << std::endl;
         std::cout << "Country " << c1->getCountryName() << " now has " << c1->getNumberOfTroops() << " armies"
                   << std::endl;
-        std::cout << "Country " << c2->getCountryName() << " had " << " x armies" << std::endl;
+        std::cout << "Country " << c2->getCountryName() << " had " << numArmiesC2 <<" armies" << std::endl;
         std::cout << "Country " << c2->getCountryName() << " now has " << c2->getNumberOfTroops() << " armies"
                   << std::endl;
         std::cout << "\033[31m";
@@ -205,7 +213,7 @@ bool test_Player_reinforce(bool verbose = false) {
     pHand->getHand()->push_back(CardType::CAVALRY);
     pHand->getHand()->push_back(CardType::CAVALRY);
 
-    int numArmiesC1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0);
+    int numArmiesC1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0)->getNumberOfTroops();
 
     if (GameLoop::getInstance()->getAllPlayers()->at(0)->reinforce() == PlayerAction::FAILED) {
         success = false;
@@ -214,7 +222,7 @@ bool test_Player_reinforce(bool verbose = false) {
     if (verbose) {
         for (auto* c: *GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()) {
             std::cout << "\033[35m";
-            std::cout << "player1's " << c->getCountryName() << " had " << "x" << " armies" << std::endl;
+            std::cout << "player1's " << c->getCountryName() << " had " << numArmiesC1 << " armies" << std::endl;
             std::cout << "player1's " << c->getCountryName() << " now has " << c->getNumberOfTroops()
                       << " armies" << std::endl;
             std::cout << "\033[31m";

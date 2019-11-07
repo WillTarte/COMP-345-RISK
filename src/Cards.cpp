@@ -10,7 +10,7 @@
 using namespace std;
 
 namespace globalHandVariables {
-    int tradedSetsCount = 1;
+    static int tradedSetsCount = 1;
 }
 
 /**

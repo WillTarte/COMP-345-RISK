@@ -10,6 +10,7 @@
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
 
+// TODO: handle actions on unowned neighbouring countries
 class Player {
 public:
     Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, int playerId);

@@ -83,25 +83,21 @@ void GameLoop::loop() {
         currentPlayer = allPlayers->at(currentPlayerPosition);
 
         cout << "\u001b[31m";  // for demo purposes
-        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
+        cout << "Player " << currentPlayer->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
-        // TODO: weird fuckery going on where the player has more than 5 cards (they should have 0) this happens on a player's second turn
-        currentPlayer->getCards()->getHand()->push_back(CardType::ARTILLERY);
-
-        std::cout << std::endl;
         currentPlayer->reinforce();
 
         cout << "\u001b[33m";  // for demo purposes
-        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is attacking!" << endl;
+        cout << "Player " << currentPlayer->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
         currentPlayer->attack();
 
         cout << "\u001b[34m";  // for demo purposes
-        cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is fortifying!" << endl;
+        cout << "Player " << currentPlayer->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
         currentPlayer->fortify();
 
-        gameNotDone = isGameDone(currentPlayer);
+        gameNotDone = !isGameDone(currentPlayer);
 
         if (gameNotDone) {
             currentPlayerPosition++;
@@ -112,7 +108,7 @@ void GameLoop::loop() {
         }
     }
     cout << "\u001b[35m";
-    cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " owns all of the countries! They have won the game!!";
+    cout << "Player " << currentPlayer->getPlayerId() << " owns all of the countries! They have won the game!!";
     cout << "\u001b[0m";
     cout.flush();
 }
@@ -133,7 +129,7 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @return true, if the currently playing player owns all the countries
  */
 bool GameLoop::isGameDone(Player* currentPlayer) {
-    return currentPlayer->getOwnedCountries()->size() != gameMap->getMapCountries()->size();
+    return currentPlayer->getOwnedCountries()->size() == gameMap->getMapCountries()->size();
 }
 
 /**
@@ -231,7 +227,7 @@ static int getNumberOfArmies(int numberOfPlayers) {
         case 6:
             return 20;
         default:
-            return 999;
+            return 0;
     }
 }
 
@@ -246,11 +242,15 @@ void GameLoop::distributeArmies() {
     int counter = 0;
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
+        cout << "Placing 1 army per country." << std::endl;
+        for(auto& country : *currentPlayer->getOwnedCountries()) {
+            country->setNumberOfTroops(1);
+        }
         cout << "Player " << currentPlayer->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
         for (unsigned long i = 1; i <= currentPlayer->getOwnedCountries()->size(); i++) {
             cout << i << " - " << currentPlayer->getOwnedCountries()->at(i-1)->getCountryName() << "\n";
         }
-        for(int i = 1; i <= numberOfArmies; i++){
+        for(int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++){
             int countryToPlaceOn;
             do{
                 cout << "\nWhere do you place army number " << i;

@@ -358,7 +358,6 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
     return PlayerAction::SUCCEEDED;
 }
 
-// TODO: fix the reinforce method, see GameEngineDriver
 /**
  * Once per turn, this player can place a number of armies on one of his/her country
  * @returns An integer representing the success/failure of the action
@@ -377,8 +376,13 @@ int Player::reinforce() {
                 std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
             } else if (canExchange(*player.getCards()->getHand())) {
                 char input = 0;
-                std::cout << "Would you like to exchange cards? (Y/n)";
-                std::cin >> input;
+                do {
+                    std::cout << "Would you like to exchange cards? (Y/n)";
+                    std::cin >> input;
+                    if (input != 'y' && input != 'n' && input != 'Y' && input != 'N') {
+                        std::cout << "\nInvalid Input. Please try again." << std::endl;
+                    }
+                } while(input != 'y' && input != 'n' && input != 'Y' && input != 'N');
                 if (input == 'n' || input == 'N') {
                     return output;
                 }
@@ -387,8 +391,7 @@ int Player::reinforce() {
                 return output;
             }
             std::cout << "What cards would you like to exchange?" << std::endl;
-            auto types = std::vector<int>(3);
-            types.reserve(3);
+            int types[3] = {};
             types[0] = 0, types[1] = 0, types[2] = 0;
             for (auto card : *player.getCards()->getHand()) {
                 switch (card) {
@@ -396,7 +399,7 @@ int Player::reinforce() {
                     case CardType::ARTILLERY: types[1]++; break;
                     case CardType::CAVALRY: types[2]++; break;
                     default: {
-                        return output;
+                        return -1;
                     }
                 }
             }
@@ -437,14 +440,12 @@ int Player::reinforce() {
             auto out = Hand::exchange(player.getCards(), GameLoop::getInstance()->getGameDeck(), cardsToExchange);
             if (out == -1) {
                 std::cout << "An error occurred while exchanging your cards." << std::endl;
-                return 0;
+                return -1;
             }
             else {
                 output += out;
             }
         }
-
-        return output;
     };
 
     auto countriesOwned = [](const Player& player) {
@@ -486,14 +487,17 @@ int Player::reinforce() {
 
     int troops, place = 0;
     while (newArmies > 0) {
+        std::cout << "Troops remaining: " << newArmies << std::endl;
         for (auto* country : *this->getOwnedCountries()) {
-            std::cout << "Troops remaining: " << newArmies << std::endl;
             std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
                       << " armies. Add how many? ";
-            // TODO: make sure the user enters an amount <= newArmies
-            std::cin >> place;
+            do {
+                std::cin >> place;
+                if(cin.fail() || place > newArmies || place < 0) {
+                    std::cout << "Invalid value entered. Pleased try again." << std::endl;
+                }
+            } while (cin.fail() || place > newArmies || place < 0);
             std::cout << std::endl;
-
             troops = country->getNumberOfTroops();
             country->setNumberOfTroops(troops + place);
             newArmies -= place;
@@ -503,7 +507,6 @@ int Player::reinforce() {
             }
         }
     }
-
     return PlayerAction::SUCCEEDED;
 }
 
