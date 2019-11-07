@@ -17,10 +17,10 @@
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, const int playerId) {
+Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
     pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
-    pCards = new Hand(cards);
-    pDiceRoller = new DiceRoller(diceRoller);
+    pCards = cards;
+    pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
 }
 
@@ -113,11 +113,11 @@ static int getAttackingCountry(Player* attacker) {
     return fromCountryIndex;
 }
 
-static bool canExchange(Hand& hand) {
+static bool canExchange(const vector<CardType>& cards) {
     int numInfantry = 0;
     int numArtillery = 0;
     int numCavalry = 0;
-    for (const auto i: *hand.getHand()) {
+    for (const auto i: cards) {
         switch (i) {
             case CardType::INFANTRY:
                 numInfantry++;
@@ -375,16 +375,16 @@ int Player::reinforce() {
         while (true) {
             if (player.getCards()->getHand()->size() > 5) {
                 std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
-            } else if (canExchange(*player.getCards())) {
+            } else if (canExchange(*player.getCards()->getHand())) {
                 char input = 0;
                 std::cout << "Would you like to exchange cards? (Y/n)";
                 std::cin >> input;
                 if (input == 'n' || input == 'N') {
-                    break;
+                    return output;
                 }
             } else {
                 std::cout << "You don't have valid cards to exchange! Moving on..." << std::endl;
-                break;
+                return output;
             }
             std::cout << "What cards would you like to exchange?" << std::endl;
             auto types = std::vector<int>(3);
@@ -396,7 +396,7 @@ int Player::reinforce() {
                     case CardType::ARTILLERY: types[1]++; break;
                     case CardType::CAVALRY: types[2]++; break;
                     default: {
-                        return 0;
+                        return output;
                     }
                 }
             }
@@ -406,7 +406,7 @@ int Player::reinforce() {
             std::cout << types[1] << " artillery, and ";
             std::cout << types[2] << " cavalry" << std::endl;
 
-            auto* cardsToExchange = new std::vector<CardType>();
+            auto cardsToExchange = std::vector<CardType>();
             auto remaining = 3;
 
             while (remaining > 0) {
@@ -426,7 +426,7 @@ int Player::reinforce() {
                             }
                             else {
                                 for (auto j = 0 ; j < input ; j++, remaining--) {
-                                    cardsToExchange->push_back((CardType) i);
+                                    cardsToExchange.push_back((CardType) i);
                                 }
 
                             }
@@ -434,26 +434,23 @@ int Player::reinforce() {
                     }
                 }
             }
-
             auto out = Hand::exchange(player.getCards(), GameLoop::getInstance()->getGameDeck(), cardsToExchange);
             if (out == -1) {
                 std::cout << "An error occurred while exchanging your cards." << std::endl;
-                delete cardsToExchange;
-                return -1;
+                return 0;
             }
             else {
                 output += out;
-                delete cardsToExchange;
             }
         }
 
         return output;
     };
 
-    auto countriesOwned = [](Player player) {
+    auto countriesOwned = [](const Player& player) {
         auto countries = player.getOwnedCountries()->size();
 
-        return countries < 9 ? 3 : countries / 3;
+        return countries < 3 ? 3 : (int) countries / 3;
     };
 
     auto continentControlValue = [](const Player& player) {
@@ -493,13 +490,14 @@ int Player::reinforce() {
             std::cout << "Troops remaining: " << newArmies << std::endl;
             std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
                       << " armies. Add how many? ";
+            // TODO: make sure the user enters an amount <= newArmies
             std::cin >> place;
             std::cout << std::endl;
 
             troops = country->getNumberOfTroops();
             country->setNumberOfTroops(troops + place);
             newArmies -= place;
-            if (newArmies == 0) {
+            if (newArmies <= 0) {
                 std::cout << "\nYou've placed all your armies!" << std::endl;
                 break;
             }

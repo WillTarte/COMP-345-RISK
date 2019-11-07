@@ -45,7 +45,7 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    cout << "Number of cards in the deck: " << GameLoop::getInstance()->getGameDeck()->getNumberOfCards() << endl;
+    cout << "Number of cards in the deck: " << *GameLoop::getInstance()->getGameDeck()->getNumberOfCards() << endl;
     cout << "Number of countries in the map: " << GameLoop::getInstance()->getGameMap()->getMapCountries()->size()
          << endl;
 

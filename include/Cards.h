@@ -19,11 +19,11 @@ class Hand {
 public:
     Hand();
     ~Hand();
-    Hand(const Hand& toCopy);
+    Hand(Hand& toCopy);
     void operator=(Hand& rhs);
     inline std::vector<CardType>* getHand() { return handPointer; }
 
-    static int exchange(Hand* hand, Deck* deck, std::vector<CardType>* givenCards);
+    static int exchange(Hand* hand, Deck* deck, std::vector<CardType> givenCards);
     static int armiesReceived();
 private:
     std::vector<CardType>* handPointer;
@@ -43,7 +43,7 @@ public:
     std::vector<CardType> populateDeck();
     void draw(Hand& userHand);
 
-    void discard(Hand* hand, std::vector<CardType>* discardedCards);
+    void discard(Hand* hand, std::vector<CardType> discardedCards);
 
 private:
     int* deckSize;

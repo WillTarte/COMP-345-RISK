@@ -161,38 +161,6 @@ bool test_Player_fortify(bool verbose = false) {
     if (GameLoop::getInstance()->getAllPlayers()->at(0)->fortify() == PlayerAction::FAILED) {
         success = false;
     }
-    /*
-    // Arrange
-    const int numArmies = 4;
-    bool success = true;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    Map::Country country1 = Map::Country(0, "country1", 0);
-    Map::Country country2 = Map::Country(1, "country2", 0);
-    Map::Country country3 = Map::Country(3, "country3", 1);
-    country1.setPlayerOwnerID(1);
-    country2.setPlayerOwnerID(1);
-    country3.setPlayerOwnerID(1);
-    country1.setNumberOfTroops(numArmies);
-    Map::Country* pCountry1 = &country1;
-    Map::Country* pCountry2 = &country2;
-    Map::Country* pCountry3 = &country3;
-    ownedCountries1.push_back(pCountry1);
-    ownedCountries1.push_back(pCountry2);
-    ownedCountries1.push_back(pCountry3);
-    country1.pAdjCountries->push_back(pCountry2);
-    country2.pAdjCountries->push_back(pCountry1);
-    country2.pAdjCountries->push_back(pCountry3);
-    country3.pAdjCountries->push_back(pCountry2);
-
-    // Act & Assert
-    Player player1 = Player(ownedCountries1, Hand(), DiceRoller(), 1);
-
-    if (player1.fortify(country1, country2, numArmies - 1) == PlayerAction::FAILED) {
-        success = false;
-    }
-    if (country1.getNumberOfTroops() >= numArmies) {
-        success = false;
-    }*/
 
     if (verbose) {
         Map::Country* c1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0);
@@ -236,6 +204,9 @@ bool test_Player_reinforce(bool verbose = false) {
     pHand->getHand()->push_back(CardType::CAVALRY);
     pHand->getHand()->push_back(CardType::CAVALRY);
     pHand->getHand()->push_back(CardType::CAVALRY);
+
+    int numArmiesC1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0);
+
     if (GameLoop::getInstance()->getAllPlayers()->at(0)->reinforce() == PlayerAction::FAILED) {
         success = false;
     }

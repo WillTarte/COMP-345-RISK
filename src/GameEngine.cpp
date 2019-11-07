@@ -86,6 +86,9 @@ void GameLoop::loop() {
         cout << "Player " << allPlayers->at(currentPlayerPosition)->getPlayerId() << " is reinforcing!" << endl;
         cout << "\u001b[31m";
         // TODO: weird fuckery going on where the player has more than 5 cards (they should have 0) this happens on a player's second turn
+        currentPlayer->getCards()->getHand()->push_back(CardType::ARTILLERY);
+
+        std::cout << std::endl;
         currentPlayer->reinforce();
 
         cout << "\u001b[33m";  // for demo purposes
@@ -204,7 +207,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
     for(int i = 0; i < numPlayers; i++){
-        players->push_back(new Player(countriesPerPlayer[i], Hand(), DiceRoller(), i));
+        players->push_back(new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i));
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;

@@ -58,7 +58,7 @@ void Deck::operator=(Deck& rhs) {
  * Hand Constructor
  */
 Hand::Hand() {
-    handPointer = new std::vector<CardType>;
+    handPointer = new std::vector<CardType>();
 }
 
 /**
@@ -72,8 +72,8 @@ Hand::~Hand() {
  * Hand copy constructor
  * @param toCopy
  */
-Hand::Hand(const Hand &toCopy) {
-    handPointer = new std::vector<CardType>;
+Hand::Hand(Hand &toCopy) {
+    handPointer = new std::vector<CardType>(toCopy.getHand()->size());
     *handPointer = *toCopy.handPointer;
 }
 
@@ -128,12 +128,12 @@ void Deck::draw(Hand& userHand) {
  * @param deck
  * @return
  */
-int Hand::exchange(Hand* hand, Deck* deck, std::vector<CardType>* givenCards) {
-    if (givenCards->size() != 3) {
+int Hand::exchange(Hand* hand, Deck* deck, std::vector<CardType> givenCards) {
+    if (givenCards.size() != 3) {
         return -1;
     }
         //Ensure that all three given cards are the same
-    else if (givenCards->at(0) == givenCards->at(1) && givenCards->at(1) == givenCards->at(2)) {
+    else if (givenCards.at(0) == givenCards.at(1) && givenCards.at(1) == givenCards.at(2)) {
         int armiesToExchange = Hand::armiesReceived();
 
         try {
@@ -147,9 +147,9 @@ int Hand::exchange(Hand* hand, Deck* deck, std::vector<CardType>* givenCards) {
         return armiesToExchange;
     }
         //Ensure that all three cards are different
-    else if (givenCards->at(0) != givenCards->at(1) &&
-             givenCards->at(0) != givenCards->at(2) &&
-             givenCards->at(1) != givenCards->at(2)) {
+    else if (givenCards.at(0) != givenCards.at(1) &&
+             givenCards.at(0) != givenCards.at(2) &&
+             givenCards.at(1) != givenCards.at(2)) {
         int armiesToExchange = Hand::armiesReceived();
 
         try {
@@ -182,12 +182,13 @@ int Hand::armiesReceived() {
  * Puts exchanged cards in the discard pile & removes them from hand
  * @param discardedCards
  */
-void Deck::discard(Hand* hand, std::vector<CardType>* discardedCards) {
+void Deck::discard(Hand* hand, std::vector<CardType> discardedCards) {
 
+    std::cout << "Hello there";
     unsigned int initialHandSize = hand->getHand()->size();
 
     for (int i = 0; i < 3; i++) {
-        Deck::discardPointer->push_back(discardedCards->at(i));
+        Deck::discardPointer->push_back(discardedCards.at(i));
     }
 
     for (int i = 0; i < 3; i++) {
@@ -196,7 +197,7 @@ void Deck::discard(Hand* hand, std::vector<CardType>* discardedCards) {
 
         while (removedCard == 0 && counter <
                                    hand->getHand()->size()) { //stop once the vector has been gone through completely or a card was removed
-            if (hand->getHand()->at(counter) == discardedCards->at(i)) {
+            if (hand->getHand()->at(counter) == discardedCards.at(i)) {
                 hand->getHand()->erase(hand->getHand()->begin() + counter);
                 removedCard = 1;
             } else {

@@ -12,7 +12,7 @@
 
 class Player {
 public:
-    Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, int playerId);
+    Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, int playerId);
     ~Player();
     Player(const Player& toCopy);
     void operator=(const Player& rhs);
@@ -21,7 +21,7 @@ public:
     int fortify();
 
     inline Hand* getCards() { return pCards; }
-    inline std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
+    inline std::vector<Map::Country*>* getOwnedCountries() const { return pOwnedCountries; }
     inline void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
 
     inline DiceRoller* getDiceRoller() { return pDiceRoller; }
