@@ -10,9 +10,11 @@
 #include <random>
 #include <string>
 #include <experimental/filesystem>
+
 using namespace std;
 namespace fs = std::experimental::filesystem;
 
+// Before the singleton is initialized
 GameLoop* GameLoop::gameLoopInstance = nullptr;
 
 /**
@@ -35,7 +37,7 @@ GameLoop::GameLoop(Map* map, vector<Player*>* playerList, Deck* deck) {
  * @param deck a fully initialized deck
  */
 void GameLoop::initInstance(Map* map, vector<Player*>* playerList, Deck* deck) {
-    if(GameLoop::gameLoopInstance == nullptr) {
+    if (GameLoop::gameLoopInstance == nullptr) {
         GameLoop::gameLoopInstance = new GameLoop(map, playerList, deck);
     } else {
         std::cout << "Tried to create an instance of GameLoop, but one already exists!" << std::endl;
@@ -103,7 +105,8 @@ void GameLoop::loop() {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
-                currentPlayer->setOwnedCountries(gameMap->getMapCountries()); // for demo - give all countries to first player at the end of the round
+                // for demo - give all countries to first player at the end of the round
+                currentPlayer->setOwnedCountries(gameMap->getMapCountries());
             }
         }
     }
@@ -146,7 +149,7 @@ static std::string chooseMap() {
     if (!mapList.empty()) {
         unsigned int mapChoice;
         unsigned int numberMaps;
-        do{
+        do {
             cout << "\nplease choose a map :\n";
             numberMaps = 0;
             for (const auto& map : mapList) {
@@ -156,7 +159,7 @@ static std::string chooseMap() {
             cin >> mapChoice;
             cin.clear();
             cin.ignore(512, '\n');
-        }while(mapChoice < 1 || mapChoice > numberMaps || isnan(mapChoice));
+        } while (mapChoice < 1 || mapChoice > numberMaps || isnan(mapChoice));
         return std::string(mapList.at(mapChoice - 1));
     }
     return "";
@@ -168,12 +171,12 @@ static std::string chooseMap() {
  */
 static int choosePlayerNumber() {
     unsigned int playerChoice;
-    do{
+    do {
         cout << "please choose a number of players between 2 and 6 :\n";
         cin >> playerChoice;
         cin.clear();
         cin.ignore(512, '\n');
-    }while(playerChoice < 2 || playerChoice > 6 || isnan(playerChoice));
+    } while (playerChoice < 2 || playerChoice > 6 || isnan(playerChoice));
     return int(playerChoice);
 }
 
@@ -187,7 +190,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     vector<vector<Map::Country*>> countriesPerPlayer;
     countriesPerPlayer.reserve(numPlayers);
     //split up the countries by the number of players
-    for(int i = 0; i < numPlayers; i++){
+    for (int i = 0; i < numPlayers; i++) {
         countriesPerPlayer.emplace_back();
     }
     //randomize map countries
@@ -195,14 +198,14 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     std::shuffle(randomizedCountries->begin(), randomizedCountries->end(), std::mt19937(std::random_device()()));
     for (unsigned long i = 0; i < randomizedCountries->size(); i++) {
         Map::Country* currCountry = randomizedCountries->at(i);
-        currCountry->setPlayerOwnerID(int(i)%numPlayers);
-        countriesPerPlayer[i%numPlayers].push_back(currCountry);
+        currCountry->setPlayerOwnerID(int(i) % numPlayers);
+        countriesPerPlayer[i % numPlayers].push_back(currCountry);
     }
 
     auto* players = new vector<Player*>();
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
-    for(int i = 0; i < numPlayers; i++){
+    for (int i = 0; i < numPlayers; i++) {
         players->push_back(new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i));
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
@@ -243,24 +246,26 @@ void GameLoop::distributeArmies() {
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
         cout << "Placing 1 army per country." << std::endl;
-        for(auto& country : *currentPlayer->getOwnedCountries()) {
+        for (auto& country : *currentPlayer->getOwnedCountries()) {
             country->setNumberOfTroops(1);
         }
-        cout << "Player " << currentPlayer->getPlayerId() << " , please place your armies. Here is your list of countries :\n";
+        cout << "Player " << currentPlayer->getPlayerId()
+             << " , please place your armies. Here is your list of countries :\n";
         for (unsigned long i = 1; i <= currentPlayer->getOwnedCountries()->size(); i++) {
-            cout << i << " - " << currentPlayer->getOwnedCountries()->at(i-1)->getCountryName() << "\n";
+            cout << i << " - " << currentPlayer->getOwnedCountries()->at(i - 1)->getCountryName() << "\n";
         }
-        for(int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++){
+        for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
             int countryToPlaceOn;
-            do{
+            do {
                 cout << "\nWhere do you place army number " << i;
                 cin >> countryToPlaceOn;
                 cin.clear();
                 cin.ignore(512, '\n');
-            }while(countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) || isnan(countryToPlaceOn));
+            } while (countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) ||
+                     isnan(countryToPlaceOn));
             //increment the number of troops on the selected country
-            Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn-1);
-            currCountry->setNumberOfTroops(currCountry->getNumberOfTroops()+1);
+            Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
+            currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
         }
         currentPlayerPosition++;
         currentPlayerPosition = currentPlayerPosition % numberOfPlayers;
@@ -286,6 +291,9 @@ void GameLoop::start() {
         if (gameMap == nullptr || !gameMap->testConnected()) {
             cout << "\nThere was an error loading the game board. Try another mapfile.\n";
             continue;
+        } else if (gameMap->getMapCountries()->size() < numberOfPlayers) {
+            std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
+                      << numberOfPlayers << " players. Please try again." << std::endl;
         } else {
             break;
         }
