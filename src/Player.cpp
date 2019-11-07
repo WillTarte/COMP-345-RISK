@@ -230,7 +230,7 @@ int Player::fortify() {
 
     do {
         std::cin.clear();
-        std::cout << "\nDo you wish to fortify a country this turn (y/n)? ";
+        std::cout << "\n[PLAYER "<< this->getPlayerId() <<"] Do you wish to fortify a country this turn (y/n)? ";
         std::cin >> playerChoice;
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid input. Try again.\n";

@@ -184,7 +184,6 @@ int Hand::armiesReceived() {
  */
 void Deck::discard(Hand* hand, std::vector<CardType> discardedCards) {
 
-    std::cout << "Hello there";
     unsigned int initialHandSize = hand->getHand()->size();
 
     for (int i = 0; i < 3; i++) {
