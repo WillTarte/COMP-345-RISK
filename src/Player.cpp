@@ -451,7 +451,7 @@ int Player::reinforce() {
     auto countriesOwned = [](const Player& player) {
         auto countries = player.getOwnedCountries()->size();
 
-        return countries < 3 ? 3 : (int) countries / 3;
+        return countries < 9 ? 3 : (int) countries / 3;
     };
 
     auto continentControlValue = [](const Player& player) {
@@ -479,9 +479,7 @@ int Player::reinforce() {
         return PlayerAction::FAILED;
     }
 
-    auto newArmies = exchange +
-            countriesOwned(*this) +
-            continentControlValue(*this);
+    auto newArmies = exchange + countriesOwned(*this) + continentControlValue(*this);
 
     std::cout << "Place your armies:" << std::endl;
 

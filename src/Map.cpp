@@ -240,4 +240,5 @@ void Map::printMap() {
 Map::Map(std::string& mapTitle, vector<Continent*> continents) {
     pMapTitle = &mapTitle;
     pMapContinents = &continents;
+    pMapCountries = new vector<Country*>();
 }
