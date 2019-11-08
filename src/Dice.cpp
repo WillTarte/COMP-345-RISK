@@ -34,7 +34,7 @@ DiceRoller::DiceRoller(const DiceRoller &toCopy) {
     history = new vector<int>;
     *diceRolled = *toCopy.diceRolled;
     *history = *toCopy.history;
-};
+}
 
 /**
  * assignment operator

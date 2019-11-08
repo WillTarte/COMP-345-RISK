@@ -10,7 +10,7 @@
 using namespace std;
 
 namespace globalHandVariables {
-    int tradedSetsCount = 1;
+    static int tradedSetsCount = 1;
 }
 
 /**
@@ -58,7 +58,7 @@ void Deck::operator=(Deck& rhs) {
  * Hand Constructor
  */
 Hand::Hand() {
-    handPointer = new std::vector<CardType>;
+    handPointer = new std::vector<CardType>();
 }
 
 /**
@@ -72,8 +72,8 @@ Hand::~Hand() {
  * Hand copy constructor
  * @param toCopy
  */
-Hand::Hand(const Hand &toCopy) {
-    handPointer = new std::vector<CardType>;
+Hand::Hand(Hand &toCopy) {
+    handPointer = new std::vector<CardType>(toCopy.getHand()->size());
     *handPointer = *toCopy.handPointer;
 }
 
@@ -128,7 +128,7 @@ void Deck::draw(Hand& userHand) {
  * @param deck
  * @return
  */
-int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards) {
+int Hand::exchange(Hand* hand, Deck* deck, std::vector<CardType> givenCards) {
     if (givenCards.size() != 3) {
         return -1;
     }
@@ -137,7 +137,7 @@ int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards
         int armiesToExchange = Hand::armiesReceived();
 
         try {
-            deck.discard(hand, givenCards);
+            deck->discard(hand, givenCards);
         } catch (const std::length_error& handLength) {
             std::cout << handLength.what() << std::endl;
             exit(1);
@@ -153,7 +153,7 @@ int Hand::exchange(Hand hand, Deck deck, const std::vector<CardType>& givenCards
         int armiesToExchange = Hand::armiesReceived();
 
         try {
-            deck.discard(hand, givenCards);
+            deck->discard(hand, givenCards);
         } catch (const std::length_error& handLength) {
             std::cout << handLength.what() << std::endl;
             exit(1);
@@ -182,8 +182,9 @@ int Hand::armiesReceived() {
  * Puts exchanged cards in the discard pile & removes them from hand
  * @param discardedCards
  */
-void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
-    unsigned int initialHandSize = hand.getHand()->size();
+void Deck::discard(Hand* hand, std::vector<CardType> discardedCards) {
+
+    unsigned int initialHandSize = hand->getHand()->size();
 
     for (int i = 0; i < 3; i++) {
         Deck::discardPointer->push_back(discardedCards.at(i));
@@ -194,9 +195,9 @@ void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
         int removedCard = 0;
 
         while (removedCard == 0 && counter <
-                                   hand.getHand()->size()) { //stop once the vector has been gone through completely or a card was removed
-            if (hand.getHand()->at(counter) == discardedCards.at(i)) {
-                hand.getHand()->erase(hand.getHand()->begin() + counter);
+                                   hand->getHand()->size()) { //stop once the vector has been gone through completely or a card was removed
+            if (hand->getHand()->at(counter) == discardedCards.at(i)) {
+                hand->getHand()->erase(hand->getHand()->begin() + counter);
                 removedCard = 1;
             } else {
                 counter++;
@@ -205,7 +206,7 @@ void Deck::discard(Hand hand, std::vector<CardType> discardedCards) {
     }
 
     // checks if the cards were removed from the hand as expected
-    if (hand.getHand()->size() == initialHandSize) {
+    if (hand->getHand()->size() == initialHandSize) {
         throw std::length_error(
                 "The three cards were not removed from the hand once exchanged successfully. System exiting.");
     }

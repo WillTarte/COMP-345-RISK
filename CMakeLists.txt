@@ -1,24 +1,20 @@
 cmake_minimum_required(VERSION 3.14)
 project(COMP-345-proj)
 
+# set everything up for c++ 17 features
 set(CMAKE_CXX_STANDARD 17)
+# Don't add this line if you will try_compile with boost.
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(
         -Wall
         -Wextra
-        -Werror
         -Wno-unknown-pragmas
         -Wno-unused-function
+        -lstdc++fs
 )
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world.map
-        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/world2.map
-        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/worldEmpty.map
-        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/references/otherWorkingMap.map
-        ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+file(COPY "references/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(Cards-driver "src/Drivers/CardsDriver.cpp")
 add_executable(Dice-driver "src/Drivers/DiceDriver.cpp")
@@ -44,3 +40,6 @@ target_sources(Player-driver PRIVATE "src/MapLoader.cpp" "src/Map.cpp" "src/Dice
 
 target_include_directories(Game-engine-driver PRIVATE "include")
 target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")
+
+target_link_libraries(Player-driver stdc++fs)
+target_link_libraries(Game-engine-driver stdc++fs)
