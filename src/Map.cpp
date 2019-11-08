@@ -32,7 +32,7 @@ Map::Map(std::string mapTitle, std::vector<std::vector<std::string>> ctd) {
  * Map copy constructor
  * @param toCopy
  */
-Map::Map(const Map &toCopy) {
+Map::Map(const Map& toCopy) {
     pMapTitle = new string();
     pMapContinents = new vector<Continent*>;
     pMapCountries = new vector<Country*>;
@@ -105,16 +105,6 @@ void Map::Continent::operator=(Map::Continent& rhs) {
 }
 
 /**
- * add a country to this continent, it does not create a copy of the country, it only adds its pointer to a list
- * of pointers. It is used to keep track of which nodes compose each subgraph.
- *
- * @param c the country to add
- */
-void Map::Continent::setCountry(Map::Country* c) {
-    pCountriesInContinent->push_back(c);
-}
-
-/**
  * Country constructor, subclass of Map
  *
  * @param id the country id
@@ -127,8 +117,7 @@ Map::Country::Country(int id, std::string name, int continent) {
     // each country only has one continent (-1 because we transform continent count to continent index)
     cyContinent = new int(continent - 1);
     pAdjCountries = new std::vector<Country*>;
-    //I dont know what to do with those
-    pPlayerOwnerId = new int(0);
+    pPlayerOwnerId = new int(-1);
     pNumberOfTroops = new int(0);
 }
 
@@ -166,7 +155,7 @@ Map::Country* Map::addNode(int id, std::string name, int continent) {
     //add node to graph (overall graph)
     pMapCountries->push_back(thisCountry);
     //add node to relevant subgraph
-    (*pMapContinents)[continent - 1]->setCountry(thisCountry);
+    (*pMapContinents)[continent - 1]->addCountry(thisCountry);
     return thisCountry;
 }
 
@@ -248,28 +237,8 @@ void Map::printMap() {
     }
 }
 
-/**
- * Checks if two countries are adjacent, by country name
- *
- * @param country1 the first country
- * @param country2 the second country
- * @return true if both are adjacent to each other
- */
-bool checkIfAdjacent(Map::Country& country1, Map::Country& country2) {
-
-    bool oneAdjacentTwo = false;
-    bool twoAdjacentOne = false;
-
-    for (auto& i : *country1.getAdjCountries()) {
-        if (i->getCountryName() == country2.getCountryName()) {
-            oneAdjacentTwo = true;
-        }
-    }
-
-    for (auto& i : *country2.getAdjCountries()) {
-        if (i->getCountryName() == country1.getCountryName()) {
-            twoAdjacentOne = true;
-        }
-    }
-    return oneAdjacentTwo && twoAdjacentOne;
+Map::Map(std::string& mapTitle, vector<Continent*> continents) {
+    pMapTitle = &mapTitle;
+    pMapContinents = &continents;
+    pMapCountries = new vector<Country*>();
 }

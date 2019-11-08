@@ -4,7 +4,7 @@
 
 int main() {
     //init loader
-    const std::string MAP1 = "otherWorkingMap.map";
+    const std::string MAP1 = "debugValid.map";
     MapLoader myLoader = MapLoader(MAP1);
 
     //create first (valid) map
@@ -22,7 +22,7 @@ int main() {
      * connected graph (that can be tested for in Map.cpp).
      */
     std::cout << "\n\n";
-    const std::string MAP2 = "world2.map";
+    const std::string MAP2 = "world2Invalid.map";
     myLoader.setMapFile(MAP2);
     std::cout << "\ncreating map 2 (invalid)\n";
     Map* secondMap = myLoader.readMapFile();

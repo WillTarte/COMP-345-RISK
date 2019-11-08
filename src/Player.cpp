@@ -4,6 +4,7 @@
 
 #include "../include/Player.h"
 #include "../include/Map.h"
+#include "../include/Cards.h"
 #include "../include/GameEngine.h"
 #include <iostream>
 #include <utility>
@@ -16,10 +17,10 @@
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country*> ownedCountries, const Hand& cards, const DiceRoller& diceRoller, const int playerId) {
+Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
     pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
-    pCards = new Hand(cards);
-    pDiceRoller = new DiceRoller(diceRoller);
+    pCards = cards;
+    pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
 }
 
@@ -85,21 +86,12 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player* defendingP
  *
  * @param countries vector of countries
  */
-static void showCountries(const std::vector<Map::Country*>& countries) {
-    std::cout << "\nYour owned countries: \n";
-    //Print all the player's owned countries so they are reminded what they have in order to choose
-    int idCount = 0;
-    int idAdj;
-    for (const auto i : countries){
-        std::cout << idCount << ". ";
-        std::cout << i->getCountryName() << " with ";
-        std::cout << i->getNumberOfTroops() << " armies and ";
-        std::cout << i->getAdjCountries()->size() << " adjacent country/ies ; \n";
-        idCount++;
-        idAdj = 0;
-        for (auto& pAdjCountry : *i->getAdjCountries()) {
-            std::cout << "    - " << idAdj << ". " << pAdjCountry->getCountryName() << " (owned by Player " << pAdjCountry->getPlayerOwnerID() << ")\n";
-            idAdj++;
+static void showCountries(std::vector<Map::Country*> countries) {
+    for (auto& country: countries) {
+        std::cout << "You own: " << country->getCountryName() << " with " << country->getNumberOfTroops() << " armies." << std::endl;
+        std::cout << "\tNeighbours: " << std::endl;
+        for(auto& neighbour: *country->getAdjCountries()) {
+            std::cout << "\t\tName: " << neighbour->getCountryName() << " Armies: " << neighbour->getNumberOfTroops() << " Owned by: Player " << neighbour->getPlayerOwnerID() << std::endl;
         }
     }
 }
@@ -119,6 +111,27 @@ static int getAttackingCountry(Player* attacker) {
         }
     } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail());
     return fromCountryIndex;
+}
+
+static bool canExchange(const vector<CardType>& cards) {
+    int numInfantry = 0;
+    int numArtillery = 0;
+    int numCavalry = 0;
+    for (const auto i: cards) {
+        switch (i) {
+            case CardType::INFANTRY:
+                numInfantry++;
+                break;
+            case CardType::CAVALRY:
+                numCavalry++;
+                break;
+            case CardType::ARTILLERY:
+                numArtillery++;
+                break;
+        }
+    }
+    return (numArtillery >= 3 || numCavalry >= 3 || numInfantry >= 3 ||
+            (numInfantry >= 1 && numArtillery >= 1 && numCavalry >= 1));
 }
 
 static int getDefendingCountry(Map::Country* fromCountry) {
@@ -178,42 +191,14 @@ static int getNumDefendingDice(Map::Country* toCountry) {
             std::cout << "1)";
         }
         std::cin >> numDefendingDice;
-        if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() || cin.fail()) {
+        if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() - 1 ||
+            cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-    } while (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() || cin.fail());
+    } while (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() - 1 ||
+             cin.fail());
     return numDefendingDice;
-}
-
-
-
-/**
- * Once per turn, this player can place a number of armies on one of his/her country
- * @returns An integer representing the success/failure of the action
- */
-int Player::reinforce() {
-    /* Act of collecting new armies and placing them on the map
-     * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
-     * 1. Trade valid sets of cards to receive armies
-     * 2. Place received armies on the map
-     */
-//TODO - implement the reinforce method and fix the driver
-    /*
-    Map::Country& countryToFortify, const int numArmies
-
-    if (!checkOwnedByPlayer(*this, countryToReinforce)) {
-        return PlayerAction::FAILED;
-    }
-
-    countryToReinforce.setNumberOfTroops(countryToReinforce.getNumberOfTroops() + numArmies);
-    std::cout << "\nPlayer " << countryToReinforce.getPlayerOwnerID() << " has fortified "
-              << countryToReinforce.getCountryName() << std::endl;
-
-    return PlayerAction::SUCCEEDED;
-    */
-
-    return 0;
 }
 
 /**
@@ -245,7 +230,7 @@ int Player::fortify() {
 
     do {
         std::cin.clear();
-        std::cout << "\nDo you wish to fortify a country this turn (y/n)? ";
+        std::cout << "\n[PLAYER "<< this->getPlayerId() <<"] Do you wish to fortify a country this turn (y/n)? ";
         std::cin >> playerChoice;
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid input. Try again.\n";
@@ -326,8 +311,8 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
      */
 
     // Roll
-    std::vector<int> attackingRolls = this->getDiceRoller().roll(numAttackingDice);
-    std::vector<int> defendingRolls = defendingPlayer->getDiceRoller().roll(numDefendingDice);
+    std::vector<int> attackingRolls = this->getDiceRoller()->roll(numAttackingDice);
+    std::vector<int> defendingRolls = defendingPlayer->getDiceRoller()->roll(numDefendingDice);
 
     // Compare the rolls, decide who wins and change number of armies of each country. Maybe update if attacking wins
     while (!attackingRolls.empty() && !defendingRolls.empty()) {
@@ -368,6 +353,156 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
             // attacker loses 1 army
             std::cout << "\nAttacker lost 1 army!" << std::endl;
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - 1);
+        }
+    }
+    return PlayerAction::SUCCEEDED;
+}
+
+/**
+ * Once per turn, this player can place a number of armies on one of his/her country
+ * @returns An integer representing the success/failure of the action
+ */
+int Player::reinforce() {
+    /* Act of collecting new armies and placing them on the map
+     * 0. At the start of your turn, if you have 5+ cards, player must trade at least 1 set.
+     * 1. Trade valid sets of cards to receive armies
+     * 2. Place received armies on the map
+     */
+    auto cardExchange = [](Player& player) {
+        auto output = 0;
+
+        while (true) {
+            if (player.getCards()->getHand()->size() > 5) {
+                std::cout << "You have more than 5 cards in your hand, so you must exchange at least once" << std::endl;
+            } else if (canExchange(*player.getCards()->getHand())) {
+                char input = 0;
+                do {
+                    std::cout << "Would you like to exchange cards? (Y/n)";
+                    std::cin >> input;
+                    if (input != 'y' && input != 'n' && input != 'Y' && input != 'N') {
+                        std::cout << "\nInvalid Input. Please try again." << std::endl;
+                    }
+                } while(input != 'y' && input != 'n' && input != 'Y' && input != 'N');
+                if (input == 'n' || input == 'N') {
+                    return output;
+                }
+            } else {
+                std::cout << "You don't have valid cards to exchange! Moving on..." << std::endl;
+                return output;
+            }
+            std::cout << "What cards would you like to exchange?" << std::endl;
+            int types[3] = {};
+            types[0] = 0, types[1] = 0, types[2] = 0;
+            for (auto card : *player.getCards()->getHand()) {
+                switch (card) {
+                    case CardType::INFANTRY: types[0]++; break;
+                    case CardType::ARTILLERY: types[1]++; break;
+                    case CardType::CAVALRY: types[2]++; break;
+                    default: {
+                        return -1;
+                    }
+                }
+            }
+
+            std::cout << "You hand is: " << std::endl;
+            std::cout << types[0] << " infantry, ";
+            std::cout << types[1] << " artillery, and ";
+            std::cout << types[2] << " cavalry" << std::endl;
+
+            auto cardsToExchange = std::vector<CardType>();
+            auto remaining = 3;
+
+            while (remaining > 0) {
+                std::cout << "You must pick " << remaining << " more cards to exchange" << std::endl;
+                for (auto i = 0 ; i <= 2 ; i++) {
+                    if (types[i] > 0) {
+                        auto input = 0;
+                        do {
+                            std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
+                            std::cout << " would you like to exchange?";
+                            std::cin >> input;
+                            if (input > remaining) {
+                                std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
+                            }
+                            else if (input > types[i]) {
+                                std::cout << "You cannot exchange more cards of a given type than you have in your hand.";
+                            }
+                            else {
+                                for (auto j = 0 ; j < input ; j++, remaining--) {
+                                    cardsToExchange.push_back((CardType) i);
+                                }
+
+                            }
+                        } while ((input > types[i] || input > remaining) && remaining != 0);
+                    }
+                }
+            }
+            auto out = Hand::exchange(player.getCards(), GameLoop::getInstance()->getGameDeck(), cardsToExchange);
+            if (out == -1) {
+                std::cout << "An error occurred while exchanging your cards." << std::endl;
+                return -1;
+            }
+            else {
+                output += out;
+            }
+        }
+    };
+
+    auto countriesOwned = [](const Player& player) {
+        auto countries = player.getOwnedCountries()->size();
+
+        return countries < 9 ? 3 : (int) countries / 3;
+    };
+
+    auto continentControlValue = [](const Player& player) {
+        auto value = 0;
+        for (auto* cont : *GameLoop::getInstance()->getGameMap()->getMapContinents()) {
+            auto fullControl = true;
+
+            for (auto* country : *cont->getCountriesInContinent()) {
+                if (player.getPlayerId() != country->getPlayerOwnerID()) {
+                    fullControl = false;
+                    break;
+                }
+            }
+
+            if (fullControl) {
+                value += cont->getpCTroops();
+            }
+        }
+
+        return value;
+    };
+
+    auto exchange = cardExchange(*this);
+    if (exchange < 0) {
+        return PlayerAction::FAILED;
+    }
+
+    auto newArmies = exchange + countriesOwned(*this) + continentControlValue(*this);
+
+    std::cout << "Place your armies:" << std::endl;
+
+    int troops, place = 0;
+    while (newArmies > 0) {
+        std::cout << "Troops remaining: " << newArmies << std::endl;
+        for (auto* country : *this->getOwnedCountries()) {
+            std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
+                      << " armies. Add how many? ";
+            do {
+                std::cin >> place;
+                if(cin.fail() || place > newArmies || place < 0) {
+                    std::cout << "Invalid value entered. Pleased try again." << std::endl;
+                }
+            } while (cin.fail() || place > newArmies || place < 0);
+            std::cout << std::endl;
+            troops = country->getNumberOfTroops();
+            country->setNumberOfTroops(troops + place);
+            newArmies -= place;
+            if (newArmies <= 0) {
+                std::cout << "\nYou've placed all your armies!" << std::endl;
+                break;
+            }
         }
     }
     return PlayerAction::SUCCEEDED;
@@ -429,9 +564,9 @@ int Player::attack() {
 
         /* GET THE DEFENDING PLAYER */
         Player* defendingPlayer = nullptr;
-        for (unsigned long i = 0; i < GameLoop::getInstance()->getAllPlayers().size(); i++) {
-            if (GameLoop::getInstance()->getAllPlayers().at(i)->getPlayerId() == toCountry->getPlayerOwnerID()) {
-                defendingPlayer = GameLoop::getInstance()->getAllPlayers().at(i);
+        for (auto& i : *GameLoop::getInstance()->getAllPlayers()) {
+            if (i->getPlayerId() == toCountry->getPlayerOwnerID()) {
+                defendingPlayer = i;
                 break;
             }
         }

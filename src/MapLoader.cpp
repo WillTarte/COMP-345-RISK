@@ -108,9 +108,11 @@ Map* MapLoader::readMapFile() {
                 } else {
                     return nullptr;
                 }
+            } else if (pLineWords->at(0) == "name") {
+                continue;
             } else {
                 //unknown mode error, will be ignored, non-critical
-                std::cout << "Line " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
+                std::cout << "\nLine " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
                 std::cout << " ::  " << line;
             }
         }
@@ -146,7 +148,7 @@ Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std:
 
         //add adjacency
         for (auto& i : *borderData) {
-            for (unsigned int j = 1; j < i.size(); j++) {
+            for (unsigned long j = 1; j < i.size(); j++) {
                 gameMap->addEdge(i[0], i[j]);
             }
         }
@@ -171,7 +173,7 @@ void MapLoader::splitLine(const std::string& line, std::vector<std::string>* pLi
 void MapLoader::getMapName(std::string* mapName, std::vector<std::string>* lineWords) {
     //get map name
     if (lineWords->at(0) == "name" || lineWords->at(0) == "Name") {
-        for (unsigned int i = 1; i < lineWords->size(); i++) {
+        for (unsigned long i = 1; i < lineWords->size(); i++) {
             *mapName += (*lineWords)[i] + " ";
         }
     }
@@ -181,7 +183,7 @@ bool MapLoader::checkSection(std::string* mode, std::vector<std::string>* lineWo
     //separate in sections
     if ((*lineWords)[0][0] == *"[") {
         *mode = "";
-        for (unsigned int i = 1; i < (*lineWords)[0].size() - 1; i++) {
+        for (unsigned long i = 1; i < (*lineWords)[0].size() - 1; i++) {
             *mode += (*lineWords)[0][i];
         }
         return true;
