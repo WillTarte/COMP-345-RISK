@@ -8,6 +8,7 @@
 #include "../include/GameEngine.h"
 #include <iostream>
 #include <utility>
+#include <list>
 
 /**
  * Player constructor
@@ -22,6 +23,8 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRolle
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
+    currentState = new PlayerState(IDLE);
+    pObservers = new std::list<Observer*>();
 }
 
 /**
@@ -32,6 +35,8 @@ Player::~Player() {
     delete pCards;
     delete pDiceRoller;
     delete pPlayerId;
+    delete pObservers;
+    delete currentState;
 }
 
 /**
@@ -43,9 +48,12 @@ Player::Player(const Player &toCopy) {
     pCards = new Hand();
     pDiceRoller = new DiceRoller();
     pPlayerId = new int(*toCopy.pPlayerId);
+    pObservers = new std::list<Observer*>();
     *pOwnedCountries = *toCopy.pOwnedCountries;
     *pCards = *toCopy.pCards;
     *pDiceRoller = *toCopy.pDiceRoller;
+    *currentState = *toCopy.currentState;
+    *pObservers = *toCopy.pObservers;
 }
 
 /**
@@ -58,6 +66,8 @@ void Player::operator=(const Player& rhs){
     this->pPlayerId = rhs.pPlayerId;
     this->pDiceRoller = rhs.pDiceRoller;
     this->pCards = rhs.pCards;
+    this->pObservers = rhs.pObservers;
+    this->currentState = rhs.currentState;
 }
 
 /**
@@ -368,6 +378,8 @@ int Player::reinforce() {
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
+    //update current state
+    //notify the observers
     auto cardExchange = [](Player& player) {
         auto output = 0;
 
@@ -583,5 +595,23 @@ int Player::attack() {
             continue;
         }
     } while (true);
+}
+
+void Player::notifyAll() {
+    if(this->pObservers->empty()) {
+        std::cout << "[WARNING] - The current player has no observers currently attached to it." << std::endl;
+        return;
+    }
+    for(const auto& observer : *this->pObservers) {
+        observer->update();
+    }
+}
+
+void Player::detachObserver(Observer* toDetach) {
+    pObservers->remove(toDetach);
+}
+
+void Player::attachObserver(Observer* observer) {
+    this->pObservers->push_back(observer);
 }
 
