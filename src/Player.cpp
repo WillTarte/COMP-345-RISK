@@ -6,6 +6,7 @@
 #include "../include/Map.h"
 #include "../include/Cards.h"
 #include "../include/GameEngine.h"
+#include "../include/GameObservers.h"
 #include <iostream>
 #include <utility>
 
@@ -22,6 +23,7 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRolle
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
+    currentState = new PlayerState(IDLE);
 }
 
 /**

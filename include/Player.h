@@ -10,6 +10,14 @@
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
 
+enum PlayerState {
+    ATTACKING,
+    DEFENDING,
+    FORTIFYING,
+    REINFORCING,
+    IDLE
+};
+
 class Player {
 public:
     Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, int playerId);
@@ -28,6 +36,9 @@ public:
 
     inline int getPlayerId() const { return *pPlayerId; }
 
+    inline PlayerState getPlayerState() const {return *currentState;}
+    inline void setPlayerState(PlayerState newState) { delete currentState; this->currentState =  new PlayerState(newState);}
+
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
     int executeFortify(Map::Country& fromCountry, Map::Country& countryToFortify, int numArmies);
@@ -35,6 +46,7 @@ private:
     Hand* pCards;
     DiceRoller* pDiceRoller;
     const int* pPlayerId;
+    PlayerState* currentState;
 };
 
 enum PlayerAction {
