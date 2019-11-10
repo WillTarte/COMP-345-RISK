@@ -22,6 +22,7 @@ add_executable(Map-driver "src/Drivers/MapDriver.cpp")
 add_executable(Map-Loader-driver "src/Drivers/MapLoaderDriver.cpp")
 add_executable(Player-driver "src/Drivers/PlayerDriver.cpp")
 add_executable(Game-engine-driver "src/Drivers/GameEngineDriver.cpp")
+add_executable(Player-Strategy-driver "src/Drivers/PlayerStrategyDriver.cpp")
 
 target_include_directories(Cards-driver PRIVATE "include")
 target_sources(Cards-driver PRIVATE "src/Cards.cpp" "src/Drivers/CardsDriver.cpp")
@@ -40,6 +41,10 @@ target_sources(Player-driver PRIVATE "src/MapLoader.cpp" "src/Map.cpp" "src/Dice
 
 target_include_directories(Game-engine-driver PRIVATE "include")
 target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")
+
+target_include_directories(Player-Strategy-driver PRIVATE "include")
+target_sources(Player-Strategy-driver PRIVATE "src/Drivers/PlayerStrategyDriver.cpp" "src/PlayerStrategy.cpp")
+
 
 target_link_libraries(Player-driver stdc++fs)
 target_link_libraries(Game-engine-driver stdc++fs)
