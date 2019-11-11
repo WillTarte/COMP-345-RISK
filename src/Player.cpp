@@ -149,11 +149,11 @@ static int getDefendingCountry(Map::Country* fromCountry) {
         std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ")";
         std::cin >> toCountryIndex;
-        if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1 || cin.fail()) {
+        if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-    } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() - 1 || cin.fail());
+    } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail());
     return toCountryIndex;
 }
 
