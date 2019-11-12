@@ -4,19 +4,19 @@
 #include "Dice.h"
 
 enum StrategyContext {
-                      ATTACK,
-                      ATTACK_FROM_COUNTRY,
-                      ATTACK_TO_COUNTRY,
-                      ATTACK_DICE_COUNT,
-                      ATTACK_NEW_ARMY_COUNT,
-                      FORTIFY,
-                      FORTIFY_FROM_COUNTRY,
-                      FORTIFY_TO_COUNTRY,
-                      FORTIFY_ARMY_COUNT,
-                      DEFEND_DICE_COUNT,
-                      REINFORCE,
-                      REINFORCE_CARD_COUNT,
-                      REINFORCE_ARMY_COUNT
+    ATTACK,
+    ATTACK_FROM_COUNTRY,
+    ATTACK_TO_COUNTRY,
+    ATTACK_DICE_COUNT,
+    ATTACK_NEW_ARMY_COUNT,
+    FORTIFY,
+    FORTIFY_FROM_COUNTRY,
+    FORTIFY_TO_COUNTRY,
+    FORTIFY_ARMY_COUNT,
+    DEFEND_DICE_COUNT,
+    REINFORCE,
+    REINFORCE_CARD_COUNT,
+    REINFORCE_ARMY_COUNT
 };
 
 #ifndef COMP_345_PROJ_PLAYER_STRATEGY_H
@@ -24,26 +24,30 @@ enum StrategyContext {
 
 class PlayerStrategy {
 public:
-  virtual char yesOrNo(StrategyContext context) = 0;
-  virtual int intInput(StrategyContext context) = 0;
+    virtual char yesOrNo(StrategyContext context) = 0;
+
+    virtual int intInput(StrategyContext context) = 0;
 };
 
-class HumanPlayerStrategy: public PlayerStrategy {
+class HumanPlayerStrategy : public PlayerStrategy {
 public:
-  char yesOrNo(StrategyContext _);
-  int intInput(StrategyContext _);
+    char yesOrNo(StrategyContext _);
+
+    int intInput(StrategyContext _);
 };
 
-class AggressiveBotStrategy: public PlayerStrategy {
+class AggressiveBotStrategy : public PlayerStrategy {
 public:
-  char yesOrNo(StrategyContext context);
-  int intInput(StrategyContext context);
+    char yesOrNo(StrategyContext context);
+
+    int intInput(StrategyContext context);
 };
 
-class BenevolentBotStrategy: public PlayerStrategy {
+class BenevolentBotStrategy : public PlayerStrategy {
 public:
-  char yesOrNo(StrategyContext context);
-  int intInput(StrategyContext context);
+    char yesOrNo(StrategyContext context);
+
+    int intInput(StrategyContext context);
 };
 
 #endif //COMP_345_PROJ_PLAYER_STRATEGY_H
