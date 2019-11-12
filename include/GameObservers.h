@@ -5,7 +5,7 @@
 #ifndef COMP_345_PROJ_GAMEOBSERVERS_H
 #define COMP_345_PROJ_GAMEOBSERVERS_H
 
-#include "Player.h"
+class Player;
 
 class Observer {
     public:
@@ -17,13 +17,15 @@ class Observer {
 
 class PhaseObserver: public Observer {
     public:
-        PhaseObserver(Player* subject);
+        explicit PhaseObserver(Player* subject);
         ~PhaseObserver();
         PhaseObserver(const PhaseObserver& toCopy);
         void operator=(const PhaseObserver& rhs);
-        void update();
-        inline Player getSubject() const { return *subject; };
-        inline PlayerState getSubjectState() const { return subject->getPlayerState();}
+        void update() override;
+        [[nodiscard]]
+        inline Player getSubject() const;
+        [[nodiscard]]
+        inline PlayerState getSubjectState() const;
     private:
         Player* subject;
 };

@@ -2,15 +2,16 @@
 // Created by William Tarte on 9/21/2019.
 //
 
-#ifndef COMP_345_PROJ_PLAYER_H
-#define COMP_345_PROJ_PLAYER_H
-
 #include <vector>
 #include <list>
 #include "Map.h"
 #include "Cards.h"
 #include "Dice.h"
-#include "GameObservers.h"
+
+#ifndef COMP_345_PROJ_PLAYER_H
+#define COMP_345_PROJ_PLAYER_H
+
+class Observer;
 
 enum PlayerState {
     ATTACKING,
@@ -41,7 +42,7 @@ public:
 
     inline int getPlayerId() const { return *pPlayerId; }
 
-    inline PlayerState getPlayerState() const {return *currentState;}
+    inline PlayerState getPlayerState() const { return *currentState; }
     inline void setPlayerState(PlayerState newState) { delete currentState; this->currentState =  new PlayerState(newState);}
 
 private:

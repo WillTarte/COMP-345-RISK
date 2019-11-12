@@ -37,14 +37,15 @@ target_include_directories(Map-Loader-driver PRIVATE "include")
 target_sources(Map-Loader-driver PRIVATE "src/MapLoader.cpp" "src/Drivers/MapLoaderDriver.cpp" "src/Map.cpp")
 
 target_include_directories(Player-driver PRIVATE "include")
-target_sources(Player-driver PRIVATE "src/MapLoader.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/GameEngine.cpp" "src/Player.cpp" "src/Drivers/PlayerDriver.cpp" "src/GameObservers.cpp")
+target_sources(Player-driver PRIVATE "src/MapLoader.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/GameEngine.cpp" "src/Player.cpp" "src/Drivers/PlayerDriver.cpp")
 
 target_include_directories(Game-engine-driver PRIVATE "include")
 target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")
 
 target_include_directories(Game-observers-driver PRIVATE "include")
-target_sources(Game-observers-driver PRIVATE)
+target_sources(Game-observers-driver PRIVATE "src/Drivers/GameObserversDriver.cpp" "src/GameObservers.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")
 
 
 target_link_libraries(Player-driver stdc++fs)
 target_link_libraries(Game-engine-driver stdc++fs)
+target_link_libraries(Game-observers-driver stdc++fs)

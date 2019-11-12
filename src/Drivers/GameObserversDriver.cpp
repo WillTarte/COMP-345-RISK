@@ -4,12 +4,16 @@
 
 
 #include <GameEngine.h>
+#include <GameObservers.h>
 
 int main() {
 
     GameLoop::start();
 
     Player* p1 = GameLoop::getInstance()->getAllPlayers()->at(0);
-    // TODO: why the fuck is this giving a compilation error
     PhaseObserver po = PhaseObserver(p1);
+    p1->notifyAll();
+
+    GameLoop::resetInstance();
+    return 0;
 }

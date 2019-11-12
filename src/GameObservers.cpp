@@ -3,8 +3,8 @@
 //
 
 #include <algorithm>
+#include "../include/Player.h"
 #include "../include/GameObservers.h"
-//#include "../include/Player.h"
 
 PhaseObserver::PhaseObserver(Player* subject) {
     this->subject = subject;
@@ -47,7 +47,7 @@ std::ostream& operator<<(std::ostream& os, const PlayerState state) {
 
 void PhaseObserver::update() {
     std::cout << "#####################" << std::endl;
-    std::cout << "#Player " << this->subject->getPlayerId() << " is " << subject->getPlayerState() << "#" << std::endl;
+    std::cout << "# Player " << this->subject->getPlayerId() << " is " << subject->getPlayerState() << "  #" << std::endl;
     std::cout << "#####################" << std::endl << std::endl;
 
     switch (subject->getPlayerState()) {
@@ -102,6 +102,14 @@ void PhaseObserver::update() {
             // Don't do shit
             break;
     }
+}
+
+Player PhaseObserver::getSubject() const {
+    return *this->subject;
+}
+
+PlayerState PhaseObserver::getSubjectState() const {
+    return this->subject->getPlayerState();
 }
 
 
