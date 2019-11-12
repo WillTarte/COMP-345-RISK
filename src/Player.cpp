@@ -69,8 +69,8 @@ void Player::operator=(const Player& rhs){
  * @return true if the exchange succeeded
  */
 static bool exchangeCountryOwnership(Player& attackingPlayer, Player* defendingPlayer, Map::Country& country) {
-
     country.setPlayerOwnerID(attackingPlayer.getPlayerId());
+
     for (unsigned long i = 0; i < defendingPlayer->getOwnedCountries()->size(); i++) {
         if (defendingPlayer->getOwnedCountries()->at(i)->getCountryName() == country.getCountryName()) {
             attackingPlayer.getOwnedCountries()->push_back(defendingPlayer->getOwnedCountries()->at(i));
@@ -78,6 +78,7 @@ static bool exchangeCountryOwnership(Player& attackingPlayer, Player* defendingP
             return true;
         }
     }
+
     return false;
 }
 
@@ -97,19 +98,20 @@ static void showCountries(std::vector<Map::Country*> countries) {
 }
 
 static int getAttackingCountry(Player* attacker) {
-
     int fromCountryIndex = 0;
+
     do {
         std::cin.clear();
         showCountries(*attacker->getOwnedCountries());
         std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
                   << attacker->getOwnedCountries()->size() - 1 << ")";
-        std::cin >> fromCountryIndex;
+        fromCountryIndex = strategy->intInput(StrategyContext::ATTACK_FROM_COUNTRY);
         if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
     } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail());
+
     return fromCountryIndex;
 }
 
@@ -148,7 +150,7 @@ static int getDefendingCountry(Map::Country* fromCountry) {
         }
         std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ")";
-        std::cin >> toCountryIndex;
+        toCountryIndex = strategy->intInput(StrategyContext::ATTACK_TO_COUNTRY);
         if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -168,7 +170,7 @@ static int getNumAttackingDice(Player* attacker, Map::Country* fromCountry) {
         } else {
             std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
         }
-        std::cin >> numAttackingDice;
+        numAttackingDice = strategy->intInput(StrategyContext::ATTACK_DICE_COUNT);
         if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
             numAttackingDice > 3 || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -190,7 +192,7 @@ static int getNumDefendingDice(Map::Country* toCountry) {
         } else {
             std::cout << "1)";
         }
-        std::cin >> numDefendingDice;
+        numDefendingDice = strategy->intInput(StategyContext::DEFEND_DICE_COUNT);
         if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() ||
             cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -222,7 +224,6 @@ int Player::executeFortify(Map::Country& fromCountry, Map::Country& countryToFor
 }
 
 int Player::fortify() {
-
     char playerChoice = 0;
     int fromCountryIndex = -1;
     int ctryToFortIndex = -1;
@@ -231,7 +232,7 @@ int Player::fortify() {
     do {
         std::cin.clear();
         std::cout << "\n[PLAYER "<< this->getPlayerId() <<"] Do you wish to fortify a country this turn (y/n)? ";
-        std::cin >> playerChoice;
+        playerChoice = strategy->yesOrNo(StrategyContext::FORTIFY);
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
@@ -245,7 +246,7 @@ int Player::fortify() {
             std::cout << "\nYou own " << this->getOwnedCountries()->size()
                       << " countries. Which country do you want to move armies from ? (choose 0 to "
                       << this->getOwnedCountries()->size() - 1 << " ) ";
-            std::cin >> fromCountryIndex;
+            fromCountryIndex = strategy->intInput(StrategyContext::FORTIFY_FROM_COUNTRY);
             //new condition
             if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 || this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1) {
                 std::cout << "\nInvalid input. Try again.\n";
@@ -261,7 +262,7 @@ int Player::fortify() {
     do {
         std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
                   << " How many would you like to move ? (1 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
-        std::cin >> numArmies;
+        numArmies = strategy->intInput(StrategyContext::FORTIFY_ARMY_COUNT);
         if (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
@@ -273,7 +274,8 @@ int Player::fortify() {
                   << " neighbours\n";\
         std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ") ";
-        std::cin >> ctryToFortIndex;
+
+        ctryToFortIndex = strategy->intInput(StrategyContext::FORTIFY_TO_COUNTRY);
 
         if (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
@@ -336,7 +338,7 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
                     do {
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
-                        cin >> newArmies;
+                        newArmies = strategy->placeArmyCount(StrategyContext::ATTACK_NEW_ARMY_COUNT);
                         if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1 || cin.fail()) {
                             cout << "\nInvalid number! Try again." << std::endl;
                             continue;
@@ -378,7 +380,7 @@ int Player::reinforce() {
                 char input = 0;
                 do {
                     std::cout << "Would you like to exchange cards? (Y/n)";
-                    std::cin >> input;
+                    input = strategy->yesOrNo(StrategyContext::REINFORCE);
                     if (input != 'y' && input != 'n' && input != 'Y' && input != 'N') {
                         std::cout << "\nInvalid Input. Please try again." << std::endl;
                     }
@@ -420,7 +422,7 @@ int Player::reinforce() {
                         do {
                             std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
                             std::cout << " would you like to exchange?";
-                            std::cin >> input;
+                            input = strategy->intInput(StrategyContext::REINFORCE_CARD_COUNT);
                             if (input > remaining) {
                                 std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
                             }
@@ -490,7 +492,7 @@ int Player::reinforce() {
             std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
                       << " armies. Add how many? ";
             do {
-                std::cin >> place;
+              place = strategy->intInput(StrategyContext::REINFORCE_ARMY_COUNT);
                 if(cin.fail() || place > newArmies || place < 0) {
                     std::cout << "Invalid value entered. Pleased try again." << std::endl;
                 }
@@ -526,7 +528,7 @@ int Player::attack() {
         std::cin.clear();
         std::cout << "It is Player " << this->getPlayerId() << "'s turn to attack!" << std::endl;
         std::cout << "\n[ATTACKER] Will you attack?(y/n)";
-        std::cin >> playerChoice;
+        playerChoice = strategy->yesOrNo(StrategyContext::ATTACK);
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -584,4 +586,3 @@ int Player::attack() {
         }
     } while (true);
 }
-
