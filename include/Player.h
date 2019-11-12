@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Dice.h"
+#include "PlayerStrategy.h"
 
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
@@ -25,7 +26,7 @@ public:
     inline void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
 
     inline DiceRoller* getDiceRoller() { return pDiceRoller; }
-
+    inline PlayerStrategy* getStrategy() { return strategy; }
     inline int getPlayerId() const { return *pPlayerId; }
 
 private:
@@ -34,6 +35,7 @@ private:
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
     DiceRoller* pDiceRoller;
+    PlayerStrategy* strategy{};
     const int* pPlayerId;
 };
 

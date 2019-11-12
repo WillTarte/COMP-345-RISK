@@ -6,6 +6,7 @@
 #include "../include/Map.h"
 #include "../include/Cards.h"
 #include "../include/GameEngine.h"
+#include "../include/PlayerStrategy.h"
 #include <iostream>
 #include <utility>
 
@@ -22,6 +23,7 @@ Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRolle
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
+    strategy = new HumanPlayerStrategy();
 }
 
 /**
@@ -58,6 +60,7 @@ void Player::operator=(const Player& rhs){
     this->pPlayerId = rhs.pPlayerId;
     this->pDiceRoller = rhs.pDiceRoller;
     this->pCards = rhs.pCards;
+    this->strategy = rhs.strategy;
 }
 
 /**
@@ -105,7 +108,7 @@ static int getAttackingCountry(Player* attacker) {
         showCountries(*attacker->getOwnedCountries());
         std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
                   << attacker->getOwnedCountries()->size() - 1 << ")";
-        fromCountryIndex = strategy->intInput(StrategyContext::ATTACK_FROM_COUNTRY);
+        fromCountryIndex = attacker->getStrategy()->intInput(StrategyContext::ATTACK_FROM_COUNTRY);
         if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -136,7 +139,7 @@ static bool canExchange(const vector<CardType>& cards) {
             (numInfantry >= 1 && numArtillery >= 1 && numCavalry >= 1));
 }
 
-static int getDefendingCountry(Map::Country* fromCountry) {
+static int getDefendingCountry(Map::Country* fromCountry, Player* player) {
 
     int toCountryIndex = 0;
     do {
@@ -150,7 +153,7 @@ static int getDefendingCountry(Map::Country* fromCountry) {
         }
         std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ")";
-        toCountryIndex = strategy->intInput(StrategyContext::ATTACK_TO_COUNTRY);
+        toCountryIndex = player->getStrategy()->intInput(StrategyContext::ATTACK_TO_COUNTRY);
         if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -170,7 +173,7 @@ static int getNumAttackingDice(Player* attacker, Map::Country* fromCountry) {
         } else {
             std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
         }
-        numAttackingDice = strategy->intInput(StrategyContext::ATTACK_DICE_COUNT);
+        numAttackingDice = attacker->getStrategy()->intInput(StrategyContext::ATTACK_DICE_COUNT);
         if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
             numAttackingDice > 3 || cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -181,7 +184,7 @@ static int getNumAttackingDice(Player* attacker, Map::Country* fromCountry) {
     return numAttackingDice;
 }
 
-static int getNumDefendingDice(Map::Country* toCountry) {
+static int getNumDefendingDice(Map::Country* toCountry, Player* player) {
 
     int numDefendingDice = 0;
     do {
@@ -192,7 +195,7 @@ static int getNumDefendingDice(Map::Country* toCountry) {
         } else {
             std::cout << "1)";
         }
-        numDefendingDice = strategy->intInput(StategyContext::DEFEND_DICE_COUNT);
+        numDefendingDice = player->getStrategy()->intInput(StrategyContext::DEFEND_DICE_COUNT);
         if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() ||
             cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -338,7 +341,7 @@ int Player::executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Pl
                     do {
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
-                        newArmies = strategy->placeArmyCount(StrategyContext::ATTACK_NEW_ARMY_COUNT);
+                        newArmies = strategy->intInput(StrategyContext::ATTACK_NEW_ARMY_COUNT);
                         if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1 || cin.fail()) {
                             cout << "\nInvalid number! Try again." << std::endl;
                             continue;
@@ -380,7 +383,7 @@ int Player::reinforce() {
                 char input = 0;
                 do {
                     std::cout << "Would you like to exchange cards? (Y/n)";
-                    input = strategy->yesOrNo(StrategyContext::REINFORCE);
+                    input = player.getStrategy()->yesOrNo(StrategyContext::REINFORCE);
                     if (input != 'y' && input != 'n' && input != 'Y' && input != 'N') {
                         std::cout << "\nInvalid Input. Please try again." << std::endl;
                     }
@@ -422,7 +425,7 @@ int Player::reinforce() {
                         do {
                             std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
                             std::cout << " would you like to exchange?";
-                            input = strategy->intInput(StrategyContext::REINFORCE_CARD_COUNT);
+                            input = player.getStrategy()->intInput(StrategyContext::REINFORCE_CARD_COUNT);
                             if (input > remaining) {
                                 std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
                             }
@@ -550,7 +553,7 @@ int Player::attack() {
         }
 
         /* USER CHOOSES WHICH COUNTRY TO ATTACK*/
-        toCountryIndex = getDefendingCountry(fromCountry);
+        toCountryIndex = getDefendingCountry(fromCountry, this);
 
         Map::Country* toCountry = fromCountry->getAdjCountries()->at(toCountryIndex);
         if (fromCountry->getPlayerOwnerID() == toCountry->getPlayerOwnerID()) {
@@ -562,7 +565,7 @@ int Player::attack() {
         numAttackingDice = getNumAttackingDice(this, fromCountry);
 
         /*DEFENDER CHOOSES HOW MANY DICE TO ROLL*/
-        numDefendingDice = getNumDefendingDice(toCountry);
+        numDefendingDice = getNumDefendingDice(toCountry, this);
 
         /* GET THE DEFENDING PLAYER */
         Player* defendingPlayer = nullptr;
