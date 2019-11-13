@@ -9,11 +9,10 @@
 int main() {
 
     GameLoop::start();
-
     Player* p1 = GameLoop::getInstance()->getAllPlayers()->at(0);
-    PhaseObserver po = PhaseObserver(p1);
     p1->notifyAll();
-
+    p1->setPlayerState(PlayerState::ATTACKING);
+    p1->notifyAll();
     GameLoop::resetInstance();
     return 0;
 }

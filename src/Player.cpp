@@ -18,7 +18,7 @@
  * @param playerId this Player' integer id
  */
 Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
-    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
+    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries));
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);

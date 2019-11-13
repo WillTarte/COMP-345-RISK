@@ -43,10 +43,11 @@ std::ostream& operator<<(std::ostream& os, const PlayerState state) {
             os << "Idle";
             break;
     }
+    return os;
 }
 
 void PhaseObserver::update() {
-    std::cout << "#####################" << std::endl;
+    std::cout << std::endl <<"#####################" << std::endl;
     std::cout << "# Player " << this->subject->getPlayerId() << " is " << subject->getPlayerState() << "  #" << std::endl;
     std::cout << "#####################" << std::endl << std::endl;
 
@@ -59,7 +60,7 @@ void PhaseObserver::update() {
                           << std::endl;
                 for (const auto& neighbour : *country->getAdjCountries()) {
                     if (neighbour->getPlayerOwnerID() != subject->getPlayerId()) {
-                        std::cout << "\t\t" << neighbour->getCountryName() << ": owned by Player "
+                        std::cout << "\t\t-> " << neighbour->getCountryName() << ": owned by Player "
                                   << neighbour->getPlayerOwnerID() << ", with " << neighbour->getNumberOfTroops()
                                   << " armies" << std::endl;
                     }
@@ -77,7 +78,7 @@ void PhaseObserver::update() {
                           << std::endl;
                 for (const auto& neighbour : *country->getAdjCountries()) {
                     if (neighbour->getPlayerOwnerID() == subject->getPlayerId()) {
-                        std::cout << "\t\t" << neighbour->getCountryName() << ": " << neighbour->getNumberOfTroops()
+                        std::cout << "\t\t-> " << neighbour->getCountryName() << ": " << neighbour->getNumberOfTroops()
                                   << " armies" << std::endl;
                     }
                 }

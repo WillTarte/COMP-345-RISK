@@ -10,6 +10,7 @@
 #include <random>
 #include <string>
 #include <experimental/filesystem>
+#include <GameObservers.h>
 
 using namespace std;
 namespace fs = std::experimental::filesystem;
@@ -82,6 +83,7 @@ void GameLoop::loop() {
 
     while (gameNotDone) {
 
+        // TODO: "This (phase information) should dynamically be updated as the game goes through different players/phases and be visible at all times during game play"
         currentPlayer = allPlayers->at(currentPlayerPosition);
 
         cout << "\u001b[31m";  // for demo purposes
@@ -206,7 +208,9 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
-        players->push_back(new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i));
+        auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
+        new PhaseObserver(player);
+        players->push_back(player);
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;
