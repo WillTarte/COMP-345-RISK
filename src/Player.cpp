@@ -4,6 +4,7 @@
 
 #include "../include/Player.h"
 #include "../include/GameEngine.h"
+#include "../include/GameObservers.h"
 #include <iostream>
 #include <utility>
 #include <list>
