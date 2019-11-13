@@ -18,7 +18,7 @@
  * @param playerId this Player' integer id
  */
 Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
-    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
+    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries));
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
@@ -67,6 +67,27 @@ void Player::operator=(const Player& rhs){
     this->pCards = rhs.pCards;
     this->pObservers = rhs.pObservers;
     this->currentState = rhs.currentState;
+}
+
+std::ostream& operator<<(std::ostream& os, const PlayerState state) {
+    switch (state) {
+        case ATTACKING:
+            os << "Attacking";
+            break;
+        case DEFENDING:
+            os << "Defending";
+            break;
+        case FORTIFYING:
+            os << "Fortifying";
+            break;
+        case REINFORCING:
+            os << "Reinforcing";
+            break;
+        case IDLE:
+            os << "Idle";
+            break;
+    }
+    return os;
 }
 
 /**

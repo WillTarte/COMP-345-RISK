@@ -21,6 +21,8 @@ enum PlayerState {
     IDLE
 };
 
+std::ostream& operator<<(std::ostream& os, const PlayerState state);
+
 class Player {
 public:
     Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, int playerId);

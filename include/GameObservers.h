@@ -22,9 +22,7 @@ class PhaseObserver: public Observer {
         PhaseObserver(const PhaseObserver& toCopy);
         void operator=(const PhaseObserver& rhs);
         void update() override;
-        [[nodiscard]]
         inline Player getSubject() const;
-        [[nodiscard]]
         inline PlayerState getSubjectState() const;
     private:
         Player* subject;
