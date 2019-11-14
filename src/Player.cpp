@@ -3,11 +3,11 @@
 //
 
 #include "../include/Player.h"
-#include "../include/Map.h"
-#include "../include/Cards.h"
 #include "../include/GameEngine.h"
+#include "../include/GameObservers.h"
 #include <iostream>
 #include <utility>
+#include <list>
 
 /**
  * Player constructor
@@ -18,10 +18,12 @@
  * @param playerId this Player' integer id
  */
 Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
-    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries)); // avoid unnecessary copy
+    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries));
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
+    currentState = new PlayerState(IDLE);
+    pObservers = new std::list<Observer*>();
 }
 
 /**
@@ -32,6 +34,8 @@ Player::~Player() {
     delete pCards;
     delete pDiceRoller;
     delete pPlayerId;
+    delete pObservers;
+    delete currentState;
 }
 
 /**
@@ -39,13 +43,16 @@ Player::~Player() {
  * @param toCopy
  */
 Player::Player(const Player &toCopy) {
-    pOwnedCountries = new vector<Map::Country*>;
+    pOwnedCountries = new std::vector<Map::Country*>;
     pCards = new Hand();
     pDiceRoller = new DiceRoller();
     pPlayerId = new int(*toCopy.pPlayerId);
+    pObservers = new std::list<Observer*>();
     *pOwnedCountries = *toCopy.pOwnedCountries;
     *pCards = *toCopy.pCards;
     *pDiceRoller = *toCopy.pDiceRoller;
+    *currentState = *toCopy.currentState;
+    *pObservers = *toCopy.pObservers;
 }
 
 /**
@@ -58,6 +65,29 @@ void Player::operator=(const Player& rhs){
     this->pPlayerId = rhs.pPlayerId;
     this->pDiceRoller = rhs.pDiceRoller;
     this->pCards = rhs.pCards;
+    this->pObservers = rhs.pObservers;
+    this->currentState = rhs.currentState;
+}
+
+std::ostream& operator<<(std::ostream& os, const PlayerState state) {
+    switch (state) {
+        case ATTACKING:
+            os << "Attacking";
+            break;
+        case DEFENDING:
+            os << "Defending";
+            break;
+        case FORTIFYING:
+            os << "Fortifying";
+            break;
+        case REINFORCING:
+            os << "Reinforcing";
+            break;
+        case IDLE:
+            os << "Idle";
+            break;
+    }
+    return os;
 }
 
 /**
@@ -105,15 +135,15 @@ static int getAttackingCountry(Player* attacker) {
         std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
                   << attacker->getOwnedCountries()->size() - 1 << ")";
         std::cin >> fromCountryIndex;
-        if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail()) {
+        if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || std::cin.fail()) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-    } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail());
+    } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || std::cin.fail());
     return fromCountryIndex;
 }
 
-static bool canExchange(const vector<CardType>& cards) {
+static bool canExchange(const std::vector<CardType>& cards) {
     int numInfantry = 0;
     int numArtillery = 0;
     int numCavalry = 0;
@@ -576,12 +606,30 @@ int Player::attack() {
 
         if (this->executeAttack(fromCountry, toCountry, defendingPlayer, numAttackingDice, numDefendingDice) ==
             PlayerAction::SUCCEEDED) {
-            cout << "\n[ATTACK SUCCEEDED] - Proceeding." << std::endl;
+            std::cout << "\n[ATTACK SUCCEEDED] - Proceeding." << std::endl;
             continue;
         } else {
-            cout << "\n[ATTACK FAILED] - Make sure that you chose appropriate values." << std::endl;
+            std::cout << "\n[ATTACK FAILED] - Make sure that you chose appropriate values." << std::endl;
             continue;
         }
     } while (true);
+}
+
+void Player::notifyAll() {
+    if(this->pObservers->empty()) {
+        std::cout << "[WARNING] - The current player has no observers currently attached to it." << std::endl;
+        return;
+    }
+    for(const auto& observer : *this->pObservers) {
+        observer->update();
+    }
+}
+
+void Player::detachObserver(Observer* toDetach) {
+    pObservers->remove(toDetach);
+}
+
+void Player::attachObserver(Observer* observer) {
+    this->pObservers->push_back(observer);
 }
 

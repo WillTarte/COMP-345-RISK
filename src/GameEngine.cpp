@@ -10,6 +10,7 @@
 #include <random>
 #include <string>
 #include <experimental/filesystem>
+#include <GameObservers.h>
 
 using namespace std;
 namespace fs = std::experimental::filesystem;
@@ -89,15 +90,21 @@ void GameLoop::loop() {
         cout << "\u001b[31m";
         currentPlayer->reinforce();
 
+        cout.clear();
+
         cout << "\u001b[33m";  // for demo purposes
         cout << "Player " << currentPlayer->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
         currentPlayer->attack();
 
+        cout.clear();
+
         cout << "\u001b[34m";  // for demo purposes
         cout << "Player " << currentPlayer->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
         currentPlayer->fortify();
+
+        cout.clear();
 
         gameNotDone = !isGameDone(currentPlayer);
 
@@ -206,7 +213,9 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     players->reserve(numPlayers);
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
-        players->push_back(new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i));
+        auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
+        new PhaseObserver(player);
+        players->push_back(player);
     }
     std::shuffle(players->begin(), players->end(), std::mt19937(std::random_device()()));
     return players;
