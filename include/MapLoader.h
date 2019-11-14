@@ -47,13 +47,13 @@ public:
 private:
     static Map* altInitMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
                                  std::vector<std::vector<std::string>>* territoryData, const bool* vMap);
-    void altSplitLine(const std::string& line, std::vector<std::string>* pLineWords, std::string mode);
-    void altGetMapName(std::string* mapName, std::vector<std::string>* lineWords);
+    void altSplitLine(const std::string &line, std::vector<std::string> *pLineWords, const std::string& mode);
+    void altGetMapName(std::string *mapName, std::vector<std::string> *lineWords);
     bool altCheckSection(std::string* mode, const std::string &line);
     bool altValidateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
                                   bool* validMap);
-    bool altValidateTerritoriesLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount, bool* validMap,
-                                    int* countryID, const int* continentCount);
+    bool altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
+                                    bool *validMap);
     static std::string getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData);
     static int getCountryID(const std::string& countryName, const std::vector<std::string>& countryList);
 };

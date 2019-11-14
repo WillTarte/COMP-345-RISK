@@ -18,7 +18,7 @@
  * @param mapFile
  */
 MapLoader::MapLoader(std::string mapFile) {
-    pMapFile = new std::string(mapFile);
+    pMapFile = new std::string(std::move(mapFile));
 }
 
 /**
@@ -261,7 +261,7 @@ bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std:
 }
 
 AlternativeLoader::AlternativeLoader(std::string mapFile) {
-    pDominationMapFile = new std::string(mapFile);
+    pDominationMapFile = new std::string(std::move(mapFile));
 }
 
 AlternativeLoader::~AlternativeLoader() {
@@ -330,8 +330,7 @@ Map *AlternativeLoader::readMapFile() {
                     return nullptr;
                 }
             } else if (*pMode == "Territories") {
-                if (altValidateTerritoriesLine(pCountryCount, pLineWords, pLineCount, pValidMap, pCountryID,
-                                               pContinentCount)) {
+                if (altValidateTerritoriesLine(pLineWords, pLineCount, pValidMap)) {
                     pTerritoryData->push_back(*pLineWords);
                 } else {
                     return nullptr;
@@ -425,15 +424,13 @@ Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::
     return nullptr;
 }
 
-void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::string> *pLineWords, std::string mode) {
+void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::string> *pLineWords, const std::string& mode) {
     std::string mLine = line;
     size_t pos;
     std::string token;
     std::string delimiter;
     if(mode == "Map" || mode == "Continents"){
         //split each line into vector of words (split by =)
-        pos = 0;
-        token;
         delimiter = "=";
         while((pos = mLine.find(delimiter)) != std::string::npos){
             token = mLine.substr(0,pos);
@@ -442,8 +439,6 @@ void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::s
         }
     }else{
         //split each line into vector of words (split by ,)
-        pos = 0;
-        token;
         delimiter = ",";
         while((pos = mLine.find(delimiter)) != std::string::npos){
             token = mLine.substr(0,pos);
@@ -482,9 +477,16 @@ AlternativeLoader::altValidateContinentLine(int *continentCount, std::vector<std
 }
 
 bool
-AlternativeLoader::altValidateTerritoriesLine(int *countryCount, std::vector<std::string> *lineWords, const int *lineCount,
-                                              bool *validMap, int *countryID, const int *continentCount) {
-    return false;
+AlternativeLoader::altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
+                                              bool *validMap) {
+    //check validity of the line in this mode
+    if (lineWords->size() < 5) {
+        std::cout << "Line " << *lineCount
+                  << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
+        *validMap = false;
+        return false;
+    }
+    return true;
 }
 
 std::string AlternativeLoader::getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData) {
