@@ -42,21 +42,20 @@ public:
     AlternativeLoader(const AlternativeLoader& toCopy);
     void operator=(AlternativeLoader& rhs);
     std::string* pDominationMapFile;
-    void setMapFile(std::string newMapFile);
+    void altSetMapFile(std::string newMapFile);
     virtual Map* readMapFile();
 private:
-    static Map* initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
-                              std::vector<std::vector<std::string>>* countryData,
-                              std::vector<std::vector<int>>* borderData, const bool* vMap);
-    void splitLine(const std::string& line, std::vector<std::string>* pLineWords);
-    void getMapName(std::string* mapName, std::vector<std::string>* lineWords);
-    bool checkSection(std::string* mode, std::vector<std::string>* lineWords);
-    bool validateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
-                               bool* validMap);
-    bool validateCountryLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount, bool* validMap,
-                             int* countryID, const int* continentCount);
-    bool validateBordersLine(std::vector<int>* lineNums, std::vector<std::string>* lineWords, const int* lineCount,
-                             bool* validMap, const int* countryCount);
+    static Map* altInitMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
+                                 std::vector<std::vector<std::string>>* territoryData, const bool* vMap);
+    void altSplitLine(const std::string& line, std::vector<std::string>* pLineWords, std::string mode);
+    void altGetMapName(std::string* mapName, std::vector<std::string>* lineWords);
+    bool altCheckSection(std::string* mode, const std::string &line);
+    bool altValidateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
+                                  bool* validMap);
+    bool altValidateTerritoriesLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount, bool* validMap,
+                                    int* countryID, const int* continentCount);
+    static std::string getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData);
+    static int getCountryID(const std::string& countryName, const std::vector<std::string>& countryList);
 };
 
 class MapLoaderAdapter : public MapLoader{
