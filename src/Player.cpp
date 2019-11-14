@@ -398,8 +398,6 @@ int Player::reinforce() {
      * 1. Trade valid sets of cards to receive armies
      * 2. Place received armies on the map
      */
-    //update current state
-    //notify the observers
     auto cardExchange = [](Player& player) {
         auto output = 0;
 

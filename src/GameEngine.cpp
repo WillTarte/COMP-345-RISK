@@ -83,7 +83,6 @@ void GameLoop::loop() {
 
     while (gameNotDone) {
 
-        // TODO: "This (phase information) should dynamically be updated as the game goes through different players/phases and be visible at all times during game play"
         currentPlayer = allPlayers->at(currentPlayerPosition);
 
         cout << "\u001b[31m";  // for demo purposes
@@ -91,15 +90,21 @@ void GameLoop::loop() {
         cout << "\u001b[31m";
         currentPlayer->reinforce();
 
+        cout.clear();
+
         cout << "\u001b[33m";  // for demo purposes
         cout << "Player " << currentPlayer->getPlayerId() << " is attacking!" << endl;
         cout << "\u001b[33m";
         currentPlayer->attack();
 
+        cout.clear();
+
         cout << "\u001b[34m";  // for demo purposes
         cout << "Player " << currentPlayer->getPlayerId() << " is fortifying!" << endl;
         cout << "\u001b[34m";
         currentPlayer->fortify();
+
+        cout.clear();
 
         gameNotDone = !isGameDone(currentPlayer);
 
