@@ -376,42 +376,24 @@ Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::
     if (*vMap) {
         //create map object with empty continents
         Map* gameMap = new Map(*mapName, *continentData);
-        //add countries to map and continents
+
+        //format data into 3 vectors that map expects
         std::vector<std::vector<std::string>> countryData;
         countryData.resize(territoryData->size());
+        countryData = altGetCountryData(countryData,territoryData,continentData);
+        std::vector<std::string> countryList;
+        countryList = altGetCountryList(countryList,territoryData);
         std::vector<std::vector<int>> borderData;
         borderData.resize(territoryData->size());
-        std::vector<std::string> countryList;
-        unsigned int counter = 0;
-        //populate countryData and maintain a countryList to figure out country IDs
-        for(auto& i : *territoryData){
-            countryData[counter].push_back(std::to_string(counter + 1));
-            countryData[counter].push_back(i[0]);
-            if(getContinentID(i[3],*continentData) == "0"){
-                return nullptr;
-            }
-            countryData[counter].push_back(getContinentID(i[3],*continentData));
-            countryList.push_back(i[0]);
-            counter++;
+        borderData = altGetBorderData(borderData,territoryData,countryList);
+        //bail if there was an error while formatting the data
+        if(borderData.empty() || countryData.empty()){
+            return nullptr;
         }
-        //populate border data
-        counter = 0;
-        for(auto& i : *territoryData){
-            borderData[counter].push_back(counter + 1);
-            for(unsigned int j = 4; j < i.size(); j++){
-                if(getCountryID(i[j],countryList) == 0){
-                    return nullptr;
-                }
-                borderData[counter].push_back(getCountryID(i[j],countryList));
-            }
-            counter++;
-        }
-
         //add countries to map
         for (auto& i : countryData) {
             gameMap->addNode(std::stoi(i[0]), i[1], std::stoi(i[2]));
         }
-
         //add adjacency
         for (auto& i : borderData) {
             for (unsigned long j = 1; j < i.size(); j++) {
@@ -511,4 +493,53 @@ int AlternativeLoader::getCountryID(const std::string& countryName, const std::v
         counter++;
     }
     return 0;
+}
+
+std::vector<std::vector<std::string>> AlternativeLoader::altGetCountryData(std::vector<std::vector<std::string>> countries,
+                                                                           std::vector<std::vector<std::string>> *territories,
+                                                                           std::vector<std::vector<std::string>> *continents) {
+    std::vector<std::vector<std::string>> to_return = std::move(countries);
+    unsigned int counter = 0;
+    //populate countryData
+    for(auto& i : *territories){
+        to_return[counter].push_back(std::to_string(counter + 1));
+        to_return[counter].push_back(i[0]);
+        if(getContinentID(i[3],*continents) == "0"){
+            //there was an error, map was not created
+            return std::vector<std::vector<std::string>>();
+        }
+        to_return[counter].push_back(getContinentID(i[3],*continents));
+        counter++;
+    }
+    return to_return;
+}
+
+std::vector<std::string> AlternativeLoader::altGetCountryList(std::vector<std::string> countries,
+                                                              std::vector<std::vector<std::string>> *territories) {
+    std::vector<std::string> to_return = std::move(countries);
+    //populate countrylist
+    for(auto& i : *territories){
+        to_return.push_back(i[0]);
+    }
+    return to_return;
+}
+
+std::vector<std::vector<int>> AlternativeLoader::altGetBorderData(std::vector<std::vector<int>> borders,
+                                                                  std::vector<std::vector<std::string>> *territories,
+                                                                  std::vector<std::string> countries) {
+    //populate border data
+    std::vector<std::vector<int>> to_return = borders;
+    int counter = 0;
+    for(auto& i : *territories){
+        to_return[counter].push_back(counter + 1);
+        for(unsigned int j = 4; j < i.size(); j++){
+            if(getCountryID(i[j],countries) == 0){
+                //there was an error, map was not created
+                return std::vector<std::vector<int>>();
+            }
+            to_return[counter].push_back(getCountryID(i[j],countries));
+        }
+        counter++;
+    }
+    return to_return;
 }

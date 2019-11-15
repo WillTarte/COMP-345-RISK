@@ -56,6 +56,17 @@ private:
                                     bool *validMap);
     static std::string getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData);
     static int getCountryID(const std::string& countryName, const std::vector<std::string>& countryList);
+
+    static std::vector<std::vector<std::string>>
+    altGetCountryData(std::vector<std::vector<std::string>> countries, std::vector<std::vector<std::string>> *territories,
+                      std::vector<std::vector<std::string>> *continents);
+
+    static std::vector<std::string>
+    altGetCountryList(std::vector<std::string> countries, std::vector<std::vector<std::string>> *territories);
+
+    static std::vector<std::vector<int>>
+    altGetBorderData(std::vector<std::vector<int>> borders, std::vector<std::vector<std::string>> *territories,
+                     std::vector<std::string> countries);
 };
 
 class MapLoaderAdapter : public MapLoader{
