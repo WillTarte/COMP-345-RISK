@@ -18,7 +18,7 @@
  * @param mapFile
  */
 MapLoader::MapLoader(std::string mapFile) {
-    pMapFile = new std::string(mapFile);
+    pMapFile = new std::string(std::move(mapFile));
 }
 
 /**

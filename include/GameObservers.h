@@ -28,4 +28,16 @@ class PhaseObserver: public Observer {
         Player* subject;
 };
 
+class StatsObserver: public Observer {
+    public:
+        explicit StatsObserver(Player* subject);
+        ~StatsObserver();
+        StatsObserver(const StatsObserver& toCopy);
+        void operator=(const StatsObserver& rhs);
+        void update() override;
+        static void printTable();
+        static void printStats();
+    private:
+      Player* subject;
+};
 #endif //COMP_345_PROJ_GAMEOBSERVERS_H
