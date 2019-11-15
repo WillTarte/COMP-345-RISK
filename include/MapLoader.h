@@ -66,7 +66,7 @@ private:
 
     static std::vector<std::vector<int>>
     altGetBorderData(std::vector<std::vector<int>> borders, std::vector<std::vector<std::string>> *territories,
-                     std::vector<std::string> countries);
+                     const std::vector<std::string>& countries);
 };
 
 class MapLoaderAdapter : public MapLoader{

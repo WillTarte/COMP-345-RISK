@@ -526,9 +526,9 @@ std::vector<std::string> AlternativeLoader::altGetCountryList(std::vector<std::s
 
 std::vector<std::vector<int>> AlternativeLoader::altGetBorderData(std::vector<std::vector<int>> borders,
                                                                   std::vector<std::vector<std::string>> *territories,
-                                                                  std::vector<std::string> countries) {
+                                                                  const std::vector<std::string>& countries) {
     //populate border data
-    std::vector<std::vector<int>> to_return = borders;
+    std::vector<std::vector<int>> to_return = std::move(borders);
     int counter = 0;
     for(auto& i : *territories){
         to_return[counter].push_back(counter + 1);
