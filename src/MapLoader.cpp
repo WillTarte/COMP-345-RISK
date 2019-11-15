@@ -281,10 +281,11 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
     pDominationMapFile = &newMapFile;
 }
 
-Map *AlternativeLoader::readMapFile() {
+Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pDominationMapFile);
     if(!infile || infile.peek() == EOF){
+        std::cout << *pDominationMapFile;
         return nullptr;
     }
     std::string line;

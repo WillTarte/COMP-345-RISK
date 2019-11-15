@@ -43,7 +43,7 @@ public:
     void operator=(AlternativeLoader& rhs);
     std::string* pDominationMapFile;
     void altSetMapFile(std::string newMapFile);
-    virtual Map* readMapFile();
+    virtual Map* altReadMapFile();
 private:
     static Map* altInitMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
                                  std::vector<std::vector<std::string>>* territoryData, const bool* vMap);
@@ -64,7 +64,7 @@ private:
 public:
     MapLoaderAdapter(AlternativeLoader alt){AltLoader = alt;};
     Map* readMapFile(){
-        return AltLoader.readMapFile();
+        return AltLoader.altReadMapFile();
     };
 };
 

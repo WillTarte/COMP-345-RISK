@@ -30,5 +30,18 @@ int main() {
     if (secondMap) {
         secondMap->printMap();
     }
+
+    //init alternative loader
+    std::cout << "\n\n";
+    const std::string MAP3 = "Africa.map";
+    AlternativeLoader altLoader = AlternativeLoader(MAP3);
+
+    std::cout << "creating map 3 using alternative loader directly (valid)\n";
+    Map* thirdMap = altLoader.altReadMapFile();
+    std::cout << "\nmap 3 creation completed.\n";
+    if (thirdMap) {
+        thirdMap->printMap();
+    }
+
     return 0;
 }
