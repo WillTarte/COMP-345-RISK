@@ -285,7 +285,6 @@ Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pDominationMapFile);
     if(!infile || infile.peek() == EOF){
-        std::cout << *pDominationMapFile;
         return nullptr;
     }
     std::string line;
@@ -399,7 +398,7 @@ Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::
         counter = 0;
         for(auto& i : *territoryData){
             borderData[counter].push_back(counter + 1);
-            for(unsigned int j = 4; j < territoryData->size(); j++){
+            for(unsigned int j = 4; j < i.size(); j++){
                 if(getCountryID(i[j],countryList) == 0){
                     return nullptr;
                 }
@@ -438,6 +437,7 @@ void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::s
             pLineWords->push_back(token);
             mLine.erase(0,pos + delimiter.length());
         }
+        pLineWords->push_back(mLine);
     }else{
         //split each line into vector of words (split by ,)
         delimiter = ",";
@@ -446,6 +446,7 @@ void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::s
             pLineWords->push_back(token);
             mLine.erase(0,pos + delimiter.length());
         }
+        pLineWords->push_back(mLine);
     }
 }
 
