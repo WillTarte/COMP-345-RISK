@@ -81,29 +81,20 @@ void GameLoop::loop() {
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
 
-    while (gameNotDone) {
+    do {
 
         currentPlayer = allPlayers->at(currentPlayerPosition);
 
-        cout << "\u001b[31m";  // for demo purposes
-        cout << "Player " << currentPlayer->getPlayerId() << " is reinforcing!" << endl;
-        cout << "\u001b[31m";
+        cout << "\u001b[35m";  // for demo purposes
         currentPlayer->reinforce();
-
         cout.clear();
 
         cout << "\u001b[33m";  // for demo purposes
-        cout << "Player " << currentPlayer->getPlayerId() << " is attacking!" << endl;
-        cout << "\u001b[33m";
         currentPlayer->attack();
-
         cout.clear();
 
         cout << "\u001b[34m";  // for demo purposes
-        cout << "Player " << currentPlayer->getPlayerId() << " is fortifying!" << endl;
-        cout << "\u001b[34m";
         currentPlayer->fortify();
-
         cout.clear();
 
         gameNotDone = !isGameDone(currentPlayer);
@@ -114,12 +105,12 @@ void GameLoop::loop() {
                 currentPlayerPosition = 0;
                 // for demo - give all countries to first player at the end of the round
                 currentPlayer->setOwnedCountries(gameMap->getMapCountries());
+                gameNotDone = false;
             }
         }
-    }
-    cout << "\u001b[35m";
-    cout << "Player " << currentPlayer->getPlayerId() << " owns all of the countries! They have won the game!!";
-    cout << "\u001b[0m";
+    } while (gameNotDone);
+
+    currentPlayer->notifyAll();
     cout.flush();
 }
 
@@ -214,6 +205,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
+        new StatsObserver(player);
         new PhaseObserver(player);
         players->push_back(player);
     }
