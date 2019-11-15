@@ -43,5 +43,14 @@ int main() {
         thirdMap->printMap();
     }
 
+    //init adapter
+    std::cout << "\n\n";
+    std::cout << "creating map 4 using adapter (valid)\n";
+    MapLoaderAdapter* adapter = new MapLoaderAdapter(altLoader);
+    Map* fourthMap = adapter->readMapFile();
+    if (fourthMap) {
+        fourthMap->printMap();
+    }
+
     return 0;
 }
