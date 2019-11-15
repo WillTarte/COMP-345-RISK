@@ -1,3 +1,4 @@
+#include <iostream>
 #include "../include/PlayerStrategy.h"
 
 char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
@@ -82,9 +83,45 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
     return count;
 }
 
-int AggressiveBotStrategy::attackFromCountryIndex() {};
+int AggressiveBotStrategy::attackFromCountryIndex(int except) {
+    int biggestIndex = 0;
+    int max = 0;
+    auto countries = player->getOwnedCountries();
+    for (auto i = 0; i < countries->size(); i++) {
+        if (countries[i][0]->getNumberOfTroops() > max
+         && countries[i][0]->getCountryId() != except) { // Allows you to find 2nd biggest
+            max = countries[i][0]->getNumberOfTroops();
+            biggestIndex = countries[i][0]->getCountryId();
+            from = *countries[i][0];
+        }
+    }
 
-int AggressiveBotStrategy::attackToCountryIndex() {};
+    return biggestIndex;
+};
+
+int AggressiveBotStrategy::attackToCountryIndex() {
+    auto adj = from.getAdjCountries();
+    int smallest = INT64_MAX;
+    int smallestIndex = -1;
+    int owner = from.getPlayerOwnerID();
+    for (int i = 0 ; i < adj->size() ; i++) {
+        if (adj[i][0]->getNumberOfTroops() < smallest
+         && adj[i][0]->getPlayerOwnerID() != owner) {
+            smallest = adj[i][0]->getNumberOfTroops();
+            smallestIndex = i;
+        }
+    }
+
+    if (smallestIndex != -1) {
+        return smallest;
+    }
+    else {
+        // Get the next smallest country if attacking player
+        // owns all adjacent countries
+        attackFromCountryIndex(from.getCountryId());
+        attackToCountryIndex();
+    }
+};
 
 int AggressiveBotStrategy::attackNewArmies() {};
 

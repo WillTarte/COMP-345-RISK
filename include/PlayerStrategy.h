@@ -1,7 +1,8 @@
-#include <vector>
+#ifndef COMP_345_PROJ_PLAYER_STRATEGY_H
+#define COMP_345_PROJ_PLAYER_STRATEGY_H
+
 #include "Map.h"
-#include "Cards.h"
-#include "Dice.h"
+#include "Player.h"
 
 enum StrategyContext {
     ATTACK,
@@ -19,13 +20,15 @@ enum StrategyContext {
     REINFORCE_ARMY_COUNT
 };
 
-#ifndef COMP_345_PROJ_PLAYER_STRATEGY_H
-#define COMP_345_PROJ_PLAYER_STRATEGY_H
-
 class PlayerStrategy {
 public:
-    virtual char yesOrNo(StrategyContext context) = 0;
-    virtual int intInput(StrategyContext context) = 0;
+    PlayerStrategy();
+    PlayerStrategy(Player player);
+    virtual char yesOrNo(StrategyContext context);
+    virtual int intInput(StrategyContext context);
+
+protected:
+    Player* player;
 };
 
 class HumanPlayerStrategy : public PlayerStrategy {
@@ -36,11 +39,14 @@ public:
 
 class AggressiveBotStrategy : public PlayerStrategy {
 public:
+    AggressiveBotStrategy();
+    AggressiveBotStrategy(Player player);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
 private:
-    int attackFromCountryIndex();
+    Map::Country from;
+    int attackFromCountryIndex(int except = -1);
     int attackToCountryIndex();
     int attackNewArmies();
     int attackNumDice();
@@ -54,6 +60,8 @@ private:
 
 class BenevolentBotStrategy : public PlayerStrategy {
 public:
+    BenevolentBotStrategy();
+    BenevolentBotStrategy(Player player);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 

@@ -6,7 +6,8 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Dice.h"
-#include "PlayerStrategy.h"
+
+class PlayerStrategy;
 
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
