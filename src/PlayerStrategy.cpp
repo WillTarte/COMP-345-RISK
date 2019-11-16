@@ -83,6 +83,10 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
     return count;
 }
 
+/*
+ * Just find your biggest country and attack with it.
+ * The except parameter is in case you own all countries adjacent to your biggest.
+ **/
 int AggressiveBotStrategy::attackFromCountryIndex(int except) {
     int biggestIndex = 0;
     int max = 0;
@@ -92,7 +96,7 @@ int AggressiveBotStrategy::attackFromCountryIndex(int except) {
          && countries[i][0]->getCountryId() != except) { // Allows you to find 2nd biggest
             max = countries[i][0]->getNumberOfTroops();
             biggestIndex = countries[i][0]->getCountryId();
-            from = *countries[i][0];
+            from = countries[i][0];
         }
     }
 
@@ -100,44 +104,127 @@ int AggressiveBotStrategy::attackFromCountryIndex(int except) {
 };
 
 int AggressiveBotStrategy::attackToCountryIndex() {
-    auto adj = from.getAdjCountries();
+    auto adj = from->getAdjCountries();
     int smallest = INT64_MAX;
     int smallestIndex = -1;
-    int owner = from.getPlayerOwnerID();
+    int owner = from->getPlayerOwnerID();
+    Map::Country* smallestCountry = nullptr;
     for (int i = 0 ; i < adj->size() ; i++) {
         if (adj[i][0]->getNumberOfTroops() < smallest
          && adj[i][0]->getPlayerOwnerID() != owner) {
             smallest = adj[i][0]->getNumberOfTroops();
             smallestIndex = i;
+            smallestCountry = adj[i][0];
         }
     }
 
     if (smallestIndex != -1) {
+        to = smallestCountry;
+        delete smallestCountry;
         return smallest;
     }
     else {
         // Get the next smallest country if attacking player
         // owns all adjacent countries
-        attackFromCountryIndex(from.getCountryId());
+        attackFromCountryIndex(from->getCountryId());
         attackToCountryIndex();
     }
 };
 
-int AggressiveBotStrategy::attackNewArmies() {};
+/*
+ * Send the minimum number of troops to keep them in your biggest country
+ **/
+int AggressiveBotStrategy::attackNewArmies() {
+    return 1;
+};
 
-int AggressiveBotStrategy::attackNumDice() {};
+/*
+ * Attack with the most number of dice they can. Uses the same logic to find the upper
+ * limits of how many dice they can attack with, and attacks with as much as possible.
+ **/
+int AggressiveBotStrategy::attackNumDice() {
+    int numDice = 0;
+    if (from->getNumberOfTroops() > 3) {
+        numDice = 3;
+    }
+    else {
+        numDice = from->getNumberOfTroops() - 1;
+    }
 
-int AggressiveBotStrategy::defendNumDice() {};
+    return numDice;
+};
 
-int AggressiveBotStrategy::fortifyFromCountryIndex() {};
+/*
+ * Defend with the maximum number of dice.
+ * TODO: Check if this is one of the player's smaller countries, then defend the minimum?
+ **/
+int AggressiveBotStrategy::defendNumDice() {
+    int numDice = 0;
+    if (to->getNumberOfTroops() >= 2) {
+        numDice = 2;
+    }
+    else {
+        numDice = 1;
+    }
 
-int AggressiveBotStrategy::fortifyToCountryIndex() {};
+    return numDice;
+};
 
-int AggressiveBotStrategy::fortifyArmyCount() {};
+/*
+ * Find the smallest country the player owns and fortify that.
+ **/
+int AggressiveBotStrategy::fortifyFromCountryIndex() {
+    from = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (from == nullptr) {
+            from = country;
+        }
+        else if (country->getNumberOfTroops() < from->getNumberOfTroops()) {
+            from = country;
+        }
+    }
 
-int AggressiveBotStrategy::numArmies() {};
+    return from->getCountryId();
+};
 
-int AggressiveBotStrategy::place() {};
+/*
+ * This function is just going to find the biggest country the player owns
+ * and use that country as the one to fortify.
+ **/
+int AggressiveBotStrategy::fortifyToCountryIndex() {
+    to = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (to == nullptr) {
+            to = country;
+        }
+        else if (country->getNumberOfTroops() > to->getNumberOfTroops()) {
+            to = country;
+        }
+    }
+
+    return to->getCountryId();
+};
+
+/*
+ * Just send all your troops from weaker countries to your biggest one to give it
+ * as much strength as possible.
+ **/
+int AggressiveBotStrategy::fortifyArmyCount() {
+    return from->getNumberOfTroops();
+};
+
+/*
+ *
+ **/
+int AggressiveBotStrategy::numArmies() {
+
+};
+
+/*
+ **/
+int AggressiveBotStrategy::place() {
+
+};
 
 char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
