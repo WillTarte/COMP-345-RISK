@@ -71,7 +71,7 @@ int main() {
     cardsExchanged.push_back(hand.getHand()->at(1));
     cardsExchanged.push_back(hand.getHand()->at(2));
 
-    int armiesReceived = Hand::exchange(hand, deck, cardsExchanged);
+    int armiesReceived = Hand::exchange(&hand, &deck, cardsExchanged);
 
     if (armiesReceived == -1) {
         std::cout << ("Invalid set of cards exchanged. They must either: All be of the same type or all be different.")

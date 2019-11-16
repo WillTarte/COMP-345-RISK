@@ -3,12 +3,13 @@
 //
 
 #include "../include/Player.h"
-#include "../include/Map.h"
-#include "../include/Cards.h"
 #include "../include/GameEngine.h"
 #include "../include/PlayerStrategy.h"
+#include "../include/GameObservers.h"
 #include <iostream>
 #include <utility>
+#include <list>
+#include <cmath>
 
 /**
  * Player constructor
@@ -18,12 +19,14 @@
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country *> ownedCountries, Hand *cards, DiceRoller *diceRoller, const int playerId) {
-    pOwnedCountries = new std::vector<Map::Country *>(std::move(ownedCountries)); // avoid unnecessary copy
+Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
+    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries));
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
     strategy = new HumanPlayerStrategy();
+    currentState = new PlayerState(IDLE);
+    pObservers = new std::list<Observer*>();
 }
 
 /**
@@ -34,6 +37,8 @@ Player::~Player() {
     delete pCards;
     delete pDiceRoller;
     delete pPlayerId;
+    delete pObservers;
+    delete currentState;
 }
 
 /**
@@ -41,13 +46,16 @@ Player::~Player() {
  * @param toCopy
  */
 Player::Player(const Player &toCopy) {
-    pOwnedCountries = new vector<Map::Country *>;
+    pOwnedCountries = new std::vector<Map::Country*>;
     pCards = new Hand();
     pDiceRoller = new DiceRoller();
     pPlayerId = new int(*toCopy.pPlayerId);
+    pObservers = new std::list<Observer*>();
     *pOwnedCountries = *toCopy.pOwnedCountries;
     *pCards = *toCopy.pCards;
     *pDiceRoller = *toCopy.pDiceRoller;
+    *currentState = *toCopy.currentState;
+    *pObservers = *toCopy.pObservers;
 }
 
 /**
@@ -61,6 +69,29 @@ void Player::operator=(const Player &rhs) {
     this->pDiceRoller = rhs.pDiceRoller;
     this->pCards = rhs.pCards;
     this->strategy = rhs.strategy;
+    this->pObservers = rhs.pObservers;
+    this->currentState = rhs.currentState;
+}
+
+std::ostream& operator<<(std::ostream& os, const PlayerState state) {
+    switch (state) {
+        case ATTACKING:
+            os << "Attacking";
+            break;
+        case DEFENDING:
+            os << "Defending";
+            break;
+        case FORTIFYING:
+            os << "Fortifying";
+            break;
+        case REINFORCING:
+            os << "Reinforcing";
+            break;
+        case IDLE:
+            os << "Idle";
+            break;
+    }
+    return os;
 }
 
 /**
@@ -111,16 +142,17 @@ static int getAttackingCountry(Player *attacker) {
         std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
                   << attacker->getOwnedCountries()->size() - 1 << ")";
         fromCountryIndex = attacker->getStrategy()->intInput(StrategyContext::ATTACK_FROM_COUNTRY);
-        if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail()) {
+        cin.ignore(512, '\n');
+        if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || std::cin.fail() || isnan(fromCountryIndex)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-    } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || cin.fail());
+    } while (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || std::cin.fail() || isnan(fromCountryIndex));
 
     return fromCountryIndex;
 }
 
-static bool canExchange(const vector<CardType> &cards) {
+static bool canExchange(const std::vector<CardType> &cards) {
     int numInfantry = 0;
     int numArtillery = 0;
     int numCavalry = 0;
@@ -156,11 +188,12 @@ static int getDefendingCountry(Map::Country *fromCountry, Player *player) {
         std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ")";
         toCountryIndex = player->getStrategy()->intInput(StrategyContext::ATTACK_TO_COUNTRY);
-        if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail()) {
+        cin.ignore(512, '\n');
+        if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail() || isnan(toCountryIndex)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
-    } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail());
+    } while (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail() || isnan(toCountryIndex));
     return toCountryIndex;
 }
 
@@ -176,13 +209,14 @@ static int getNumAttackingDice(Player *attacker, Map::Country *fromCountry) {
             std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
         }
         numAttackingDice = attacker->getStrategy()->intInput(StrategyContext::ATTACK_DICE_COUNT);
+        cin.ignore(512, '\n');
         if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
-            numAttackingDice > 3 || cin.fail()) {
+            numAttackingDice > 3 || cin.fail() || isnan(numAttackingDice)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
     } while (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
-             numAttackingDice > 3 || cin.fail());
+             numAttackingDice > 3 || cin.fail() || isnan(numAttackingDice));
     return numAttackingDice;
 }
 
@@ -198,13 +232,14 @@ static int getNumDefendingDice(Map::Country *toCountry, Player *player) {
             std::cout << "1)";
         }
         numDefendingDice = player->getStrategy()->intInput(StrategyContext::DEFEND_DICE_COUNT);
+        cin.ignore(512, '\n');
         if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() ||
-            cin.fail()) {
+            cin.fail() || isnan(numDefendingDice)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
         }
     } while (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() ||
-             cin.fail());
+             cin.fail() || isnan(numDefendingDice));
     return numDefendingDice;
 }
 
@@ -230,6 +265,8 @@ int Player::executeFortify(Map::Country &fromCountry, Map::Country &countryToFor
 }
 
 int Player::fortify() {
+    this->setPlayerState(PlayerState::FORTIFYING);
+    this->notifyAll();
     char playerChoice = 0;
     int fromCountryIndex = -1;
     int ctryToFortIndex = -1;
@@ -239,6 +276,7 @@ int Player::fortify() {
         std::cin.clear();
         std::cout << "\n[PLAYER " << this->getPlayerId() << "] Do you wish to fortify a country this turn (y/n)? ";
         playerChoice = strategy->yesOrNo(StrategyContext::FORTIFY);
+        cin.ignore(512, '\n');
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
@@ -253,6 +291,7 @@ int Player::fortify() {
                       << " countries. Which country do you want to move armies from ? (choose 0 to "
                       << this->getOwnedCountries()->size() - 1 << " ) ";
             fromCountryIndex = strategy->intInput(StrategyContext::FORTIFY_FROM_COUNTRY);
+            cin.ignore(512, '\n');
             //new condition
             if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 ||
                 this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1) {
@@ -263,6 +302,7 @@ int Player::fortify() {
         } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 ||
                  this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
     } else {
+        this->setPlayerState(PlayerState::IDLE);
         return PlayerAction::ABORTED;
     }
 
@@ -344,6 +384,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
                 std::cout << "\n[DEFENDER] Defender has lost possession of country " << toCountry->getCountryName()
                           << std::endl;
                 if (!exchangeCountryOwnership(*this, defendingPlayer, *toCountry)) {
+                    this->setPlayerState(PlayerState::IDLE);
                     return PlayerAction::FAILED;
                 } else {
                     int newArmies = 0;
@@ -351,7 +392,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
                         newArmies = strategy->intInput(StrategyContext::ATTACK_NEW_ARMY_COUNT);
-                        if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1 || cin.fail()) {
+                        if (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1 || cin.fail() || isnan(newArmies)) {
                             cout << "\nInvalid number! Try again." << std::endl;
                             continue;
                         } else {
@@ -360,6 +401,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
                             break;
                         }
                     } while (newArmies > fromCountry->getNumberOfTroops() - 1 || newArmies < 1);
+                    this->setPlayerState(PlayerState::IDLE);
                     return PlayerAction::SUCCEEDED;
                 }
             }
@@ -369,6 +411,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
             fromCountry->setNumberOfTroops(fromCountry->getNumberOfTroops() - 1);
         }
     }
+    this->setPlayerState(PlayerState::IDLE);
     return PlayerAction::SUCCEEDED;
 }
 
@@ -492,8 +535,12 @@ int Player::reinforce() {
         return value;
     };
 
+    this->setPlayerState(PlayerState::REINFORCING);
+    this->notifyAll();
+
     auto exchange = cardExchange(*this);
     if (exchange < 0) {
+        this->setPlayerState(PlayerState::IDLE);
         return PlayerAction::FAILED;
     }
 
@@ -509,10 +556,11 @@ int Player::reinforce() {
                       << " armies. Add how many? ";
             do {
                 place = strategy->intInput(StrategyContext::REINFORCE_ARMY_COUNT);
-                if (cin.fail() || place > newArmies || place < 0) {
+                cin.ignore(512, '\n');
+                if(cin.fail() || place > newArmies || place < 0 || isnan(place)) {
                     std::cout << "Invalid value entered. Pleased try again." << std::endl;
                 }
-            } while (cin.fail() || place > newArmies || place < 0);
+            } while (cin.fail() || place > newArmies || place < 0 || isnan(place));
             std::cout << std::endl;
             troops = country->getNumberOfTroops();
             country->setNumberOfTroops(troops + place);
@@ -523,6 +571,7 @@ int Player::reinforce() {
             }
         }
     }
+    this->setPlayerState(PlayerState::IDLE);
     return PlayerAction::SUCCEEDED;
 }
 
@@ -539,12 +588,16 @@ int Player::attack() {
     int numAttackingDice;
     int numDefendingDice;
 
+    this->setPlayerState(PlayerState::ATTACKING);
+    this->notifyAll();
+
     /* USER DECISION TO ATTACK OR NOT*/
     do {
         std::cin.clear();
         std::cout << "It is Player " << this->getPlayerId() << "'s turn to attack!" << std::endl;
         std::cout << "\n[ATTACKER] Will you attack?(y/n)";
         playerChoice = strategy->yesOrNo(StrategyContext::ATTACK);
+        cin.ignore(512, '\n');
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -554,6 +607,7 @@ int Player::attack() {
             /*USER CHOOSES FROM WHICH COUNTRY TO ATTACK*/
             fromCountryIndex = getAttackingCountry(this);
         } else {
+            this->setPlayerState(PlayerState::IDLE);
             return PlayerAction::ABORTED;
         }
 
@@ -589,16 +643,36 @@ int Player::attack() {
             }
         }
         if (defendingPlayer == nullptr) {
+            this->setPlayerState(PlayerState::IDLE);
             return PlayerAction::FAILED;
         }
 
         if (this->executeAttack(fromCountry, toCountry, defendingPlayer, numAttackingDice, numDefendingDice) ==
             PlayerAction::SUCCEEDED) {
-            cout << "\n[ATTACK SUCCEEDED] - Proceeding." << std::endl;
+            std::cout << "\n[ATTACK SUCCEEDED] - Proceeding." << std::endl;
             continue;
         } else {
-            cout << "\n[ATTACK FAILED] - Make sure that you chose appropriate values." << std::endl;
+            std::cout << "\n[ATTACK FAILED] - Make sure that you chose appropriate values." << std::endl;
             continue;
         }
     } while (true);
 }
+
+void Player::notifyAll() {
+    if(this->pObservers->empty()) {
+        std::cout << "[WARNING] - The current player has no observers currently attached to it." << std::endl;
+        return;
+    }
+    for(const auto& observer : *this->pObservers) {
+        observer->update();
+    }
+}
+
+void Player::detachObserver(Observer* toDetach) {
+    pObservers->remove(toDetach);
+}
+
+void Player::attachObserver(Observer* observer) {
+    this->pObservers->push_back(observer);
+}
+
