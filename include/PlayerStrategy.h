@@ -45,7 +45,8 @@ public:
     int intInput(StrategyContext context);
 
 private:
-    Map::Country from;
+    Map::Country* from;
+    Map::Country* to;
     int attackFromCountryIndex(int except = -1);
     int attackToCountryIndex();
     int attackNewArmies();
