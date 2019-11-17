@@ -29,6 +29,8 @@ public:
 
 protected:
     Player* player;
+    Map::Country* from;
+    Map::Country* to;
 };
 
 class HumanPlayerStrategy : public PlayerStrategy {
@@ -45,8 +47,6 @@ public:
     int intInput(StrategyContext context);
 
 private:
-    Map::Country* from;
-    Map::Country* to;
     int attackFromCountryIndex(int except = -1);
     int attackToCountryIndex();
     int attackNewArmies();
@@ -55,8 +55,6 @@ private:
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
     int fortifyArmyCount();
-    int numArmies();
-    int place();
 };
 
 class BenevolentBotStrategy : public PlayerStrategy {
@@ -67,10 +65,6 @@ public:
     int intInput(StrategyContext context);
 
 private:
-    int attackFromCountryIndex();
-    int attackToCountryIndex();
-    int attackNewArmies();
-    int attackNumDice();
     int defendNumDice();
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
