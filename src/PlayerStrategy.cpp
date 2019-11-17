@@ -1,10 +1,25 @@
 #include <iostream>
+#include "../include/Player.h"
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
 
+PlayerStrategy::PlayerStrategy() {
+   armiesToPlace = new int(0);
+   player = nullptr;
+   from = nullptr;
+   to = nullptr;
+}
+
+PlayerStrategy::PlayerStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
 char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
     /*
-     * Need the parameter to generatlize the function, but human inputs
+     * Need the parameter to generalize the function, but human inputs
      * don't need context. If you don't do anything with the parameter,
      * it throws a warning. So this way we get to generalize the solution
      * by just throwing away the parameter immediately.
@@ -22,6 +37,20 @@ int HumanPlayerStrategy::intInput(StrategyContext _) {
     std::cin >> count;
 
     return count;
+}
+
+AggressiveBotStrategy::AggressiveBotStrategy() {
+    this->armiesToPlace = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
 }
 
 char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
@@ -208,6 +237,20 @@ int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops();
 }
 
+BenevolentBotStrategy::BenevolentBotStrategy() {
+    this->armiesToPlace = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
 char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
@@ -312,6 +355,7 @@ int BenevolentBotStrategy::fortifyArmyCount() {
 }
 
 int BenevolentBotStrategy::numArmies() {
+
     return 0;
 }
 

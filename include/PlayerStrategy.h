@@ -23,11 +23,13 @@ enum StrategyContext {
 class PlayerStrategy {
 public:
     PlayerStrategy();
-    PlayerStrategy(Player player);
-    virtual char yesOrNo(StrategyContext context);
-    virtual int intInput(StrategyContext context);
+    PlayerStrategy(const Player& player);
+    virtual char yesOrNo(StrategyContext context) = 0;
+    virtual int intInput(StrategyContext context) = 0;
+    void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
 
 protected:
+    int* armiesToPlace;
     Player* player;
     Map::Country* from;
     Map::Country* to;
@@ -42,7 +44,7 @@ public:
 class AggressiveBotStrategy : public PlayerStrategy {
 public:
     AggressiveBotStrategy();
-    AggressiveBotStrategy(Player player);
+    AggressiveBotStrategy(const Player &player);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
@@ -59,11 +61,13 @@ private:
 class BenevolentBotStrategy : public PlayerStrategy {
 public:
     BenevolentBotStrategy();
-    BenevolentBotStrategy(Player player);
+    BenevolentBotStrategy(const Player &player);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
+    void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
 
 private:
+    int* numWeakest = new int(-1);
     int defendNumDice();
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();

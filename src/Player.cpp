@@ -545,6 +545,7 @@ int Player::reinforce() {
     }
 
     auto newArmies = exchange + countriesOwned(*this) + continentControlValue(*this);
+    strategy->setArmiesToPlace(newArmies);
 
     std::cout << "Place your armies:" << std::endl;
 
