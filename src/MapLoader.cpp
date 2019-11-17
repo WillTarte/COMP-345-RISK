@@ -5,13 +5,14 @@
 #pragma ide diagnostic ignored "MemberFunctionCanBeStatic"
 
 #include "../include/Map.h"
+#include "../include/MapLoader.h"
 #include <sstream>
+#include <algorithm>
 #include <string>
 #include <fstream>
 #include <utility>
 #include <vector>
 #include <iostream>
-#include "../include/MapLoader.h"
 
 /**
  * MapLoader constructor
@@ -75,6 +76,9 @@ Map* MapLoader::readMapFile() {
             //do nothing, the line is empty or is a comment
             continue;
         } else {
+            // strip every line of the \n and \r characters
+            line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+            line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
             splitLine(line, pLineWords);
             getMapName(pMapName, pLineWords);
 
@@ -288,6 +292,8 @@ Map *AlternativeLoader::altReadMapFile() {
     std::cout << in.tellg();
 
     std::ifstream infile(*pDominationMapFile);
+
+    // TODO: cannot read from the same file twice
     if(!infile || infile.peek() == EOF){
         return nullptr;
     }
@@ -315,6 +321,9 @@ Map *AlternativeLoader::altReadMapFile() {
             //do nothing, the line is empty or is a comment
             continue;
         } else {
+            // strip every line of the \n and \r characters
+            line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+            line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
             //check if we enter a new section
             if (altCheckSection(pMode, line)) {
                 continue;
@@ -331,12 +340,14 @@ Map *AlternativeLoader::altReadMapFile() {
                 if (altValidateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap)) {
                     pContinentData->push_back(*pLineWords);
                 } else {
+                    infile.close();
                     return nullptr;
                 }
             } else if (*pMode == "Territories") {
                 if (altValidateTerritoriesLine(pLineWords, pLineCount, pValidMap)) {
                     pTerritoryData->push_back(*pLineWords);
                 } else {
+                    infile.close();
                     return nullptr;
                 }
             } else {
@@ -360,6 +371,7 @@ Map *AlternativeLoader::altReadMapFile() {
     delete (pTerritoryData);
     delete (pCountryID);
 
+    infile.close();
     return map;
 }
 
@@ -368,7 +380,9 @@ bool AlternativeLoader::altCheckSection(std::string *mode, const std::string &li
     if (line[0] == *"[") {
         *mode = "";
         for (unsigned long i = 1; i < line.size() - 1; i++) {
-            *mode += line[i];
+            if(line[i] != *"]") {
+                *mode += line[i];
+            }
         }
         return true;
     }

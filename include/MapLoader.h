@@ -3,12 +3,11 @@
 //
 #include <vector>
 #include <string>
+#include <iostream>
 #include "../include/Map.h"
 
 #ifndef COMP_345_PROJ_MAPLOADER_H
 #define COMP_345_PROJ_MAPLOADER_H
-
-class string;
 
 class MapLoader {
 public:
