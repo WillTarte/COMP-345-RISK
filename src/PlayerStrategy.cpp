@@ -34,9 +34,11 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'y';
             break;
         case StrategyContext::REINFORCE:
-            botChoice = 'y';
+            botChoice = 'n';
             break;
         default: {
+            // Should never occur
+            botChoice = 'n';
         }
     }
 
@@ -57,7 +59,7 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
             attackNumDice();
             break;
         case StrategyContext::ATTACK_NEW_ARMY_COUNT:
-            attackNewArmies();
+            count = 1;
             break;
         case StrategyContext::DEFEND_DICE_COUNT:
             defendNumDice();
@@ -132,13 +134,6 @@ int AggressiveBotStrategy::attackToCountryIndex() {
 }
 
 /*
- * Send the minimum number of troops to keep them in your biggest country
- **/
-int AggressiveBotStrategy::attackNewArmies() {
-    return 1;
-};
-
-/*
  * Attack with the most number of dice they can. Uses the same logic to find the upper
  * limits of how many dice they can attack with, and attacks with as much as possible.
  **/
@@ -152,7 +147,7 @@ int AggressiveBotStrategy::attackNumDice() {
     }
 
     return numDice;
-};
+}
 
 /*
  * Defend with the maximum number of dice.
@@ -168,7 +163,7 @@ int AggressiveBotStrategy::defendNumDice() {
     }
 
     return numDice;
-};
+}
 
 /*
  * Find the smallest country the player owns and fortify that.
@@ -185,7 +180,7 @@ int AggressiveBotStrategy::fortifyFromCountryIndex() {
     }
 
     return from->getCountryId();
-};
+}
 
 /*
  * This function is just going to find the biggest country the player owns
@@ -203,7 +198,7 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
     }
 
     return to->getCountryId();
-};
+}
 
 /*
  * Just send all your troops from weaker countries to your biggest one to give it
@@ -211,7 +206,7 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
  **/
 int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops();
-};
+}
 
 char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
@@ -226,6 +221,8 @@ char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'y';
             break;
         default: {
+            // Should never occur
+            botChoice = 'n';
         }
     }
 
@@ -277,7 +274,7 @@ int BenevolentBotStrategy::defendNumDice() {
     }
 
     return numDice;
-};
+}
 
 int BenevolentBotStrategy::fortifyFromCountryIndex() {
     from = nullptr;
@@ -291,7 +288,7 @@ int BenevolentBotStrategy::fortifyFromCountryIndex() {
     }
 
     return from->getCountryId();
-};
+}
 
 int BenevolentBotStrategy::fortifyToCountryIndex() {
     to = nullptr;
@@ -305,19 +302,19 @@ int BenevolentBotStrategy::fortifyToCountryIndex() {
     }
 
     return to->getCountryId();
-};
+}
 
 int BenevolentBotStrategy::fortifyArmyCount() {
     int move = from->getNumberOfTroops();
     move = (move - to->getNumberOfTroops()) / 2;
 
     return move;
-};
+}
 
 int BenevolentBotStrategy::numArmies() {
     return 0;
-};
+}
 
 int BenevolentBotStrategy::place() {
     return 0;
-};
+}

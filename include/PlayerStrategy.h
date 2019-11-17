@@ -49,7 +49,6 @@ public:
 private:
     int attackFromCountryIndex(int except = -1);
     int attackToCountryIndex();
-    int attackNewArmies();
     int attackNumDice();
     int defendNumDice();
     int fortifyFromCountryIndex();
