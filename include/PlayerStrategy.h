@@ -23,9 +23,8 @@ enum StrategyContext {
 class PlayerStrategy {
 public:
     PlayerStrategy();
-    ~PlayerStrategy();
     PlayerStrategy(const PlayerStrategy& toCopy);
-    void operator=(const PlayerStrategy& rhs);
+    PlayerStrategy& operator=(const PlayerStrategy& rhs);
     PlayerStrategy(const Player& player);
     virtual char yesOrNo(StrategyContext context) = 0;
     virtual int intInput(StrategyContext context) = 0;
@@ -38,10 +37,18 @@ protected:
     Player* player;
     Map::Country* from;
     Map::Country* to;
+
+private:
+    virtual ~PlayerStrategy() = default;
 };
 
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
+    HumanPlayerStrategy();
+    ~HumanPlayerStrategy();
+    HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
+    HumanPlayerStrategy& operator=(const HumanPlayerStrategy& rhs);
+    HumanPlayerStrategy(const Player& player);
     char yesOrNo(StrategyContext _);
     int intInput(StrategyContext _);
 };
@@ -52,7 +59,7 @@ public:
     AggressiveBotStrategy(const Player &player);
     ~AggressiveBotStrategy();
     AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
-    void operator=(const AggressiveBotStrategy& rhs);
+    AggressiveBotStrategy& operator=(const AggressiveBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
@@ -72,10 +79,9 @@ public:
     BenevolentBotStrategy(const Player &player);
     ~BenevolentBotStrategy();
     BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);
-    void operator=(const BenevolentBotStrategy& rhs);
+    BenevolentBotStrategy& operator=(const BenevolentBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
-    void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
 
 private:
     int* numWeakest = new int(-1);

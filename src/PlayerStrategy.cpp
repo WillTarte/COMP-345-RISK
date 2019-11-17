@@ -6,21 +6,16 @@
 /******************************************************************************/
 /*********************** Player strategy constructors *************************/
 /******************************************************************************/
-PlayerStrategy::~PlayerStrategy() {
-    delete armiesToPlace;
-    delete player;
-    delete from;
-    delete to;
-}
-
 PlayerStrategy::PlayerStrategy() {
-   armiesToPlace = new int(0);
-   player = nullptr;
-   from = nullptr;
-   to = nullptr;
+    this->armiesToPlace = new int(0);
+    this->exchangingCardType = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
 }
 
 PlayerStrategy::PlayerStrategy(const Player& player) {
+    this->exchangingCardType = new int(0);
     this->armiesToPlace = new int(0);
     this->player = new Player(player);
     this->from = nullptr;
@@ -28,13 +23,57 @@ PlayerStrategy::PlayerStrategy(const Player& player) {
 }
 
 PlayerStrategy::PlayerStrategy(const PlayerStrategy& toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
     this->armiesToPlace = toCopy.armiesToPlace;
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
 }
 
-void PlayerStrategy::operator=(const PlayerStrategy& rhs) {
+PlayerStrategy& PlayerStrategy::operator=(const PlayerStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+}
+
+/******************************************************************************/
+/*********************** Player strategy constructors *************************/
+/******************************************************************************/
+HumanPlayerStrategy::~HumanPlayerStrategy() {
+    delete armiesToPlace;
+    delete player;
+    delete from;
+    delete to;
+}
+
+HumanPlayerStrategy::HumanPlayerStrategy() {
+    this->armiesToPlace = new int(0);
+    this->exchangingCardType = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+HumanPlayerStrategy::HumanPlayerStrategy(const Player& player) {
+    this->exchangingCardType = new int(0);
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+HumanPlayerStrategy::HumanPlayerStrategy(const HumanPlayerStrategy& toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+}
+
+HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
     this->armiesToPlace = rhs.armiesToPlace;
     this->player = rhs.player;
     this->from = rhs.from;
@@ -52,27 +91,31 @@ AggressiveBotStrategy::~AggressiveBotStrategy() {
 }
 
 AggressiveBotStrategy::AggressiveBotStrategy() {
-    armiesToPlace = new int(0);
-    player = nullptr;
-    from = nullptr;
-    to = nullptr;
+    this->armiesToPlace = new int(0);
+    this->exchangingCardType = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
 }
 
 AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
     this->armiesToPlace = new int(0);
+    this->exchangingCardType = new int(0);
     this->player = new Player(player);
     this->from = nullptr;
     this->to = nullptr;
 }
 
-AggressiveBotStrategy::AggressiveBotStrategy(const AggressiveBotStrategy& toCopy) {
+AggressiveBotStrategy::AggressiveBotStrategy(const AggressiveBotStrategy& toCopy) : PlayerStrategy(toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
     this->armiesToPlace = toCopy.armiesToPlace;
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
 }
 
-void AggressiveBotStrategy::operator=(const AggressiveBotStrategy& rhs) {
+AggressiveBotStrategy& AggressiveBotStrategy::operator=(const AggressiveBotStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
     this->armiesToPlace = rhs.armiesToPlace;
     this->player = rhs.player;
     this->from = rhs.from;
@@ -90,10 +133,10 @@ BenevolentBotStrategy::~BenevolentBotStrategy() {
 }
 
 BenevolentBotStrategy::BenevolentBotStrategy() {
-    armiesToPlace = new int(0);
-    player = nullptr;
-    from = nullptr;
-    to = nullptr;
+    this->armiesToPlace = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
 }
 
 BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
@@ -103,14 +146,16 @@ BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
     this->to = nullptr;
 }
 
-BenevolentBotStrategy::BenevolentBotStrategy(const BenevolentBotStrategy& toCopy) {
+BenevolentBotStrategy::BenevolentBotStrategy(const BenevolentBotStrategy& toCopy) : PlayerStrategy(toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
     this->armiesToPlace = toCopy.armiesToPlace;
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
 }
 
-void BenevolentBotStrategy::operator=(const BenevolentBotStrategy& rhs) {
+BenevolentBotStrategy& BenevolentBotStrategy::operator=(const BenevolentBotStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
     this->armiesToPlace = rhs.armiesToPlace;
     this->player = rhs.player;
     this->from = rhs.from;
