@@ -22,7 +22,7 @@ int main() {
      * connected graph (that can be tested for in Map.cpp).
      */
     std::cout << "\n\n";
-    const std::string MAP2 = "world.map";
+    const std::string MAP2 = "world2Invalid.map";
     myLoader.setMapFile(MAP2);
     std::cout << "\ncreating map 2 (invalid)\n";
     Map* secondMap = myLoader.readMapFile();
@@ -34,10 +34,10 @@ int main() {
     //init alternative loader
     std::cout << "\n\n";
     const std::string MAP3 = "africa.map";
-    AlternativeLoader altLoader = AlternativeLoader(MAP3);
+    auto* altLoader = new AlternativeLoader(MAP3);
 
     std::cout << "creating map 3 using alternative loader directly (valid)\n";
-    Map* thirdMap = altLoader.altReadMapFile();
+    Map* thirdMap = altLoader->altReadMapFile();
     std::cout << "\nmap 3 creation completed.\n";
     if (thirdMap) {
         thirdMap->printMap();
@@ -51,6 +51,8 @@ int main() {
     if (fourthMap) {
         fourthMap->printMap();
     }
+
+    delete(adapter);
 
     return 0;
 }

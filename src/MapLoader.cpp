@@ -95,6 +95,7 @@ Map* MapLoader::readMapFile() {
                 if (validateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap)) {
                     pContinentData->push_back(*pLineWords);
                 } else {
+                    infile.close();
                     return nullptr;
                 }
             } else if (*pMode == "countries") {
@@ -102,6 +103,7 @@ Map* MapLoader::readMapFile() {
                                         pContinentCount)) {
                     pCountryData->push_back(*pLineWords);
                 } else {
+                    infile.close();
                     return nullptr;
                 }
             } else if (*pMode == "borders") {
@@ -109,6 +111,7 @@ Map* MapLoader::readMapFile() {
                 if (validateBordersLine(pLineNums, pLineWords, pLineCount, pValidMap, pCountryCount)) {
                     pBorderData->push_back(*pLineNums);
                 } else {
+                    infile.close();
                     return nullptr;
                 }
             } else if (pLineWords->at(0) == "name") {
@@ -135,6 +138,7 @@ Map* MapLoader::readMapFile() {
     delete (pCountryID);
     delete (pBorderData);
 
+    infile.close();
     return map;
 }
 
@@ -264,8 +268,8 @@ bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std:
     }
 }
 
-AlternativeLoader::AlternativeLoader(std::string mapFile) {
-    pDominationMapFile = new std::string(std::move(mapFile));
+AlternativeLoader::AlternativeLoader(const std::string& mapFile) {
+    pDominationMapFile = new std::string(mapFile);
 }
 
 AlternativeLoader::~AlternativeLoader() {
@@ -287,13 +291,8 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
 
 Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
-
-    std::ifstream in(*pDominationMapFile, std::ifstream::ate | std::ifstream::binary);
-    std::cout << in.tellg();
-
     std::ifstream infile(*pDominationMapFile);
 
-    // TODO: cannot read from the same file twice
     if(!infile || infile.peek() == EOF){
         return nullptr;
     }
