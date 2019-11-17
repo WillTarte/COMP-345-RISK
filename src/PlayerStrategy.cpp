@@ -3,6 +3,16 @@
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
 
+/******************************************************************************/
+/*********************** Player strategy constructors *************************/
+/******************************************************************************/
+PlayerStrategy::~PlayerStrategy() {
+    delete armiesToPlace;
+    delete player;
+    delete from;
+    delete to;
+}
+
 PlayerStrategy::PlayerStrategy() {
    armiesToPlace = new int(0);
    player = nullptr;
@@ -17,6 +27,99 @@ PlayerStrategy::PlayerStrategy(const Player& player) {
     this->to = nullptr;
 }
 
+PlayerStrategy::PlayerStrategy(const PlayerStrategy& toCopy) {
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+}
+
+void PlayerStrategy::operator=(const PlayerStrategy& rhs) {
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+}
+
+/******************************************************************************/
+/*********************** Aggressive bot constructors **************************/
+/******************************************************************************/
+AggressiveBotStrategy::~AggressiveBotStrategy() {
+    delete armiesToPlace;
+    delete player;
+    delete from;
+    delete to;
+}
+
+AggressiveBotStrategy::AggressiveBotStrategy() {
+    armiesToPlace = new int(0);
+    player = nullptr;
+    from = nullptr;
+    to = nullptr;
+}
+
+AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+AggressiveBotStrategy::AggressiveBotStrategy(const AggressiveBotStrategy& toCopy) {
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+}
+
+void AggressiveBotStrategy::operator=(const AggressiveBotStrategy& rhs) {
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+}
+
+/******************************************************************************/
+/*********************** Benevolent bot constructors **************************/
+/******************************************************************************/
+BenevolentBotStrategy::~BenevolentBotStrategy() {
+    delete armiesToPlace;
+    delete player;
+    delete from;
+    delete to;
+}
+
+BenevolentBotStrategy::BenevolentBotStrategy() {
+    armiesToPlace = new int(0);
+    player = nullptr;
+    from = nullptr;
+    to = nullptr;
+}
+
+BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+BenevolentBotStrategy::BenevolentBotStrategy(const BenevolentBotStrategy& toCopy) {
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+}
+
+void BenevolentBotStrategy::operator=(const BenevolentBotStrategy& rhs) {
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+}
+
+/******************************************************************************/
+/******************** Human player strategy methods ***************************/
+/******************************************************************************/
 char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
     /*
      * Need the parameter to generalize the function, but human inputs
@@ -39,20 +142,9 @@ int HumanPlayerStrategy::intInput(StrategyContext _) {
     return count;
 }
 
-AggressiveBotStrategy::AggressiveBotStrategy() {
-    this->armiesToPlace = new int(0);
-    this->player = nullptr;
-    this->from = nullptr;
-    this->to = nullptr;
-}
-
-AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
-    this->armiesToPlace = new int(0);
-    this->player = new Player(player);
-    this->from = nullptr;
-    this->to = nullptr;
-}
-
+/******************************************************************************/
+/******************* Aggressive bot strategy methods **************************/
+/******************************************************************************/
 char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
@@ -235,20 +327,9 @@ int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops() - 1;
 }
 
-BenevolentBotStrategy::BenevolentBotStrategy() {
-    this->armiesToPlace = new int(0);
-    this->player = nullptr;
-    this->from = nullptr;
-    this->to = nullptr;
-}
-
-BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
-    this->armiesToPlace = new int(0);
-    this->player = new Player(player);
-    this->from = nullptr;
-    this->to = nullptr;
-}
-
+/******************************************************************************/
+/******************* Benevolent bot strategy methods **************************/
+/******************************************************************************/
 char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {

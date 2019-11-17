@@ -23,6 +23,9 @@ enum StrategyContext {
 class PlayerStrategy {
 public:
     PlayerStrategy();
+    ~PlayerStrategy();
+    PlayerStrategy(const PlayerStrategy& toCopy);
+    void operator=(const PlayerStrategy& rhs);
     PlayerStrategy(const Player& player);
     virtual char yesOrNo(StrategyContext context) = 0;
     virtual int intInput(StrategyContext context) = 0;
@@ -47,6 +50,9 @@ class AggressiveBotStrategy : public PlayerStrategy {
 public:
     AggressiveBotStrategy();
     AggressiveBotStrategy(const Player &player);
+    ~AggressiveBotStrategy();
+    AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
+    void operator=(const AggressiveBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
@@ -64,6 +70,9 @@ class BenevolentBotStrategy : public PlayerStrategy {
 public:
     BenevolentBotStrategy();
     BenevolentBotStrategy(const Player &player);
+    ~BenevolentBotStrategy();
+    BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);
+    void operator=(const BenevolentBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
     void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
