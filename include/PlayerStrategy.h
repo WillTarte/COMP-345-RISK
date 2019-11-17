@@ -26,10 +26,12 @@ public:
     PlayerStrategy(const Player& player);
     virtual char yesOrNo(StrategyContext context) = 0;
     virtual int intInput(StrategyContext context) = 0;
-    void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
+    inline void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
+    inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
 
 protected:
     int* armiesToPlace;
+    int* exchangingCardType;
     Player* player;
     Map::Country* from;
     Map::Country* to;

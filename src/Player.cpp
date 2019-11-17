@@ -435,7 +435,7 @@ int Player::reinforce() {
                 char input = 0;
                 do {
                     std::cout << "Would you like to exchange cards? (Y/n)";
-                    input = player.getStrategy()->yesOrNo(StrategyContext::REINFORCE);
+                    input = player.strategy->yesOrNo(StrategyContext::REINFORCE);
                     if (input != 'y' && input != 'n' && input != 'Y' && input != 'N') {
                         std::cout << "\nInvalid Input. Please try again." << std::endl;
                     }
@@ -483,7 +483,8 @@ int Player::reinforce() {
                         do {
                             std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
                             std::cout << " would you like to exchange?";
-                            input = player.getStrategy()->intInput(StrategyContext::REINFORCE_CARD_COUNT);
+                            player.strategy->setExchangingCardType(i);
+                            input = player.strategy->intInput(StrategyContext::REINFORCE_CARD_COUNT);
                             if (input > remaining) {
                                 std::cout << "You can only exchange " << remaining << " more cards" << std::endl;
                             } else if (input > types[i]) {

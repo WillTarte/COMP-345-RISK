@@ -355,10 +355,36 @@ int BenevolentBotStrategy::fortifyArmyCount() {
 }
 
 int BenevolentBotStrategy::numArmies() {
+    int count = 0;
+    for (auto cardType : *player->getCards()->getHand()) {
+        if ((int) cardType == *exchangingCardType) {
+            count++;
+        }
+    }
 
-    return 0;
+    return count;
 }
 
 int BenevolentBotStrategy::place() {
-    return 0;
+    if (*numWeakest == -1) {
+        int count = 0;
+        int weakest = 0;
+        // Find what the smallest country is
+        for (auto* country : *player->getOwnedCountries()) {
+            if (weakest == 0 || country->getNumberOfTroops() < weakest) {
+                weakest = country->getNumberOfTroops();
+            }
+        }
+
+        // Then find out how many other countries have the same number of armies as it
+        for (auto* country : *player->getOwnedCountries()) {
+            if (country->getNumberOfTroops() == weakest) {
+                count++;
+            }
+        }
+
+        numWeakest = new int(count);
+    }
+
+    return *armiesToPlace / *numWeakest;
 }
