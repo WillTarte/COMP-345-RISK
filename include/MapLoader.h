@@ -12,7 +12,7 @@
 class MapLoader {
 public:
     explicit MapLoader(std::string mapFile = "");
-    ~MapLoader();
+    virtual ~MapLoader();
     MapLoader(const MapLoader& toCopy);
     void operator=(MapLoader& rhs);
     std::string* pMapFile;
@@ -36,14 +36,14 @@ private:
 
 class AlternativeLoader{
 public:
-    explicit AlternativeLoader(std::string mapFile = "");
+    explicit AlternativeLoader(const std::string& mapFile);
     ~AlternativeLoader();
     AlternativeLoader(const AlternativeLoader& toCopy);
     void operator=(AlternativeLoader& rhs);
-    std::string* pDominationMapFile;
     void altSetMapFile(std::string newMapFile);
-    virtual Map* altReadMapFile();
+    Map* altReadMapFile();
 private:
+    std::string* pDominationMapFile;
     static Map* altInitMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
                                  std::vector<std::vector<std::string>>* territoryData, const bool* vMap);
     void altSplitLine(const std::string &line, std::vector<std::string> *pLineWords, const std::string& mode);
@@ -70,11 +70,12 @@ private:
 
 class MapLoaderAdapter : public MapLoader{
 private:
-    AlternativeLoader AltLoader;
+    AlternativeLoader* AltLoader;
 public:
-    MapLoaderAdapter(AlternativeLoader alt){AltLoader = alt;};
+    MapLoaderAdapter(AlternativeLoader* alt){AltLoader = alt;};
+    virtual ~MapLoaderAdapter() { delete AltLoader;}
     Map* readMapFile(){
-        return AltLoader.altReadMapFile();
+        return AltLoader->altReadMapFile();
     };
 };
 
