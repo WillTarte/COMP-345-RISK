@@ -37,7 +37,7 @@ private:
 
 class AlternativeLoader{
 public:
-    AlternativeLoader(std::string mapFile = "");
+    explicit AlternativeLoader(std::string mapFile = "");
     ~AlternativeLoader();
     AlternativeLoader(const AlternativeLoader& toCopy);
     void operator=(AlternativeLoader& rhs);

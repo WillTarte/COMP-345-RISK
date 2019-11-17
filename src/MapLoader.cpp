@@ -158,7 +158,7 @@ Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std:
 }
 
 void MapLoader::setMapFile(std::string newMapFile) {
-    pMapFile = &newMapFile;
+    pMapFile = new std::string(newMapFile);
 }
 
 void MapLoader::splitLine(const std::string& line, std::vector<std::string>* pLineWords) {
@@ -283,6 +283,10 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
 
 Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
+
+    std::ifstream in(*pDominationMapFile, std::ifstream::ate | std::ifstream::binary);
+    std::cout << in.tellg();
+
     std::ifstream infile(*pDominationMapFile);
     if(!infile || infile.peek() == EOF){
         return nullptr;
