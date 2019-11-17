@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/PlayerStrategy.h"
+#include "../include/Map.h"
 
 char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
     /*
@@ -70,13 +71,11 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
         case StrategyContext::FORTIFY_ARMY_COUNT:
             fortifyArmyCount();
             break;
+        // No mention of how reinforce works for aggressive bot
         case StrategyContext::REINFORCE_ARMY_COUNT:
-            numArmies();
-            break;
         case StrategyContext::REINFORCE_CARD_COUNT:
-            place();
-            break;
         default: {
+            count = -1;
         }
     }
 
@@ -91,7 +90,7 @@ int AggressiveBotStrategy::attackFromCountryIndex(int except) {
     int biggestIndex = 0;
     int max = 0;
     auto countries = player->getOwnedCountries();
-    for (auto i = 0; i < countries->size(); i++) {
+    for (unsigned long i = 0; i < countries->size(); i++) {
         if (countries[i][0]->getNumberOfTroops() > max
          && countries[i][0]->getCountryId() != except) { // Allows you to find 2nd biggest
             max = countries[i][0]->getNumberOfTroops();
@@ -101,15 +100,15 @@ int AggressiveBotStrategy::attackFromCountryIndex(int except) {
     }
 
     return biggestIndex;
-};
+}
 
 int AggressiveBotStrategy::attackToCountryIndex() {
     auto adj = from->getAdjCountries();
-    int smallest = INT64_MAX;
-    int smallestIndex = -1;
+    int smallest = INT32_MAX;
+    unsigned long smallestIndex = 0;
     int owner = from->getPlayerOwnerID();
     Map::Country* smallestCountry = nullptr;
-    for (int i = 0 ; i < adj->size() ; i++) {
+    for (unsigned long i = 0 ; i < adj->size() ; i++) {
         if (adj[i][0]->getNumberOfTroops() < smallest
          && adj[i][0]->getPlayerOwnerID() != owner) {
             smallest = adj[i][0]->getNumberOfTroops();
@@ -118,7 +117,7 @@ int AggressiveBotStrategy::attackToCountryIndex() {
         }
     }
 
-    if (smallestIndex != -1) {
+    if (smallestIndex != 0) {
         to = smallestCountry;
         delete smallestCountry;
         return smallest;
@@ -127,9 +126,10 @@ int AggressiveBotStrategy::attackToCountryIndex() {
         // Get the next smallest country if attacking player
         // owns all adjacent countries
         attackFromCountryIndex(from->getCountryId());
-        attackToCountryIndex();
+        delete smallestCountry;
+        return attackToCountryIndex();
     }
-};
+}
 
 /*
  * Send the minimum number of troops to keep them in your biggest country
@@ -213,19 +213,6 @@ int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops();
 };
 
-/*
- *
- **/
-int AggressiveBotStrategy::numArmies() {
-
-};
-
-/*
- **/
-int AggressiveBotStrategy::place() {
-
-};
-
 char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
@@ -249,18 +236,6 @@ int BenevolentBotStrategy::intInput(StrategyContext context) {
     int count = 0;
 
     switch ((int) context) {
-        case StrategyContext::ATTACK_FROM_COUNTRY:
-            count = attackFromCountryIndex();
-            break;
-        case StrategyContext::ATTACK_TO_COUNTRY:
-            count = attackToCountryIndex();
-            break;
-        case StrategyContext::ATTACK_DICE_COUNT:
-            attackNumDice();
-            break;
-        case StrategyContext::ATTACK_NEW_ARMY_COUNT:
-            attackNewArmies();
-            break;
         case StrategyContext::DEFEND_DICE_COUNT:
             defendNumDice();
             break;
@@ -279,29 +254,70 @@ int BenevolentBotStrategy::intInput(StrategyContext context) {
         case StrategyContext::REINFORCE_CARD_COUNT:
             place();
             break;
+        case StrategyContext::ATTACK_FROM_COUNTRY:
+        case StrategyContext::ATTACK_TO_COUNTRY:
+        case StrategyContext::ATTACK_DICE_COUNT:
+        case StrategyContext::ATTACK_NEW_ARMY_COUNT:
         default: {
+            count = -1;
         }
     }
 
     return count;
 }
 
-int BenevolentBotStrategy::attackFromCountryIndex() {};
 
-int BenevolentBotStrategy::attackToCountryIndex() {};
+int BenevolentBotStrategy::defendNumDice() {
+    int numDice = 0;
+    if (to->getNumberOfTroops() >= 2) {
+        numDice = 2;
+    }
+    else {
+        numDice = 1;
+    }
 
-int BenevolentBotStrategy::attackNewArmies() {};
+    return numDice;
+};
 
-int BenevolentBotStrategy::attackNumDice() {};
+int BenevolentBotStrategy::fortifyFromCountryIndex() {
+    from = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (from == nullptr) {
+            from = country;
+        }
+        else if (country->getNumberOfTroops() > from->getNumberOfTroops()) {
+            from = country;
+        }
+    }
 
-int BenevolentBotStrategy::defendNumDice() {};
+    return from->getCountryId();
+};
 
-int BenevolentBotStrategy::fortifyFromCountryIndex() {};
+int BenevolentBotStrategy::fortifyToCountryIndex() {
+    to = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (to == nullptr) {
+            to = country;
+        }
+        else if (country->getNumberOfTroops() < to->getNumberOfTroops()) {
+            to = country;
+        }
+    }
 
-int BenevolentBotStrategy::fortifyToCountryIndex() {};
+    return to->getCountryId();
+};
 
-int BenevolentBotStrategy::fortifyArmyCount() {};
+int BenevolentBotStrategy::fortifyArmyCount() {
+    int move = from->getNumberOfTroops();
+    move = (move - to->getNumberOfTroops()) / 2;
 
-int BenevolentBotStrategy::numArmies() {};
+    return move;
+};
 
-int BenevolentBotStrategy::place() {};
+int BenevolentBotStrategy::numArmies() {
+    return 0;
+};
+
+int BenevolentBotStrategy::place() {
+    return 0;
+};
