@@ -150,14 +150,12 @@ int AggressiveBotStrategy::attackToCountryIndex() {
 
     if (smallestIndex != 0) {
         to = smallestCountry;
-        delete smallestCountry;
         return smallest;
     }
     else {
         // Get the next smallest country if attacking player
         // owns all adjacent countries
         attackFromCountryIndex(from->getCountryId());
-        delete smallestCountry;
         return attackToCountryIndex();
     }
 }
@@ -234,7 +232,7 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
  * as much strength as possible.
  **/
 int AggressiveBotStrategy::fortifyArmyCount() {
-    return from->getNumberOfTroops();
+    return from->getNumberOfTroops() - 1;
 }
 
 BenevolentBotStrategy::BenevolentBotStrategy() {
