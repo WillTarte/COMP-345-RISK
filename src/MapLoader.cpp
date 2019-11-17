@@ -45,6 +45,10 @@ void MapLoader::operator=(MapLoader& rhs) {
     this->pMapFile = rhs.pMapFile;
 }
 
+/**
+ * Main method of the map loader. Parses the file and creates the map object
+ * @return Map
+ */
 Map* MapLoader::readMapFile() {
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
@@ -138,6 +142,15 @@ Map* MapLoader::readMapFile() {
     return map;
 }
 
+/**
+ * Helper function that creates the map object
+ * @param mapName, string of the map name
+ * @param continentData, vector containing the name and id of each continent
+ * @param countryData, vector containing the name and id of every country
+ * @param borderData, vector containing adjacency information
+ * @param vMap, flags map validity
+ * @return Map
+ */
 Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
                               std::vector<std::vector<std::string>>* countryData,
                               std::vector<std::vector<int>>* borderData, const bool* vMap) {
@@ -145,14 +158,14 @@ Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std:
         //create map object with empty continents
         Map* gameMap = new Map(*mapName, *continentData);
         //add countries to map and continents
-        for (auto& i : *countryData) {
-            gameMap->addNode(std::stoi(i[0]), i[1], std::stoi(i[2]));
+        for (auto& countries : *countryData) {
+            gameMap->addNode(std::stoi(countries[0]), countries[1], std::stoi(countries[2]));
         }
 
         //add adjacency
-        for (auto& i : *borderData) {
-            for (unsigned long j = 1; j < i.size(); j++) {
-                gameMap->addEdge(i[0], i[j]);
+        for (auto& borders : *borderData) {
+            for (unsigned long j = 1; j < borders.size(); j++) {
+                gameMap->addEdge(borders[0], borders[j]);
             }
         }
         return gameMap;
@@ -161,10 +174,19 @@ Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std:
     return nullptr;
 }
 
+/**
+ * Sets the map file to load
+ * @param newMapFile, string of the map name
+ */
 void MapLoader::setMapFile(std::string newMapFile) {
     pMapFile = new std::string(newMapFile);
 }
 
+/**
+ * Helper function that splits a map file's line by spaces
+ * @param line, string map file line
+ * @param pLineWords, pointer to a vector that holds the split up line
+ */
 void MapLoader::splitLine(const std::string& line, std::vector<std::string>* pLineWords) {
     //split each line into vector of words (split by spaces)
     std::istringstream iss(line);
@@ -173,6 +195,11 @@ void MapLoader::splitLine(const std::string& line, std::vector<std::string>* pLi
     }
 }
 
+/**
+ * Helper function that checks if the current line holds the map name
+ * @param mapName, pointer that holds the map name
+ * @param lineWords, pointer to a vector that holds the split up line
+ */
 void MapLoader::getMapName(std::string* mapName, std::vector<std::string>* lineWords) {
     //get map name
     if (lineWords->at(0) == "name" || lineWords->at(0) == "Name") {
@@ -182,6 +209,11 @@ void MapLoader::getMapName(std::string* mapName, std::vector<std::string>* lineW
     }
 }
 
+/**
+ * Helper function that checks if the current line specifies the start of a new section
+ * @param mode, pointer string that holds the current map mode
+ * @param lineWords, pointer to a vector that holds the split up line
+ */
 bool MapLoader::checkSection(std::string* mode, std::vector<std::string>* lineWords) {
     //separate in sections
     if ((*lineWords)[0][0] == *"[") {
@@ -194,6 +226,9 @@ bool MapLoader::checkSection(std::string* mode, std::vector<std::string>* lineWo
     return false;
 }
 
+/**
+ * Helper function that checks the validity of a continent line
+ */
 bool MapLoader::validateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
                                       bool* validMap) {
     (*continentCount)++;
@@ -212,6 +247,9 @@ bool MapLoader::validateContinentLine(int* continentCount, std::vector<std::stri
     }
 }
 
+/**
+ * Helper function that checks the validity of a country line
+ */
 bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount,
                                bool* validMap,
                                int* countryID, const int* continentCount) {
@@ -238,6 +276,9 @@ bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>*
     }
 }
 
+/**
+ * Helper function that checks the validity of a border line
+ */
 bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std::string>* lineWords, const int* lineCount,
                                bool* validMap, const int* countryCount) {
     //check validity of the line in this mode
@@ -264,27 +305,49 @@ bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std:
     }
 }
 
+/**
+ * AlternativeLoader constructor
+ * @param mapFile
+ */
 AlternativeLoader::AlternativeLoader(std::string mapFile) {
     pDominationMapFile = new std::string(std::move(mapFile));
 }
 
+/**
+ * AlternativeLoader destructor
+ */
 AlternativeLoader::~AlternativeLoader() {
     delete pDominationMapFile;
 }
 
+/**
+ * AlternativeLoader copy constructor
+ * @param toCopy
+ */
 AlternativeLoader::AlternativeLoader(const AlternativeLoader &toCopy) {
     pDominationMapFile = new std::string();
     *pDominationMapFile = *toCopy.pDominationMapFile;
 }
 
+/**
+ * assignment operator
+ */
 void AlternativeLoader::operator=(AlternativeLoader &rhs) {
     this->pDominationMapFile = rhs.pDominationMapFile;
 }
 
+/**
+ * Sets the map file to load
+ * @param newMapFile, string of the map name
+ */
 void AlternativeLoader::altSetMapFile(std::string newMapFile) {
     pDominationMapFile = &newMapFile;
 }
 
+/**
+ * Main method of the map loader. Parses the file and creates the map object
+ * @return Map
+ */
 Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
 
@@ -293,7 +356,6 @@ Map *AlternativeLoader::altReadMapFile() {
 
     std::ifstream infile(*pDominationMapFile);
 
-    // TODO: cannot read from the same file twice
     if(!infile || infile.peek() == EOF){
         return nullptr;
     }
@@ -375,6 +437,11 @@ Map *AlternativeLoader::altReadMapFile() {
     return map;
 }
 
+/**
+ * Helper function that checks if the current line specifies the start of a new section
+ * @param mode, pointer string that holds the current map mode
+ * @param line, current line
+ */
 bool AlternativeLoader::altCheckSection(std::string *mode, const std::string &line) {
     //separate in sections
     if (line[0] == *"[") {
@@ -389,6 +456,14 @@ bool AlternativeLoader::altCheckSection(std::string *mode, const std::string &li
     return false;
 }
 
+/**
+ * Helper function that creates the map object
+ * @param mapName, string of the map name
+ * @param continentData, vector containing the name and id of each continent
+ * @param territoryData, vector containing the country and adjacency information
+ * @param vMap, flags map validity
+ * @return Map
+ */
 Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::vector<std::string>> *continentData,
                                          std::vector<std::vector<std::string>> *territoryData, const bool *vMap) {
     if (*vMap) {
@@ -409,13 +484,13 @@ Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::
             return nullptr;
         }
         //add countries to map
-        for (auto& i : countryData) {
-            gameMap->addNode(std::stoi(i[0]), i[1], std::stoi(i[2]));
+        for (auto& countries : countryData) {
+            gameMap->addNode(std::stoi(countries[0]), countries[1], std::stoi(countries[2]));
         }
         //add adjacency
-        for (auto& i : borderData) {
-            for (unsigned long j = 1; j < i.size(); j++) {
-                gameMap->addEdge(i[0], i[j]);
+        for (auto& borders : borderData) {
+            for (unsigned long j = 1; j < borders.size(); j++) {
+                gameMap->addEdge(borders[0], borders[j]);
             }
         }
         return gameMap;
@@ -424,6 +499,12 @@ Map *AlternativeLoader::altInitMapObject(std::string *mapName, std::vector<std::
     return nullptr;
 }
 
+/**
+ * Helper function that splits a map file's line by spaces
+ * @param line, string map file line
+ * @param pLineWords, pointer to a vector that holds the split up line
+ * @param mode, current reading mode
+ */
 void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::string> *pLineWords, const std::string& mode) {
     std::string mLine = line;
     size_t pos;
@@ -450,6 +531,11 @@ void AlternativeLoader::altSplitLine(const std::string &line, std::vector<std::s
     }
 }
 
+/**
+ * Helper function that checks if the current line holds the map name
+ * @param mapName, pointer that holds the map name
+ * @param lineWords, pointer to a vector that holds the split up line
+ */
 void AlternativeLoader::altGetMapName(std::string *mapName, std::vector<std::string> *lineWords) {
     //get map name
     if (lineWords->at(0) == "name" || lineWords->at(0) == "Name") {
@@ -459,8 +545,10 @@ void AlternativeLoader::altGetMapName(std::string *mapName, std::vector<std::str
     }
 }
 
-bool
-AlternativeLoader::altValidateContinentLine(int *continentCount, std::vector<std::string> *lineWords, const int *lineCount,
+/**
+ * Helper function that checks the validity of a continent line
+ */
+bool AlternativeLoader::altValidateContinentLine(int *continentCount, std::vector<std::string> *lineWords, const int *lineCount,
                                             bool *validMap) {
     (*continentCount)++;
     //check validity of the line in this mode
@@ -478,8 +566,10 @@ AlternativeLoader::altValidateContinentLine(int *continentCount, std::vector<std
     }
 }
 
-bool
-AlternativeLoader::altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
+/**
+ * Helper function that checks the validity of a territory line
+ */
+bool AlternativeLoader::altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
                                               bool *validMap) {
     //check validity of the line in this mode
     if (lineWords->size() < 5) {
@@ -491,6 +581,9 @@ AlternativeLoader::altValidateTerritoriesLine(std::vector<std::string> *lineWord
     return true;
 }
 
+/**
+ * Helper function that goes through the list of continents and returns the id
+ */
 std::string AlternativeLoader::getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData) {
     unsigned int counter = 0;
     for(auto& i : continentData){
@@ -502,6 +595,9 @@ std::string AlternativeLoader::getContinentID(const std::string& continentName,s
     return std::to_string(0);
 }
 
+/**
+ * Helper function that goes through the list of countries and returns the id
+ */
 int AlternativeLoader::getCountryID(const std::string& countryName, const std::vector<std::string>& countryList) {
     int counter = 0;
     for(auto& i : countryList){
@@ -513,6 +609,9 @@ int AlternativeLoader::getCountryID(const std::string& countryName, const std::v
     return 0;
 }
 
+/**
+ * Helper function that looks through the territory data and extracts the country data
+ */
 std::vector<std::vector<std::string>> AlternativeLoader::altGetCountryData(std::vector<std::vector<std::string>> countries,
                                                                            std::vector<std::vector<std::string>> *territories,
                                                                            std::vector<std::vector<std::string>> *continents) {
@@ -532,6 +631,9 @@ std::vector<std::vector<std::string>> AlternativeLoader::altGetCountryData(std::
     return to_return;
 }
 
+/**
+ * Helper function that creates the country list
+ */
 std::vector<std::string> AlternativeLoader::altGetCountryList(std::vector<std::string> countries,
                                                               std::vector<std::vector<std::string>> *territories) {
     std::vector<std::string> to_return = std::move(countries);
@@ -542,6 +644,9 @@ std::vector<std::string> AlternativeLoader::altGetCountryList(std::vector<std::s
     return to_return;
 }
 
+/**
+ * Helper function that looks through the territory data and extracts the border data
+ */
 std::vector<std::vector<int>> AlternativeLoader::altGetBorderData(std::vector<std::vector<int>> borders,
                                                                   std::vector<std::vector<std::string>> *territories,
                                                                   const std::vector<std::string>& countries) {
