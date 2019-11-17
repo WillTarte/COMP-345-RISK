@@ -179,7 +179,7 @@ Map* MapLoader::initMapObject(std::string* mapName, std::vector<std::vector<std:
  * @param newMapFile, string of the map name
  */
 void MapLoader::setMapFile(std::string newMapFile) {
-    pMapFile = new std::string(newMapFile);
+    pMapFile = new std::string(std::move(newMapFile));
 }
 
 /**
@@ -309,8 +309,8 @@ bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std:
  * AlternativeLoader constructor
  * @param mapFile
  */
-AlternativeLoader::AlternativeLoader(std::string mapFile) {
-    pDominationMapFile = new std::string(std::move(mapFile));
+AlternativeLoader::AlternativeLoader(const std::string& mapFile) {
+    pDominationMapFile = new std::string(mapFile);
 }
 
 /**
@@ -350,10 +350,6 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
  */
 Map *AlternativeLoader::altReadMapFile() {
     //create file stream to read file line by line
-
-    std::ifstream in(*pDominationMapFile, std::ifstream::ate | std::ifstream::binary);
-    std::cout << in.tellg();
-
     std::ifstream infile(*pDominationMapFile);
 
     if(!infile || infile.peek() == EOF){
