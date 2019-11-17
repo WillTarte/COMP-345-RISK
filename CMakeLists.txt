@@ -46,9 +46,8 @@ target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "sr
 target_include_directories(Game-observers-driver PRIVATE "include")
 target_sources(Game-observers-driver PRIVATE "src/Drivers/GameObserversDriver.cpp" "src/GameObservers.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp")
 
-
 target_include_directories(Player-Strategy-driver PRIVATE "include")
-target_sources(Player-Strategy-driver PRIVATE "src/Drivers/PlayerStrategyDriver.cpp" "src/PlayerStrategy.cpp")
+target_sources(Player-Strategy-driver PRIVATE "src/Drivers/PlayerStrategyDriver.cpp" "src/PlayerStrategy.cpp" "src/Map.cpp")
 
 
 target_link_libraries(Player-driver stdc++fs)
