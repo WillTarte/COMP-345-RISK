@@ -556,7 +556,7 @@ int Player::reinforce() {
     this->notifyAll();
 
     auto exchange = cardExchange(*this);
-    if (exchange < 0) {
+    if (exchange <= 0) {
         this->setPlayerState(PlayerState::IDLE);
         this->strategy->resetChoices();
         return PlayerAction::FAILED;
