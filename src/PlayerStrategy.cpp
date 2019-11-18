@@ -1,10 +1,8 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "../include/Player.h"
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
-
-// TODO: fix output for bot players
 
 /******************************************************************************/
 /*********************** Player strategy constructors *************************/
@@ -79,7 +77,7 @@ HumanPlayerStrategy::HumanPlayerStrategy(const Player& player) {
     this->to = nullptr;
 }
 
-HumanPlayerStrategy::HumanPlayerStrategy(const HumanPlayerStrategy& toCopy) {
+HumanPlayerStrategy::HumanPlayerStrategy(const HumanPlayerStrategy& toCopy)  : PlayerStrategy(toCopy) {
     this->exchangingCardType = toCopy.exchangingCardType;
     this->armiesToPlace = toCopy.armiesToPlace;
     this->player = toCopy.player;
@@ -279,10 +277,10 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
             count = fortifyArmyCount();
             break;
         case StrategyContext::REINFORCE_ARMY_COUNT:
-            count = place();
+            count = reinforceArmyCount();
             break;
         case StrategyContext::REINFORCE_CARD_COUNT:
-            count = numArmies();
+            count = numCards();
             break;
         default: {
             count = -1;
@@ -464,7 +462,7 @@ int AggressiveBotStrategy::fortifyArmyCount() {
  * Finds out how many cards of a certain type the player owns. Without any strategy,
  * it'll simply exchange all cards of that type.
  **/
-int AggressiveBotStrategy::numArmies() {
+int AggressiveBotStrategy::numCards() {
     int count = 0;
     for (auto cardType : *player->getCards()->getHand()) {
         if ((int) cardType == *exchangingCardType) {
@@ -483,7 +481,7 @@ int AggressiveBotStrategy::numArmies() {
  * If the country the reinforce is prompting for is not the biggest country,
  * then it'll just return 0 so as to not reinforce anything but the biggest country.
  **/
-int AggressiveBotStrategy::place() {
+int AggressiveBotStrategy::reinforceArmyCount() {
     Map::Country* biggest = nullptr;
     // Find what the biggest country is
     for (auto* country : *player->getOwnedCountries()) {

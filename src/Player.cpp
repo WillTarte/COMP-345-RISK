@@ -42,6 +42,7 @@ Player::~Player() {
     delete pObservers;
     delete currentState;
     delete strategy;
+    delete strategyName;
 }
 
 /**
@@ -54,11 +55,13 @@ Player::Player(const Player &toCopy) {
     pDiceRoller = new DiceRoller();
     pPlayerId = new int(*toCopy.pPlayerId);
     pObservers = new std::list<Observer*>();
+    strategyName = new std::string();
     *pOwnedCountries = *toCopy.pOwnedCountries;
     *pCards = *toCopy.pCards;
     *pDiceRoller = *toCopy.pDiceRoller;
     *currentState = *toCopy.currentState;
     *pObservers = *toCopy.pObservers;
+    *strategyName = *toCopy.strategyName;
 }
 
 /**
@@ -74,6 +77,7 @@ void Player::operator=(const Player &rhs) {
     this->strategy = rhs.strategy;
     this->pObservers = rhs.pObservers;
     this->currentState = rhs.currentState;
+    this->strategyName = rhs.strategyName;
 }
 
 std::ostream& operator<<(std::ostream& os, const PlayerState state) {
@@ -101,12 +105,19 @@ void Player::setPlayerStrategy(Strategies strat) {
     switch (strat) {
         case Strategies::AGGRESSIVE_BOT: {
             this->strategy = new AggressiveBotStrategy(this);
+            this->strategyName = new std::string("AGGRESSIVE");
         } break;
         case Strategies::BENEVOLENT_BOT: {
             this->strategy = new BenevolentBotStrategy(this);
+            this->strategyName = new std::string("BENEVOLENT");
         } break;
+        case Strategies::HUMAN_PLAYER: {
+            this->strategy = new HumanPlayerStrategy(this);
+            this->strategyName = new std::string("HUMAN");
+        }
         default: {
             this->strategy = new HumanPlayerStrategy(this);
+            this->strategyName = new std::string("HUMAN");
         }
     }
 }

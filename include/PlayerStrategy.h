@@ -84,8 +84,8 @@ private:
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
     int fortifyArmyCount();
-    int numArmies();
-    int place();
+    int numCards();
+    int reinforceArmyCount();
 };
 
 class BenevolentBotStrategy : public PlayerStrategy {

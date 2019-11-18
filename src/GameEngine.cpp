@@ -88,17 +88,15 @@ void GameLoop::loop() {
             continue;
         }
 
+        //TODO: clear after each phase
         cout << "\u001b[35m";
         currentPlayer->reinforce();
-        cout.clear();
 
         cout << "\u001b[33m";
         currentPlayer->attack();
-        cout.clear();
 
         cout << "\u001b[34m";
         currentPlayer->fortify();
-        cout.clear();
 
         gameNotDone = !isGameDone(currentPlayer);
 
@@ -218,7 +216,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
             case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
             case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
             default: {
-                player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+                player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
             }
         }
         new StatsObserver(player);
