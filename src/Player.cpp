@@ -11,7 +11,6 @@
 #include <list>
 #include <cmath>
 
-// TODO: reset bot choices after a behavior is finished
 // TODO: player draw card during attack
 
 /**
@@ -218,7 +217,7 @@ static int getNumAttackingDice(Player *attacker, Map::Country *fromCountry) {
     int numAttackingDice = 0;
     do {
         std::cin.clear();
-        std::cout << "[ATTACKER] How many dice will Player " << attacker->getPlayerId() << " roll?(1 to ";
+        std::cout << "\n[ATTACKER] How many dice will Player " << attacker->getPlayerId() << " roll?(1 to ";
         if (fromCountry->getNumberOfTroops() > 3) {
             std::cout << "3)";
         } else {
@@ -240,7 +239,7 @@ static int getNumDefendingDice(Map::Country *toCountry, Player *player) {
     int numDefendingDice = 0;
     do {
         std::cin.clear();
-        std::cout << "[DEFENDER] How many dice will Player " << toCountry->getPlayerOwnerID() << " roll?(1 to ";
+        std::cout << "\n[DEFENDER] How many dice will Player " << toCountry->getPlayerOwnerID() << " roll?(1 to ";
         if (toCountry->getNumberOfTroops() >= 2) {
             std::cout << "2)";
         } else {
@@ -275,6 +274,7 @@ int Player::executeFortify(Map::Country &fromCountry, Map::Country &countryToFor
     std::cout << "\nPlayer " << this->getPlayerId() << " has fortified " << countryToFortify.getCountryName()
               << " from "
               << fromCountry.getCountryName() << std::endl;
+    this->strategy->resetChoices();
     return PlayerAction::SUCCEEDED;
 }
 
@@ -315,6 +315,7 @@ int Player::fortify() {
                  this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
     } else {
         this->setPlayerState(PlayerState::IDLE);
+        this->strategy->resetChoices();
         return PlayerAction::ABORTED;
     }
 
@@ -379,7 +380,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
     // Roll
     std::vector<int> attackingRolls = this->getDiceRoller()->roll(numAttackingDice);
     std::vector<int> defendingRolls = defendingPlayer->getDiceRoller()->roll(numDefendingDice);
-    std::cout << std::endl << std::endl << " - " << fromCountry->getCountryName() << " is attacking " << toCountry->getCountryName() << " - "<<std::endl;
+    std::cout << std::endl << " - " << fromCountry->getCountryName() << " is attacking " << toCountry->getCountryName() << " - "<<std::endl;
 
     // Compare the rolls, decide who wins and change number of armies of each country. Maybe update if attacking wins
     while (!attackingRolls.empty() && !defendingRolls.empty()) {
@@ -557,6 +558,7 @@ int Player::reinforce() {
     auto exchange = cardExchange(*this);
     if (exchange < 0) {
         this->setPlayerState(PlayerState::IDLE);
+        this->strategy->resetChoices();
         return PlayerAction::FAILED;
     }
 
@@ -589,6 +591,7 @@ int Player::reinforce() {
         }
     }
     this->setPlayerState(PlayerState::IDLE);
+    this->strategy->resetChoices();
     return PlayerAction::SUCCEEDED;
 }
 
@@ -624,6 +627,7 @@ int Player::attack() {
             fromCountryIndex = getAttackingCountry(this);
         } else {
             this->setPlayerState(PlayerState::IDLE);
+            this->strategy->resetChoices();
             return PlayerAction::ABORTED;
         }
 
@@ -660,6 +664,7 @@ int Player::attack() {
         }
         if (defendingPlayer == nullptr) {
             this->setPlayerState(PlayerState::IDLE);
+            this->strategy->resetChoices();
             return PlayerAction::FAILED;
         }
 
