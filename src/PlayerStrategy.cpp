@@ -49,17 +49,20 @@ void PlayerStrategy::resetChoices() {
     this->numWeakest = nullptr;
 }
 
+PlayerStrategy::~PlayerStrategy() {
+    delete from;
+    delete to;
+    delete armiesToPlace;
+    delete exchangingCardType;
+    delete numWeakest;
+    // makes sure the player is not deleted when switching strategies
+    player = nullptr;
+    delete player;
+}
+
 /******************************************************************************/
 /*********************** Player strategy constructors *************************/
 /******************************************************************************/
-// TODO : dont delete the player
-HumanPlayerStrategy::~HumanPlayerStrategy() {
-    delete exchangingCardType;
-    delete armiesToPlace;
-    delete from;
-    delete to;
-}
-
 HumanPlayerStrategy::HumanPlayerStrategy() {
     this->armiesToPlace = new int(0);
     this->exchangingCardType = new int(0);
@@ -95,13 +98,6 @@ HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& r
 /******************************************************************************/
 /*********************** Aggressive bot constructors **************************/
 /******************************************************************************/
-AggressiveBotStrategy::~AggressiveBotStrategy() {
-    delete armiesToPlace;
-    delete exchangingCardType;
-    delete from;
-    delete to;
-}
-
 AggressiveBotStrategy::AggressiveBotStrategy() {
     this->armiesToPlace = new int(0);
     this->exchangingCardType = new int(0);
@@ -137,13 +133,6 @@ AggressiveBotStrategy& AggressiveBotStrategy::operator=(const AggressiveBotStrat
 /******************************************************************************/
 /*********************** Benevolent bot constructors **************************/
 /******************************************************************************/
-BenevolentBotStrategy::~BenevolentBotStrategy() {
-    delete armiesToPlace;
-    delete exchangingCardType;
-    delete from;
-    delete to;
-}
-
 BenevolentBotStrategy::BenevolentBotStrategy() {
     this->armiesToPlace = new int(0);
     this->player = nullptr;
@@ -217,30 +206,41 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'n';
         }
     }
-
+    std::cout << botChoice << std::endl;
     return botChoice;
 }
 
-// TODO: should attack from 1 country per round (biggest valid country)
 bool AggressiveBotStrategy::willAttack() {
 
     Map::Country* biggest = nullptr;
     bool canAttack = false;
+    std::set<int> checkedCountries = std::set<int>();
 
-    for (auto* country : *player->getOwnedCountries()) {
-        if(biggest == nullptr) {
-            biggest = country;
-            canAttack = true;
-        } else if(biggest->getNumberOfTroops() < country->getNumberOfTroops()) {
-            for(auto* neighbour : *country->getAdjCountries()) {
-                if(neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
-                    canAttack = true;
-                    biggest = country;
+    while(!canAttack) {
+        for (auto* country : *player->getOwnedCountries()) {
+            if (biggest == nullptr) {
+                biggest = country;
+            } else if (biggest->getNumberOfTroops() < country->getNumberOfTroops() ||
+                       checkedCountries.find(biggest->getCountryId()) != checkedCountries.end()) {
+                for (auto* neighbour : *country->getAdjCountries()) {
+                    if (neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
+                        biggest = country;
+                    }
                 }
             }
         }
+
+        for (auto* neighbour: *biggest->getAdjCountries()) {
+            if (neighbour->getPlayerOwnerID() != biggest->getPlayerOwnerID()) {
+                canAttack = true;
+            }
+        }
+        if (!canAttack) {
+            checkedCountries.insert(biggest->getCountryId());
+        }
     }
-    if(from != nullptr && biggest->getCountryId() != from->getCountryId()) {
+
+    if (from != nullptr && biggest->getCountryId() != from->getCountryId()) {
         canAttack = false;
     }
 
@@ -288,7 +288,7 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
             count = -1;
         }
     }
-
+    std::cout << count << std::endl;
     return count;
 }
 
@@ -296,42 +296,31 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
  * This function will loop over all the countries you own and find the one that has the
  * most number of troops.
  *
- * The expected output is the index of the biggest country a player owns.
+ * The expected output is the index of the biggest (attack valid) country a player owns.
  **/
 int AggressiveBotStrategy::attackFromCountryIndex() {
 
-    std::set<int> checkedBiggestCountries = std::set<int>();
-    Map::Country* biggestCountry = nullptr;
     int fromCountryIndex = -1;
-    while(fromCountryIndex == -1) {
-        for (auto* country : *player->getOwnedCountries()) {
-            if (biggestCountry != nullptr &&
-                checkedBiggestCountries.find(biggestCountry->getCountryId()) != checkedBiggestCountries.end()) {
-                continue;
-            }
-            if (biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
-                biggestCountry = country;
-            }
-        }
-
-        bool canAttack = false;
-        for (auto* neighbour : *biggestCountry->getAdjCountries()) {
-            if (neighbour->getPlayerOwnerID() != biggestCountry->getPlayerOwnerID()) {
-                canAttack = true;
-            }
-        }
-        if (!canAttack) {
-            checkedBiggestCountries.insert(biggestCountry->getCountryId());
-            continue;
-        }
-
-        for (int i = 0; i < player->getOwnedCountries()->size(); i++) {
-            if (player->getOwnedCountries()->at(i)->getCountryId() == biggestCountry->getCountryId()) {
-                fromCountryIndex = i;
+    Map::Country* biggestCountry = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if(biggestCountry == nullptr) {
+            biggestCountry = country;
+        } else if(biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
+            for(auto* neighbour : *country->getAdjCountries()) {
+                if(neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
+                    biggestCountry = country;
+                }
             }
         }
     }
+
     from = biggestCountry;
+    for(int i = 0; i < player->getOwnedCountries()->size(); i++) {
+        if(player->getOwnedCountries()->at(i)->getCountryId() == biggestCountry->getCountryId()) {
+            fromCountryIndex = i;
+        }
+    }
+
     return fromCountryIndex;
 }
 
@@ -550,7 +539,7 @@ char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'n';
         }
     }
-
+    std::cout << botChoice << std::endl;
     return botChoice;
 }
 
@@ -587,7 +576,7 @@ int BenevolentBotStrategy::intInput(StrategyContext context) {
             count = -1;
         }
     }
-
+    std::cout << count << std::endl;
     return count;
 }
 

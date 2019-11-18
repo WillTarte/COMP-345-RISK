@@ -88,17 +88,15 @@ void GameLoop::loop() {
             continue;
         }
 
-        std::cout << "Player " << currentPlayer->getPlayerId() << " is " << currentPlayer->getStrategy() << std::endl;
-
-        cout << "\u001b[35m";  // for demo purposes
+        cout << "\u001b[35m";
         currentPlayer->reinforce();
         cout.clear();
 
-        cout << "\u001b[33m";  // for demo purposes
+        cout << "\u001b[33m";
         currentPlayer->attack();
         cout.clear();
 
-        cout << "\u001b[34m";  // for demo purposes
+        cout << "\u001b[34m";
         currentPlayer->fortify();
         cout.clear();
 

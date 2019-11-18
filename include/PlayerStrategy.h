@@ -39,8 +39,7 @@ public:
     virtual inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
     virtual inline void setTo(Map::Country* toCountry) { to = toCountry; }
     virtual void resetChoices();
-
-    virtual ~PlayerStrategy() = default;
+    virtual ~PlayerStrategy();
 
 protected:
     int* armiesToPlace;
@@ -56,7 +55,7 @@ class HumanPlayerStrategy : public PlayerStrategy {
 public:
     HumanPlayerStrategy();
     HumanPlayerStrategy(Player* player): PlayerStrategy(player){};
-    ~HumanPlayerStrategy();
+    ~HumanPlayerStrategy() = default;
     HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
     HumanPlayerStrategy& operator=(const HumanPlayerStrategy& rhs);
     HumanPlayerStrategy(const Player& player);
@@ -69,7 +68,7 @@ public:
     AggressiveBotStrategy();
     AggressiveBotStrategy(Player* player): PlayerStrategy(player){};
     AggressiveBotStrategy(const Player &player);
-    ~AggressiveBotStrategy();
+    ~AggressiveBotStrategy() = default;
     AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
     AggressiveBotStrategy& operator=(const AggressiveBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
@@ -94,7 +93,7 @@ public:
     BenevolentBotStrategy();
     BenevolentBotStrategy(Player* player): PlayerStrategy(player){};
     BenevolentBotStrategy(const Player &player);
-    ~BenevolentBotStrategy();
+    ~BenevolentBotStrategy() = default;
     BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);
     BenevolentBotStrategy& operator=(const BenevolentBotStrategy& rhs);
     char yesOrNo(StrategyContext context);
