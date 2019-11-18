@@ -200,7 +200,7 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'y';
             break;
         case StrategyContext::REINFORCE:
-            botChoice = 'n';
+            botChoice = 'y';
             break;
         default: {
             // Should never occur
@@ -239,9 +239,12 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
         case StrategyContext::FORTIFY_ARMY_COUNT:
             fortifyArmyCount();
             break;
-        // No mention of how reinforce works for aggressive bot
         case StrategyContext::REINFORCE_ARMY_COUNT:
+            numArmies();
+            break;
         case StrategyContext::REINFORCE_CARD_COUNT:
+            place();
+            break;
         default: {
             count = -1;
         }
@@ -370,6 +373,34 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
  **/
 int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops() - 1;
+}
+
+int AggressiveBotStrategy::numArmies() {
+    int count = 0;
+    for (auto cardType : *player->getCards()->getHand()) {
+        if ((int) cardType == *exchangingCardType) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int AggressiveBotStrategy::place() {
+    Map::Country* biggest = nullptr;
+    // Find what the biggest country is
+    for (auto* country : *player->getOwnedCountries()) {
+        if (country->getNumberOfTroops() > biggest->getNumberOfTroops()) {
+            biggest = country;
+        }
+    }
+
+    if (biggest != nullptr && biggest->getCountryId() == to->getCountryId()) {
+        return *armiesToPlace;
+    }
+    else {
+        return 0;
+    }
 }
 
 /******************************************************************************/

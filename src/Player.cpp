@@ -94,8 +94,8 @@ std::ostream& operator<<(std::ostream& os, const PlayerState state) {
     return os;
 }
 
-void Player::setPlayerStrategy(Strategies strategy) {
-    switch (strategy) {
+void Player::setPlayerStrategy(Strategies strat) {
+    switch (strat) {
         case Strategies::AGGRESSIVE_BOT: {
             this->strategy = new AggressiveBotStrategy();
         } break;
@@ -571,6 +571,7 @@ int Player::reinforce() {
             std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
                       << " armies. Add how many? ";
             do {
+                strategy->setTo(country);
                 place = strategy->intInput(StrategyContext::REINFORCE_ARMY_COUNT);
                 cin.ignore(512, '\n');
                 if(cin.fail() || place > newArmies || place < 0 || isnan(place)) {

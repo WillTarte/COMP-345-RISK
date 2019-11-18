@@ -37,10 +37,12 @@ public:
     virtual int intInput(StrategyContext context) = 0;
     inline void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
     inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
+    inline void setTo(Map::Country* toCountry) { to = toCountry; }
 
 protected:
     int* armiesToPlace;
     int* exchangingCardType;
+    int* numWeakest = new int(-1);
     Player* player;
     Map::Country* from;
     Map::Country* to;
@@ -78,6 +80,8 @@ private:
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
     int fortifyArmyCount();
+    int numArmies();
+    int place();
 };
 
 class BenevolentBotStrategy : public PlayerStrategy {
@@ -91,7 +95,6 @@ public:
     int intInput(StrategyContext context);
 
 private:
-    int* numWeakest = new int(-1);
     int defendNumDice();
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
