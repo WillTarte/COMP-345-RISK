@@ -39,6 +39,7 @@ Player::~Player() {
     delete pPlayerId;
     delete pObservers;
     delete currentState;
+    delete strategy;
 }
 
 /**

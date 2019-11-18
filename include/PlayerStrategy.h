@@ -39,6 +39,8 @@ public:
     inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
     inline void setTo(Map::Country* toCountry) { to = toCountry; }
 
+    virtual ~PlayerStrategy() = default;
+
 protected:
     int* armiesToPlace;
     int* exchangingCardType;
@@ -47,8 +49,6 @@ protected:
     Map::Country* from;
     Map::Country* to;
 
-private:
-    virtual ~PlayerStrategy() = default;
 };
 
 class HumanPlayerStrategy : public PlayerStrategy {

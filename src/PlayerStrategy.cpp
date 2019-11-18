@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 #include "../include/Player.h"
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
@@ -211,6 +212,9 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     return botChoice;
 }
 
+/*
+ * This function will delegate which function to use depending on what you're trying to do.
+ **/
 int AggressiveBotStrategy::intInput(StrategyContext context) {
     int count = 0;
 
@@ -254,8 +258,14 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
 }
 
 /*
- * Just find your biggest country and attack with it.
- * The except parameter is in case you own all countries adjacent to your biggest.
+ * This function will loop over all the countries you own and find the one that has the
+ * most number of troops.
+ *
+ * If the except parameter is passed in, then it'll look for the biggest country *besides*
+ * that one. This way if the player owns all countries adjacent to their biggest country,
+ * it can select their second biggest country instead.
+ *
+ * The expected output is the ID of the biggest country a player owns.
  **/
 int AggressiveBotStrategy::attackFromCountryIndex(int except) {
     int biggestIndex = 0;
@@ -273,6 +283,16 @@ int AggressiveBotStrategy::attackFromCountryIndex(int except) {
     return biggestIndex;
 }
 
+/*
+ * This method will look at all countries that are adjacent to the attacking
+ * player's biggest country. It will find it's weakest country and attack that.
+ *
+ * If the attacking player controls all adjacent countries, then it'll reselect
+ * which country to attack from - not sure if this should happen since this isn't
+ * defined behaviour in the assingment?
+ *
+ * The expected output is the smallest enemry country adjacent to the attacker's biggest country.
+ **/
 int AggressiveBotStrategy::attackToCountryIndex() {
     auto adj = from->getAdjCountries();
     int smallest = INT32_MAX;
@@ -317,8 +337,7 @@ int AggressiveBotStrategy::attackNumDice() {
 }
 
 /*
- * Defend with the maximum number of dice.
- * TODO: Check if this is one of the player's smaller countries, then defend the minimum?
+ * Defend with the maximum number of dice. Just always fight back as much as they can.
  **/
 int AggressiveBotStrategy::defendNumDice() {
     int numDice = 0;
@@ -333,7 +352,9 @@ int AggressiveBotStrategy::defendNumDice() {
 }
 
 /*
- * Find the smallest country the player owns and fortify that.
+ * Finds the smallest country the aggressive bot owns, and fortifies from that country.
+ *
+ * The expected output is the smallest country they own.
  **/
 int AggressiveBotStrategy::fortifyFromCountryIndex() {
     from = nullptr;
@@ -352,6 +373,8 @@ int AggressiveBotStrategy::fortifyFromCountryIndex() {
 /*
  * This function is just going to find the biggest country the player owns
  * and use that country as the one to fortify.
+ *
+ * The expected output is the same as the attackFromCountry function
  **/
 int AggressiveBotStrategy::fortifyToCountryIndex() {
     to = nullptr;
@@ -375,6 +398,10 @@ int AggressiveBotStrategy::fortifyArmyCount() {
     return from->getNumberOfTroops() - 1;
 }
 
+/*
+ * Finds out how many cards of a certain type the player owns. Without any strategy,
+ * it'll simply exchange all cards of that type.
+ **/
 int AggressiveBotStrategy::numArmies() {
     int count = 0;
     for (auto cardType : *player->getCards()->getHand()) {
@@ -386,6 +413,14 @@ int AggressiveBotStrategy::numArmies() {
     return count;
 }
 
+/*
+ * The reinforce method asks if you'd like to reinforce at each country you own.
+ * What this method does is it checks if that country is the biggest one you own,
+ * and if it is, it'll return all the armies you're allowed to place.
+ *
+ * If the country the reinforce is prompting for is not the biggest country,
+ * then it'll just return 0 so as to not reinforce anything but the biggest country.
+ **/
 int AggressiveBotStrategy::place() {
     Map::Country* biggest = nullptr;
     // Find what the biggest country is
@@ -427,6 +462,9 @@ char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     return botChoice;
 }
 
+/*
+ * This function will delegate which function to use depending on what you're trying to do.
+ **/
 int BenevolentBotStrategy::intInput(StrategyContext context) {
     int count = 0;
 
@@ -461,7 +499,10 @@ int BenevolentBotStrategy::intInput(StrategyContext context) {
     return count;
 }
 
-
+/*
+ * This is the exact same strategy that the aggressive player uses. It will simply
+ * always select the most dice it's allowed to for defending.
+ **/
 int BenevolentBotStrategy::defendNumDice() {
     int numDice = 0;
     if (to->getNumberOfTroops() >= 2) {
@@ -474,6 +515,14 @@ int BenevolentBotStrategy::defendNumDice() {
     return numDice;
 }
 
+/*
+ * This is the opposite of the aggressive player. The benevolent bot will find out
+ * what the biggest country they own is and use that to fortify their smaller
+ * countries.
+ *
+ * The expected output of this function is the ID of the biggest country that
+ * the benevolent bot player controls.
+ **/
 int BenevolentBotStrategy::fortifyFromCountryIndex() {
     from = nullptr;
     for (auto* country : *player->getOwnedCountries()) {
@@ -488,6 +537,14 @@ int BenevolentBotStrategy::fortifyFromCountryIndex() {
     return from->getCountryId();
 }
 
+/*
+ * Again, this is the opposite of the aggressive player. The benevolent bot will
+ * find out what the smallest countries they own are and use that to fortify
+ * from their bigger countries.
+ *
+ * The expected output of this function is the ID of the smallest country that
+ * the benevolent bot player controls.
+ **/
 int BenevolentBotStrategy::fortifyToCountryIndex() {
     to = nullptr;
     for (auto* country : *player->getOwnedCountries()) {
@@ -502,6 +559,10 @@ int BenevolentBotStrategy::fortifyToCountryIndex() {
     return to->getCountryId();
 }
 
+/*
+ * This will split the number of armies between the two countries evenly so that
+ * both countries end up with the same number of armies.
+ **/
 int BenevolentBotStrategy::fortifyArmyCount() {
     int move = from->getNumberOfTroops();
     move = (move - to->getNumberOfTroops()) / 2;
@@ -509,6 +570,10 @@ int BenevolentBotStrategy::fortifyArmyCount() {
     return move;
 }
 
+/*
+ * Same as the aggressive bot, the benevolent bot will chose cards
+ * to exchange without really applying any strategy to the decision.
+ **/
 int BenevolentBotStrategy::numArmies() {
     int count = 0;
     for (auto cardType : *player->getCards()->getHand()) {
@@ -520,6 +585,20 @@ int BenevolentBotStrategy::numArmies() {
     return count;
 }
 
+/*
+ * numWeakest is initialized to -1, so if it's not yet been set then it'll set it.
+ * To set numWeakest it first finds out what the player's weakest country is. Once
+ * you know the weakest country, it'll then loop over all of that player's countries
+ * again and find out how many countries have the same number of troops as that
+ * country.
+ *
+ * Finally, it distributes armies across all it's weakest countries evenly. Therefore,
+ * it'll find out how many armies you need to place and divide it by the number
+ * of countries that you want to place on.
+ *
+ * It'll return the ceiling of that number so that it's placing at minimum 1 per country
+ * instead of performing integer division and trying to place 0.
+ **/
 int BenevolentBotStrategy::place() {
     if (*numWeakest == -1) {
         int count = 0;
@@ -541,5 +620,5 @@ int BenevolentBotStrategy::place() {
         numWeakest = new int(count);
     }
 
-    return *armiesToPlace / *numWeakest;
+    return ceil((double)*armiesToPlace / (double)*numWeakest);
 }
