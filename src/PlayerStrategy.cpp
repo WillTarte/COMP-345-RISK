@@ -195,7 +195,7 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
         case StrategyContext::ATTACK:
-            botChoice = 'y';
+            botChoice = willAttack() ? 'y' : 'n';
             break;
         case StrategyContext::FORTIFY:
             botChoice = 'y';
@@ -210,6 +210,23 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     }
 
     return botChoice;
+}
+
+bool AggressiveBotStrategy::willAttack() {
+    Map::Country* biggest = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (biggest == nullptr || biggest->getNumberOfTroops() < country->getNumberOfTroops()) {
+            biggest = country;
+        }
+    }
+
+    for (auto* country : *biggest->getAdjCountries()) {
+        if (country->getPlayerOwnerID() != biggest->getPlayerOwnerID()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*

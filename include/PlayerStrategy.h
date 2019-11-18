@@ -73,6 +73,7 @@ public:
     int intInput(StrategyContext context);
 
 private:
+    bool willAttack();
     int attackFromCountryIndex(int except = -1);
     int attackToCountryIndex();
     int attackNumDice();
