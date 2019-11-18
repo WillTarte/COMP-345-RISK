@@ -194,22 +194,19 @@ char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     switch ((int) context) {
         case StrategyContext::ATTACK:
             botChoice = willAttack() ? 'y' : 'n';
-            std::cout << botChoice << std::endl;
             break;
         case StrategyContext::FORTIFY:
             botChoice = canFortify() ? 'y' : 'n';
-            std::cout << botChoice << std::endl;
             break;
         case StrategyContext::REINFORCE:
             botChoice = 'y';
-            std::cout << botChoice << std::endl;
             break;
         default: {
             // Should never occur
             botChoice = 'n';
         }
     }
-
+    std::cout << botChoice << std::endl;
     return botChoice;
 }
 
@@ -446,7 +443,14 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
         }
     }
 
-    return to->getCountryId();
+    int toCountryRelativeIndex = -1;
+    for(int i = 0; i < from->getAdjCountries()->size(); i++) {
+        if(from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
+            toCountryRelativeIndex = i;
+        }
+    }
+
+    return toCountryRelativeIndex;
 }
 
 /**
@@ -705,4 +709,28 @@ int BenevolentBotStrategy::place() {
     }
 
     return ceil((double)*armiesToPlace / (double)*numWeakest);
+}
+
+/**
+ * Checks if the bot can fortify (smallest country has an adjacent country with more armies)
+ *
+ * @return true if the bot can fortify
+ */
+bool BenevolentBotStrategy::canFortify() {
+    bool canFortify = false;
+    Map::Country* smallestCountry = nullptr;
+    for (auto* country: *player->getOwnedCountries()) {
+        if (smallestCountry == nullptr || smallestCountry->getNumberOfTroops() > country->getNumberOfTroops()) {
+            smallestCountry = country;
+        }
+    }
+
+    for (auto* neighbour : *smallestCountry->getAdjCountries()) {
+        if (neighbour->getPlayerOwnerID() == smallestCountry->getPlayerOwnerID()
+                && neighbour->getNumberOfTroops() > smallestCountry->getNumberOfTroops()) {
+            canFortify = true;
+        }
+    }
+
+    return canFortify;
 }

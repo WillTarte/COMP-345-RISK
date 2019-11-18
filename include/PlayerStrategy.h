@@ -100,6 +100,7 @@ public:
     int intInput(StrategyContext context);
 
 private:
+    bool canFortify();
     int defendNumDice();
     int fortifyFromCountryIndex();
     int fortifyToCountryIndex();
