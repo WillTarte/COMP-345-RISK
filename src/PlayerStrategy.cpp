@@ -279,10 +279,10 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
             count = fortifyArmyCount();
             break;
         case StrategyContext::REINFORCE_ARMY_COUNT:
-            count = place();
+            count = reinforceArmyCount();
             break;
         case StrategyContext::REINFORCE_CARD_COUNT:
-            count = numArmies();
+            count = numCards();
             break;
         default: {
             count = -1;
@@ -464,7 +464,7 @@ int AggressiveBotStrategy::fortifyArmyCount() {
  * Finds out how many cards of a certain type the player owns. Without any strategy,
  * it'll simply exchange all cards of that type.
  **/
-int AggressiveBotStrategy::numArmies() {
+int AggressiveBotStrategy::numCards() {
     int count = 0;
     for (auto cardType : *player->getCards()->getHand()) {
         if ((int) cardType == *exchangingCardType) {
@@ -483,7 +483,7 @@ int AggressiveBotStrategy::numArmies() {
  * If the country the reinforce is prompting for is not the biggest country,
  * then it'll just return 0 so as to not reinforce anything but the biggest country.
  **/
-int AggressiveBotStrategy::place() {
+int AggressiveBotStrategy::reinforceArmyCount() {
     Map::Country* biggest = nullptr;
     // Find what the biggest country is
     for (auto* country : *player->getOwnedCountries()) {
