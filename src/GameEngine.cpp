@@ -205,6 +205,18 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
+        std::cout << "What strategy should player " << i << " use? (Human/aggresive/passive)"  << std::endl;
+
+        char strat = 0;
+        std::cin >> strat;
+
+        switch(strat) {
+            case 'a': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
+            case 'b': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+            default: {
+                player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+            }
+        }
         new StatsObserver(player);
         new PhaseObserver(player);
         players->push_back(player);

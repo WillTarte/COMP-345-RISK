@@ -94,6 +94,20 @@ std::ostream& operator<<(std::ostream& os, const PlayerState state) {
     return os;
 }
 
+void Player::setPlayerStrategy(Strategies strategy) {
+    switch (strategy) {
+        case Strategies::AGGRESSIVE_BOT: {
+            this->strategy = new AggressiveBotStrategy();
+        } break;
+        case Strategies::BENEVOLENT_BOT: {
+            this->strategy = new BenevolentBotStrategy();
+        } break;
+        default: {
+            this->strategy = new HumanPlayerStrategy();
+        }
+    }
+}
+
 /**
  * Exchanges a countries owner with a new owner
  *

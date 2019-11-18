@@ -7,8 +7,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Dice.h"
-
-class PlayerStrategy;
+#include "PlayerStrategy.h"
 
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
@@ -48,6 +47,7 @@ public:
 
     inline PlayerState getPlayerState() const { return *currentState; }
     inline void setPlayerState(PlayerState newState) { delete currentState; this->currentState =  new PlayerState(newState);}
+    void setPlayerStrategy(Strategies strategy);
 
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);

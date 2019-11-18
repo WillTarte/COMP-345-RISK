@@ -2,7 +2,14 @@
 #define COMP_345_PROJ_PLAYER_STRATEGY_H
 
 #include "Map.h"
-#include "Player.h"
+
+class Player;
+
+enum Strategies {
+    HUMAN_PLAYER,
+    AGGRESSIVE_BOT,
+    BENEVOLENT_BOT
+};
 
 enum StrategyContext {
     ATTACK,
