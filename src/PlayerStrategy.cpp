@@ -299,15 +299,14 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
  * The expected output is the index of the biggest (attack valid) country a player owns.
  **/
 int AggressiveBotStrategy::attackFromCountryIndex() {
-
-    int fromCountryIndex = -1;
+    unsigned int fromCountryIndex = -1;
     Map::Country* biggestCountry = nullptr;
     for (auto* country : *player->getOwnedCountries()) {
-        if(biggestCountry == nullptr) {
+        if (biggestCountry == nullptr) {
             biggestCountry = country;
-        } else if(biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
-            for(auto* neighbour : *country->getAdjCountries()) {
-                if(neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
+        } else if (biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
+            for (auto* neighbour : *country->getAdjCountries()) {
+                if (neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
                     biggestCountry = country;
                 }
             }
@@ -315,13 +314,13 @@ int AggressiveBotStrategy::attackFromCountryIndex() {
     }
 
     from = biggestCountry;
-    for(int i = 0; i < player->getOwnedCountries()->size(); i++) {
-        if(player->getOwnedCountries()->at(i)->getCountryId() == biggestCountry->getCountryId()) {
+    for (unsigned long i = 0; i < player->getOwnedCountries()->size(); i++) {
+        if (player->getOwnedCountries()->at(i)->getCountryId() == biggestCountry->getCountryId()) {
             fromCountryIndex = i;
         }
     }
 
-    return fromCountryIndex;
+    return (int) fromCountryIndex;
 }
 
 /**
@@ -336,20 +335,20 @@ int AggressiveBotStrategy::attackFromCountryIndex() {
  **/
 int AggressiveBotStrategy::attackToCountryIndex() {
     Map::Country* smallestNeighbour = nullptr;
-    int index = 0;
-    for(int i = 0; i < from->getAdjCountries()->size(); i++) {
-        if(smallestNeighbour == nullptr && from->getAdjCountries()->at(i)->getPlayerOwnerID() != from->getPlayerOwnerID()) {
+    unsigned int index = 0;
+    for (unsigned long i = 0; i < from->getAdjCountries()->size(); i++) {
+        if (smallestNeighbour == nullptr && from->getAdjCountries()->at(i)->getPlayerOwnerID() != from->getPlayerOwnerID()) {
             smallestNeighbour = from->getAdjCountries()->at(i);
             index = i;
         }
-        if(smallestNeighbour != nullptr && smallestNeighbour->getNumberOfTroops() > from->getAdjCountries()->at(i)->getNumberOfTroops() && from->getAdjCountries()->at(i)->getPlayerOwnerID()!= from->getPlayerOwnerID()) {
+        if (smallestNeighbour != nullptr && smallestNeighbour->getNumberOfTroops() > from->getAdjCountries()->at(i)->getNumberOfTroops() && from->getAdjCountries()->at(i)->getPlayerOwnerID()!= from->getPlayerOwnerID()) {
             smallestNeighbour = from->getAdjCountries()->at(i);
             index = i;
         }
     }
 
     to = smallestNeighbour;
-    return index;
+    return (int) index;
 }
 
 /**
@@ -392,38 +391,38 @@ int AggressiveBotStrategy::fortifyFromCountryIndex() {
 
     from = nullptr;
     std::set<int> checkedBiggestCountries = std::set<int>();
-    int fromCountryIndex = -1;
+    unsigned int fromCountryIndex = -1;
     while (from == nullptr) {
         Map::Country* biggestCountry = nullptr;
-        for(auto* country : *player->getOwnedCountries()) {
+        for (auto* country : *player->getOwnedCountries()) {
             if (biggestCountry != nullptr && checkedBiggestCountries.find(biggestCountry->getCountryId()) != checkedBiggestCountries.end()) {
                 continue;
             }
-            if(biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
+            if (biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
                 biggestCountry = country;
             }
         }
 
         for (auto* neighbour : *biggestCountry->getAdjCountries()) {
-            if(neighbour->getPlayerOwnerID() == biggestCountry->getPlayerOwnerID() && neighbour->getNumberOfTroops() > 1 ) {
+            if (neighbour->getPlayerOwnerID() == biggestCountry->getPlayerOwnerID() && neighbour->getNumberOfTroops() > 1 ) {
                 from = neighbour;
             }
         }
 
-        if(from == nullptr) {
+        if (from == nullptr) {
             checkedBiggestCountries.insert(biggestCountry->getCountryId());
             continue;
         }
 
         fromCountryIndex = -1;
-        for(int i = 0; i < player->getOwnedCountries()->size(); i++) {
-            if(player->getOwnedCountries()->at(i)->getCountryId() == from->getCountryId()) {
+        for (unsigned long i = 0; i < player->getOwnedCountries()->size(); i++) {
+            if (player->getOwnedCountries()->at(i)->getCountryId() == from->getCountryId()) {
                 fromCountryIndex = i;
             }
         }
     }
 
-    return fromCountryIndex;
+    return (int) fromCountryIndex;
 }
 
 /**
@@ -443,14 +442,14 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
         }
     }
 
-    int toCountryRelativeIndex = -1;
-    for(int i = 0; i < from->getAdjCountries()->size(); i++) {
-        if(from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
+    unsigned int toCountryRelativeIndex = -1;
+    for (unsigned long i = 0; i < from->getAdjCountries()->size(); i++) {
+        if (from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
             toCountryRelativeIndex = i;
         }
     }
 
-    return toCountryRelativeIndex;
+    return (int) toCountryRelativeIndex;
 }
 
 /**
@@ -510,20 +509,20 @@ int AggressiveBotStrategy::place() {
  */
 bool AggressiveBotStrategy::canFortify() {
 
-    bool fortifiable = false;
+    bool canFortify = false;
     Map::Country* biggestCountry = nullptr;
-    for(auto* country: *player->getOwnedCountries()) {
-        if(biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
+    for (auto* country: *player->getOwnedCountries()) {
+        if (biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
             biggestCountry = country;
         }
     }
-    for(auto* neighbour : *biggestCountry->getAdjCountries()) {
-        if(neighbour->getPlayerOwnerID() == biggestCountry->getPlayerOwnerID() && neighbour->getNumberOfTroops() > 1) {
-            fortifiable = true;
+    for (auto* neighbour : *biggestCountry->getAdjCountries()) {
+        if (neighbour->getPlayerOwnerID() == biggestCountry->getPlayerOwnerID() && neighbour->getNumberOfTroops() > 1) {
+            canFortify = true;
         }
     }
 
-    return fortifiable;
+    return canFortify;
 }
 
 /******************************************************************************/
@@ -614,7 +613,7 @@ int BenevolentBotStrategy::defendNumDice() {
 int BenevolentBotStrategy::fortifyFromCountryIndex() {
     from = nullptr;
     std::set<int> checkedSmallestCountries = std::set<int>();
-    int fromCountryIndex = -1;
+    unsigned int fromCountryIndex = -1;
     while (from == nullptr) {
         Map::Country* smallestCountry = nullptr;
 
@@ -646,7 +645,7 @@ int BenevolentBotStrategy::fortifyFromCountryIndex() {
         }
     }
 
-    return fromCountryIndex;
+    return (int) fromCountryIndex;
 }
 
 /**
@@ -668,14 +667,14 @@ int BenevolentBotStrategy::fortifyToCountryIndex() {
         }
     }
 
-    int toCountryRelativeIndex = -1;
+    unsigned int toCountryRelativeIndex = -1;
     for (unsigned long i = 0 ; i < from->getAdjCountries()->size() ; i++) {
         if (from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
             toCountryRelativeIndex = i;
         }
     }
 
-    return toCountryRelativeIndex;
+    return (int) toCountryRelativeIndex;
 }
 
 /**
