@@ -278,63 +278,36 @@ int AggressiveBotStrategy::intInput(StrategyContext context) {
  * This function will loop over all the countries you own and find the one that has the
  * most number of troops.
  *
- * If the except parameter is passed in, then it'll look for the biggest country *besides*
- * that one. This way if the player owns all countries adjacent to their biggest country,
- * it can select their second biggest country instead.
- *
  * The expected output is the ID of the biggest country a player owns.
  **/
-int AggressiveBotStrategy::attackFromCountryIndex(int except) {
-    int biggestIndex = 0;
-    int max = 0;
-    auto countries = player->getOwnedCountries();
-    for (unsigned long i = 0; i < countries->size(); i++) {
-        if (countries[i][0]->getNumberOfTroops() > max
-         && countries[i][0]->getCountryId() != except) { // Allows you to find 2nd biggest
-            max = countries[i][0]->getNumberOfTroops();
-            biggestIndex = countries[i][0]->getCountryId();
-            from = countries[i][0];
+int AggressiveBotStrategy::attackFromCountryIndex() {
+    Map::Country* biggest = nullptr;
+    for (auto* country : *player->getOwnedCountries()) {
+        if (biggest == nullptr || biggest->getNumberOfTroops() < country->getNumberOfTroops()) {
+            biggest = country;
         }
     }
 
-    return biggestIndex;
+    from = biggest;
+    return biggest->getCountryId();
 }
 
 /*
  * This method will look at all countries that are adjacent to the attacking
  * player's biggest country. It will find it's weakest country and attack that.
  *
- * If the attacking player controls all adjacent countries, then it'll reselect
- * which country to attack from - not sure if this should happen since this isn't
- * defined behaviour in the assingment?
- *
- * The expected output is the smallest enemry country adjacent to the attacker's biggest country.
+ * The expected output is the smallest enemy country adjacent to the attacker's biggest country.
  **/
 int AggressiveBotStrategy::attackToCountryIndex() {
-    auto adj = from->getAdjCountries();
-    int smallest = INT32_MAX;
-    unsigned long smallestIndex = 0;
-    int owner = from->getPlayerOwnerID();
-    Map::Country* smallestCountry = nullptr;
-    for (unsigned long i = 0 ; i < adj->size() ; i++) {
-        if (adj[i][0]->getNumberOfTroops() < smallest
-         && adj[i][0]->getPlayerOwnerID() != owner) {
-            smallest = adj[i][0]->getNumberOfTroops();
-            smallestIndex = i;
-            smallestCountry = adj[i][0];
+    Map::Country* smallest = nullptr;
+    for (auto* country : *from->getAdjCountries()) {
+        if (smallest == nullptr || country->getNumberOfTroops() < smallest->getNumberOfTroops()) {
+            smallest = country;
         }
     }
 
-    if (smallestIndex != 0) {
-        to = smallestCountry;
-        return smallest;
-    }
-    else {
-        // Get the next smallest country if attacking player
-        // owns all adjacent countries
-        attackFromCountryIndex(from->getCountryId());
-        return attackToCountryIndex();
-    }
+    to = smallest;
+    return smallest->getCountryId();
 }
 
 /*
@@ -376,10 +349,7 @@ int AggressiveBotStrategy::defendNumDice() {
 int AggressiveBotStrategy::fortifyFromCountryIndex() {
     from = nullptr;
     for (auto* country : *player->getOwnedCountries()) {
-        if (from == nullptr) {
-            from = country;
-        }
-        else if (country->getNumberOfTroops() < from->getNumberOfTroops()) {
+        if (from == nullptr || country->getNumberOfTroops() < from->getNumberOfTroops()) {
             from = country;
         }
     }

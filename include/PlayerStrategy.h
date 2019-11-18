@@ -74,7 +74,7 @@ public:
 
 private:
     bool willAttack();
-    int attackFromCountryIndex(int except = -1);
+    int attackFromCountryIndex();
     int attackToCountryIndex();
     int attackNumDice();
     int defendNumDice();
