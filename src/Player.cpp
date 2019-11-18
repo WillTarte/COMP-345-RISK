@@ -11,6 +11,9 @@
 #include <list>
 #include <cmath>
 
+// TODO: reset bot choices after a behavior is finished
+// TODO: player draw card during attack
+
 /**
  * Player constructor
  *
@@ -98,13 +101,13 @@ std::ostream& operator<<(std::ostream& os, const PlayerState state) {
 void Player::setPlayerStrategy(Strategies strat) {
     switch (strat) {
         case Strategies::AGGRESSIVE_BOT: {
-            this->strategy = new AggressiveBotStrategy();
+            this->strategy = new AggressiveBotStrategy(this);
         } break;
         case Strategies::BENEVOLENT_BOT: {
-            this->strategy = new BenevolentBotStrategy();
+            this->strategy = new BenevolentBotStrategy(this);
         } break;
         default: {
-            this->strategy = new HumanPlayerStrategy();
+            this->strategy = new HumanPlayerStrategy(this);
         }
     }
 }
@@ -157,7 +160,6 @@ static int getAttackingCountry(Player *attacker) {
         std::cout << "\n[ATTACKER] From which country do you want to attack?(choose 0 to "
                   << attacker->getOwnedCountries()->size() - 1 << ")";
         fromCountryIndex = attacker->getStrategy()->intInput(StrategyContext::ATTACK_FROM_COUNTRY);
-        cin.ignore(512, '\n');
         if (fromCountryIndex < 0 || fromCountryIndex > (int) attacker->getOwnedCountries()->size() - 1 || std::cin.fail() || isnan(fromCountryIndex)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -203,7 +205,6 @@ static int getDefendingCountry(Map::Country *fromCountry, Player *player) {
         std::cout << "\n[ATTACKER] Which country would you like to attack?(0 to "
                   << fromCountry->getAdjCountries()->size() - 1 << ")";
         toCountryIndex = player->getStrategy()->intInput(StrategyContext::ATTACK_TO_COUNTRY);
-        cin.ignore(512, '\n');
         if (toCountryIndex < 0 || toCountryIndex > (int) fromCountry->getAdjCountries()->size() || cin.fail() || isnan(toCountryIndex)) {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -224,7 +225,6 @@ static int getNumAttackingDice(Player *attacker, Map::Country *fromCountry) {
             std::cout << fromCountry->getNumberOfTroops() - 1 << ")";
         }
         numAttackingDice = attacker->getStrategy()->intInput(StrategyContext::ATTACK_DICE_COUNT);
-        cin.ignore(512, '\n');
         if (numAttackingDice < 1 || numAttackingDice > fromCountry->getNumberOfTroops() - 1 ||
             numAttackingDice > 3 || cin.fail() || isnan(numAttackingDice)) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -247,7 +247,6 @@ static int getNumDefendingDice(Map::Country *toCountry, Player *player) {
             std::cout << "1)";
         }
         numDefendingDice = player->getStrategy()->intInput(StrategyContext::DEFEND_DICE_COUNT);
-        cin.ignore(512, '\n');
         if (numDefendingDice < 1 || numDefendingDice > 2 || numDefendingDice > toCountry->getNumberOfTroops() ||
             cin.fail() || isnan(numDefendingDice)) {
             std::cout << "\nInvalid Input. Please try again.\n";
@@ -291,7 +290,6 @@ int Player::fortify() {
         std::cin.clear();
         std::cout << "\n[PLAYER " << this->getPlayerId() << "] Do you wish to fortify a country this turn (y/n)? ";
         playerChoice = strategy->yesOrNo(StrategyContext::FORTIFY);
-        cin.ignore(512, '\n');
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
@@ -306,7 +304,6 @@ int Player::fortify() {
                       << " countries. Which country do you want to move armies from ? (choose 0 to "
                       << this->getOwnedCountries()->size() - 1 << " ) ";
             fromCountryIndex = strategy->intInput(StrategyContext::FORTIFY_FROM_COUNTRY);
-            cin.ignore(512, '\n');
             //new condition
             if (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 ||
                 this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1) {
@@ -382,6 +379,7 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
     // Roll
     std::vector<int> attackingRolls = this->getDiceRoller()->roll(numAttackingDice);
     std::vector<int> defendingRolls = defendingPlayer->getDiceRoller()->roll(numDefendingDice);
+    std::cout << std::endl << std::endl << " - " << fromCountry->getCountryName() << " is attacking " << toCountry->getCountryName() << " - "<<std::endl;
 
     // Compare the rolls, decide who wins and change number of armies of each country. Maybe update if attacking wins
     while (!attackingRolls.empty() && !defendingRolls.empty()) {
@@ -404,6 +402,8 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
                 } else {
                     int newArmies = 0;
                     do {
+                        //TODO: if the player conquers atleast 1 country, then they get 1 card for that turn
+                        GameLoop::getInstance()->getGameDeck()->draw(*this->getCards());
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
                         newArmies = strategy->intInput(StrategyContext::ATTACK_NEW_ARMY_COUNT);
@@ -525,7 +525,7 @@ int Player::reinforce() {
         }
     };
 
-    auto countriesOwned = [](const Player &player) {
+    auto countriesOwned = [](Player& player) {
         auto countries = player.getOwnedCountries()->size();
 
         return countries < 9 ? 3 : (int) countries / 3;
@@ -569,12 +569,11 @@ int Player::reinforce() {
     while (newArmies > 0) {
         std::cout << "Troops remaining: " << newArmies << std::endl;
         for (auto *country : *this->getOwnedCountries()) {
-            std::cout << country->getCountryName() << " has " << country->getNumberOfTroops()
-                      << " armies. Add how many? ";
+            std::cout << country->getCountryName() << " has " << country->getNumberOfTroops() << " armies. Add how many? ";
             do {
                 strategy->setTo(country);
+                strategy->setArmiesToPlace(newArmies);
                 place = strategy->intInput(StrategyContext::REINFORCE_ARMY_COUNT);
-                cin.ignore(512, '\n');
                 if(cin.fail() || place > newArmies || place < 0 || isnan(place)) {
                     std::cout << "Invalid value entered. Pleased try again." << std::endl;
                 }
@@ -615,7 +614,6 @@ int Player::attack() {
         std::cout << "It is Player " << this->getPlayerId() << "'s turn to attack!" << std::endl;
         std::cout << "\n[ATTACKER] Will you attack?(y/n)";
         playerChoice = strategy->yesOrNo(StrategyContext::ATTACK);
-        cin.ignore(512, '\n');
         if (playerChoice != 'y' && playerChoice != 'n') {
             std::cout << "\nInvalid Input. Please try again.\n";
             continue;
@@ -665,8 +663,7 @@ int Player::attack() {
             return PlayerAction::FAILED;
         }
 
-        if (this->executeAttack(fromCountry, toCountry, defendingPlayer, numAttackingDice, numDefendingDice) ==
-            PlayerAction::SUCCEEDED) {
+        if (this->executeAttack(fromCountry, toCountry, defendingPlayer, numAttackingDice, numDefendingDice) == PlayerAction::SUCCEEDED) {
             std::cout << "\n[ATTACK SUCCEEDED] - Proceeding." << std::endl;
             continue;
         } else {

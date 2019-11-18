@@ -32,12 +32,13 @@ public:
     PlayerStrategy();
     PlayerStrategy(const PlayerStrategy& toCopy);
     PlayerStrategy& operator=(const PlayerStrategy& rhs);
-    PlayerStrategy(const Player& player);
+    PlayerStrategy(Player* player);
     virtual char yesOrNo(StrategyContext context) = 0;
     virtual int intInput(StrategyContext context) = 0;
-    inline void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
-    inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
-    inline void setTo(Map::Country* toCountry) { to = toCountry; }
+    virtual inline void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
+    virtual inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
+    virtual inline void setTo(Map::Country* toCountry) { to = toCountry; }
+    virtual void resetChoices();
 
     virtual ~PlayerStrategy() = default;
 
@@ -54,6 +55,8 @@ protected:
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
     HumanPlayerStrategy();
+
+    HumanPlayerStrategy(Player* player): PlayerStrategy(player){};
     ~HumanPlayerStrategy();
     HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
     HumanPlayerStrategy& operator=(const HumanPlayerStrategy& rhs);
@@ -65,6 +68,7 @@ public:
 class AggressiveBotStrategy : public PlayerStrategy {
 public:
     AggressiveBotStrategy();
+    AggressiveBotStrategy(Player* player): PlayerStrategy(player){};
     AggressiveBotStrategy(const Player &player);
     ~AggressiveBotStrategy();
     AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
@@ -74,7 +78,8 @@ public:
 
 private:
     bool willAttack();
-    int attackFromCountryIndex(int except = -1);
+    bool canFortify();
+    int attackFromCountryIndex();
     int attackToCountryIndex();
     int attackNumDice();
     int defendNumDice();
@@ -88,6 +93,7 @@ private:
 class BenevolentBotStrategy : public PlayerStrategy {
 public:
     BenevolentBotStrategy();
+    BenevolentBotStrategy(Player* player): PlayerStrategy(player){};
     BenevolentBotStrategy(const Player &player);
     ~BenevolentBotStrategy();
     BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);

@@ -84,6 +84,11 @@ void GameLoop::loop() {
     do {
 
         currentPlayer = allPlayers->at(currentPlayerPosition);
+        if(currentPlayer->getOwnedCountries()->empty()) {
+            continue;
+        }
+
+        std::cout << "Player " << currentPlayer->getPlayerId() << " is " << currentPlayer->getStrategy() << std::endl;
 
         cout << "\u001b[35m";  // for demo purposes
         currentPlayer->reinforce();
@@ -205,14 +210,15 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
-        std::cout << "What strategy should player " << i << " use? (Human/aggresive/passive)"  << std::endl;
+        std::cout << "What strategy should player " << i << " use? a)Human b)aggresive c)passive"  << std::endl;
 
         char strat = 0;
         std::cin >> strat;
 
         switch(strat) {
-            case 'a': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
-            case 'b': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+            case 'a': player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
+            case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
+            case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
             default: {
                 player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
             }

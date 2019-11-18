@@ -38,7 +38,7 @@ public:
     void detachObserver(Observer* toDetach);
 
     inline Hand* getCards() { return pCards; }
-    inline std::vector<Map::Country*>* getOwnedCountries() const { return pOwnedCountries; }
+    inline std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
     inline void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
 
     inline DiceRoller* getDiceRoller() { return pDiceRoller; }
