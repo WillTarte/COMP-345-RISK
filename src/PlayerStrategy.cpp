@@ -52,7 +52,7 @@ void PlayerStrategy::resetChoices() {
 /******************************************************************************/
 /*********************** Player strategy constructors *************************/
 /******************************************************************************/
-// TODO : cant delete the player
+// TODO : dont delete the player
 HumanPlayerStrategy::~HumanPlayerStrategy() {
     delete armiesToPlace;
     delete player;
@@ -184,7 +184,6 @@ char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
      * it throws a warning. So this way we get to generalize the solution
      * by just throwing away the parameter immediately.
      */
-    //delete &_;
     char playerDecision = 0;
     std::cin >> playerDecision;
     std::cin.ignore(512, '\n');
@@ -192,7 +191,6 @@ char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
 }
 
 int HumanPlayerStrategy::intInput(StrategyContext _) {
-    //delete &_;
     int count = 0;
     std::cin >> count;
     std::cin.ignore(512, '\n');
@@ -341,7 +339,11 @@ int AggressiveBotStrategy::attackFromCountryIndex() {
  * This method will look at all countries that are adjacent to the attacking
  * player's biggest country. It will find it's weakest country and attack that.
  *
- * The expected output is the smallest enemy country adjacent to the attacker's biggest country.
+ * If the attacking player controls all adjacent countries, then it'll reselect
+ * which country to attack from - not sure if this should happen since this isn't
+ * defined behaviour in the assingment?
+ *
+ * The expected output is the smallest enemry country adjacent to the attacker's biggest country.
  **/
 int AggressiveBotStrategy::attackToCountryIndex() {
     Map::Country* smallestNeighbour = nullptr;
@@ -496,7 +498,7 @@ int AggressiveBotStrategy::place() {
     }
 
     if (biggest != nullptr && biggest->getCountryId() == to->getCountryId()) {
-        std::cout << "armiesToPlace = " << *armiesToPlace;
+        std::cout << *armiesToPlace;
         return *armiesToPlace;
     }
     else {

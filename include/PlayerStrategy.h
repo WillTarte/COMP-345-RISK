@@ -55,7 +55,6 @@ protected:
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
     HumanPlayerStrategy();
-
     HumanPlayerStrategy(Player* player): PlayerStrategy(player){};
     ~HumanPlayerStrategy();
     HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
