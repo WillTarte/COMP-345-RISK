@@ -443,7 +443,14 @@ int AggressiveBotStrategy::fortifyToCountryIndex() {
         }
     }
 
-    return to->getCountryId();
+    int toCountryRelativeIndex = -1;
+    for(int i = 0; i < from->getAdjCountries()->size(); i++) {
+        if(from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
+            toCountryRelativeIndex = i;
+        }
+    }
+
+    return toCountryRelativeIndex;
 }
 
 /**
