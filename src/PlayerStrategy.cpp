@@ -54,8 +54,8 @@ void PlayerStrategy::resetChoices() {
 /******************************************************************************/
 // TODO : dont delete the player
 HumanPlayerStrategy::~HumanPlayerStrategy() {
+    delete exchangingCardType;
     delete armiesToPlace;
-    delete player;
     delete from;
     delete to;
 }
@@ -97,7 +97,7 @@ HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& r
 /******************************************************************************/
 AggressiveBotStrategy::~AggressiveBotStrategy() {
     delete armiesToPlace;
-    delete player;
+    delete exchangingCardType;
     delete from;
     delete to;
 }
@@ -139,7 +139,7 @@ AggressiveBotStrategy& AggressiveBotStrategy::operator=(const AggressiveBotStrat
 /******************************************************************************/
 BenevolentBotStrategy::~BenevolentBotStrategy() {
     delete armiesToPlace;
-    delete player;
+    delete exchangingCardType;
     delete from;
     delete to;
 }
@@ -713,4 +713,28 @@ int BenevolentBotStrategy::place() {
     }
 
     return ceil((double)*armiesToPlace / (double)*numWeakest);
+}
+
+/**
+ * Checks if the bot can fortify (smallest country has an adjacent country with more armies)
+ *
+ * @return true if the bot can fortify
+ */
+bool BenevolentBotStrategy::canFortify() {
+    bool canFortify = false;
+    Map::Country* smallestCountry = nullptr;
+    for (auto* country: *player->getOwnedCountries()) {
+        if (smallestCountry == nullptr || smallestCountry->getNumberOfTroops() > country->getNumberOfTroops()) {
+            smallestCountry = country;
+        }
+    }
+
+    for (auto* neighbour : *smallestCountry->getAdjCountries()) {
+        if (neighbour->getPlayerOwnerID() == smallestCountry->getPlayerOwnerID()
+                && neighbour->getNumberOfTroops() > smallestCountry->getNumberOfTroops()) {
+            canFortify = true;
+        }
+    }
+
+    return canFortify;
 }
