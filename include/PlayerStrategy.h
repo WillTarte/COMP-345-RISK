@@ -75,7 +75,7 @@ public:
     int intInput(StrategyContext context);
 
 private:
-    bool willAttack();
+    bool canAttack();
     bool canFortify();
     int attackFromCountryIndex();
     int attackToCountryIndex();
