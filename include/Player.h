@@ -7,6 +7,7 @@
 #include "Map.h"
 #include "Cards.h"
 #include "Dice.h"
+#include "PlayerStrategy.h"
 
 #ifndef COMP_345_PROJ_PLAYER_H
 #define COMP_345_PROJ_PLAYER_H
@@ -37,15 +38,17 @@ public:
     void detachObserver(Observer* toDetach);
 
     inline Hand* getCards() { return pCards; }
-    inline std::vector<Map::Country*>* getOwnedCountries() const { return pOwnedCountries; }
+    inline std::vector<Map::Country*>* getOwnedCountries() { return pOwnedCountries; }
     inline void setOwnedCountries(std::vector<Map::Country*>* countries){pOwnedCountries = countries;}
 
     inline DiceRoller* getDiceRoller() { return pDiceRoller; }
-
+    inline PlayerStrategy* getStrategy() { return strategy; }
     inline int getPlayerId() const { return *pPlayerId; }
 
     inline PlayerState getPlayerState() const { return *currentState; }
     inline void setPlayerState(PlayerState newState) { delete currentState; this->currentState =  new PlayerState(newState);}
+    void setPlayerStrategy(Strategies strategy);
+    inline std::string getStrategyName() { return *strategyName;}
 
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
@@ -53,9 +56,11 @@ private:
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
     DiceRoller* pDiceRoller;
+    PlayerStrategy* strategy{};
     const int* pPlayerId;
     PlayerState* currentState{};
     std::list<Observer*>* pObservers;
+    std::string* strategyName{};
 };
 
 enum PlayerAction {

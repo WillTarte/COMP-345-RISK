@@ -84,18 +84,19 @@ void GameLoop::loop() {
     do {
 
         currentPlayer = allPlayers->at(currentPlayerPosition);
+        if(currentPlayer->getOwnedCountries()->empty()) {
+            continue;
+        }
 
-        cout << "\u001b[35m";  // for demo purposes
+        //TODO: clear after each phase
+        cout << "\u001b[35m";
         currentPlayer->reinforce();
-        cout.clear();
 
-        cout << "\u001b[33m";  // for demo purposes
+        cout << "\u001b[33m";
         currentPlayer->attack();
-        cout.clear();
 
-        cout << "\u001b[34m";  // for demo purposes
+        cout << "\u001b[34m";
         currentPlayer->fortify();
-        cout.clear();
 
         gameNotDone = !isGameDone(currentPlayer);
 
@@ -205,6 +206,19 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
+        std::cout << "What strategy should player " << i << " use? a)Human b)aggresive c)passive"  << std::endl;
+
+        char strat = 0;
+        std::cin >> strat;
+
+        switch(strat) {
+            case 'a': player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
+            case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
+            case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+            default: {
+                player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
+            }
+        }
         new StatsObserver(player);
         new PhaseObserver(player);
         players->push_back(player);

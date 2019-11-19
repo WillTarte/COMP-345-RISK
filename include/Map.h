@@ -36,6 +36,7 @@ public:
             inline int getPlayerOwnerID(){ return *pPlayerOwnerId;};
             inline int getNumberOfTroops(){ return *pNumberOfTroops;};
             inline int getCountryContinent(){return *cyContinent;};
+            inline int getCountryId() {return *cyID; };
         private:
             int* cyID;
             std::string* cyName;

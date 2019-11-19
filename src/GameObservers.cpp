@@ -30,7 +30,7 @@ void PhaseObserver::operator=(const PhaseObserver& rhs) {
 void PhaseObserver::update() {
     bool gameDone = false;
 
-    for (const auto *p : *GameLoop::getInstance()->getAllPlayers()) {
+    for (auto *p : *GameLoop::getInstance()->getAllPlayers()) {
         if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
             gameDone = true;
         }
@@ -127,7 +127,7 @@ void StatsObserver::update() {
     bool gameDone = false;
     int playerId = 0;
 
-    for (const auto* p : *GameLoop::getInstance()->getAllPlayers()) {
+    for (auto* p : *GameLoop::getInstance()->getAllPlayers()) {
         if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
             gameDone = true;
             playerId = p->getPlayerId();
@@ -165,7 +165,7 @@ void StatsObserver::printStats() {
     int numberOfCountries = GameLoop::getInstance()->getGameMap()->getMapCountries()->size();
     std::stringstream stream;
 
-    for (const auto* p : *GameLoop::getInstance()->getAllPlayers()) {
+    for (auto* p : *GameLoop::getInstance()->getAllPlayers()) {
         if (!p->getOwnedCountries()->empty()) {
             std::string currentPlayer = "Player " + std::to_string(p->getPlayerId());
             std::string percentage = std::to_string(
