@@ -331,15 +331,6 @@ int Player::fortify() {
     }
 
     Map::Country *fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
-    do {
-        std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
-                  << " How many would you like to move ? (1 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
-        numArmies = strategy->intInput(StrategyContext::FORTIFY_ARMY_COUNT);
-        if (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1) {
-            std::cout << "\nInvalid input. Try again.\n";
-            continue;
-        }
-    } while (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1);
 
     do {
         std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size()
@@ -361,6 +352,16 @@ int Player::fortify() {
         }
     } while (ctryToFortIndex < 0 || ctryToFortIndex > (int) fromCountry->getAdjCountries()->size() - 1 ||
              getPlayerId() != fromCountry->getAdjCountries()->at(ctryToFortIndex)->getPlayerOwnerID());
+
+    do {
+        std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
+                  << " How many would you like to move ? (1 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
+        numArmies = strategy->intInput(StrategyContext::FORTIFY_ARMY_COUNT);
+        if (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1) {
+            std::cout << "\nInvalid input. Try again.\n";
+            continue;
+        }
+    } while (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1);
 
     Map::Country *countryToFortify = fromCountry->getAdjCountries()->at(ctryToFortIndex);
 
@@ -567,7 +568,7 @@ int Player::reinforce() {
     this->notifyAll();
 
     auto exchange = cardExchange(*this);
-    if (exchange <= 0) {
+    if (exchange < 0) {
         this->setPlayerState(PlayerState::IDLE);
         this->strategy->resetChoices();
         return PlayerAction::FAILED;
