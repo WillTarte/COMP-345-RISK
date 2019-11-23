@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cmath>
+#include <random>
+#include <algorithm>
 #include "../include/Player.h"
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
@@ -160,6 +162,40 @@ BenevolentBotStrategy& BenevolentBotStrategy::operator=(const BenevolentBotStrat
     this->from = rhs.from;
     this->to = rhs.to;
 }
+
+/******************************************************************************/
+/************************* Random bot constructors ****************************/
+/******************************************************************************/
+
+RandomBotStrategy::RandomBotStrategy() {
+    this->armiesToPlace = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
+}
+
+RandomBotStrategy::RandomBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+}
+RandomBotStrategy::RandomBotStrategy(const RandomBotStrategy& toCopy) : PlayerStrategy(toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+}
+
+RandomBotStrategy& RandomBotStrategy::operator=(const RandomBotStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+}
+
 
 /******************************************************************************/
 /******************** Human player strategy methods ***************************/
@@ -765,3 +801,123 @@ bool BenevolentBotStrategy::canFortify() {
 
     return canFortify;
 }
+
+/******************************************************************************/
+/********************* Random bot strategy methods ****************************/
+/******************************************************************************/
+
+/**
+ * Randomly decides if the bot will do an action
+ * @param context
+ * @return
+ */
+char RandomBotStrategy::yesOrNo(StrategyContext context) {
+    std::vector<char> optionVector = {'y', 'n'};
+    switch((int) context) {
+        case StrategyContext::ATTACK:
+        case StrategyContext::FORTIFY:
+        case StrategyContext::REINFORCE:
+            std::shuffle(optionVector.begin(), optionVector.end(), std::mt19937(std::random_device()())); // randomize the option vector
+    }
+    return optionVector[0];
+}
+
+/**
+ * Determine the maximal number of dice the random bot can throw during an attack (including 0)
+ * @return
+ */
+int RandomBotStrategy::attackMaxDice(std::mt19937 gen) {
+    int maxDice = 0;
+    if (from->getNumberOfTroops() > 3) {
+        maxDice = 3;
+    }
+    else if (from->getNumberOfTroops() == 3) {
+        maxDice = 2;
+    }
+    else if (from->getNumberOfTroops() == 2) {
+        maxDice = 1;
+    }
+    std::uniform_int_distribution<> dis(0, maxDice);
+    return dis(gen);
+}
+
+/**
+ * Select a random country that the user owns
+ * @return
+ */
+int RandomBotStrategy::chooseRandomCountry(std::mt19937 gen) {
+    int numberOfCountries = this->player->getOwnedCountries()->size();
+    std::uniform_int_distribution<> dis(0, numberOfCountries - 1); // define the range
+    return dis(gen);
+}
+
+int RandomBotStrategy::chooseRandomNeighbour(std::mt19937 gen) {
+    int numberOfNeighbours = from->getAdjCountries()->size();
+    std::uniform_int_distribution<> dis(0, numberOfNeighbours - 1);
+    return dis(gen);
+}
+
+int RandomBotStrategy::sendRandomArmies(std::mt19937 gen) {
+    int maxArmies = from->getNumberOfTroops() - 1;
+    std::uniform_int_distribution<> dis(0, maxArmies);
+    return dis(gen);
+}
+
+int RandomBotStrategy::reinforceMaxCards(std::mt19937 gen, int currentType) {
+    int numberCurrentType = 0;
+    for (CardType currentCard : *player->getCards()->getHand()) {
+        if (currentCard == currentType) {
+            numberCurrentType++;
+        }
+    }
+    std::uniform_int_distribution<> dis(0, numberCurrentType);
+    return dis(gen);
+}
+
+/**
+ * Provide a random player input for all prompts in all phases
+ * @param context
+ * @return
+ */
+int RandomBotStrategy::intInput(StrategyContext context) {
+    int userInput = 0;
+    std::random_device rd; // random number generator
+    std::mt19937 gen(rd()); // seed the generator
+    switch((int) context) {
+        case StrategyContext::ATTACK_FROM_COUNTRY: {
+            userInput = RandomBotStrategy::chooseRandomCountry(gen);
+        } break;
+        case StrategyContext::ATTACK_TO_COUNTRY: {
+            userInput = RandomBotStrategy::chooseRandomNeighbour(gen);
+        } break;
+        case StrategyContext::ATTACK_DICE_COUNT: {
+            userInput = RandomBotStrategy::attackMaxDice(gen);
+        } break;
+        case StrategyContext::DEFEND_DICE_COUNT: {
+            int maxDice = (from->getNumberOfTroops() >= 2) ? 2 : 1;
+            std::uniform_int_distribution<> dis(0, maxDice);
+            userInput = dis(gen);
+        } break;
+        case StrategyContext::FORTIFY_FROM_COUNTRY: {
+            userInput = RandomBotStrategy::chooseRandomCountry(gen);
+        } break;
+        case StrategyContext::FORTIFY_TO_COUNTRY: {
+            userInput = RandomBotStrategy::chooseRandomNeighbour(gen);
+        } break;
+        case StrategyContext::FORTIFY_ARMY_COUNT: {
+            userInput = RandomBotStrategy::sendRandomArmies(gen);
+        } break;
+        case StrategyContext::ATTACK_NEW_ARMY_COUNT: {
+            userInput = RandomBotStrategy::sendRandomArmies(gen);
+        } break;
+        case StrategyContext::REINFORCE_CARD_COUNT: {
+            userInput = RandomBotStrategy::reinforceMaxCards(gen, *exchangingCardType);
+        } break;
+        case StrategyContext::REINFORCE_ARMY_COUNT: {
+            std::uniform_int_distribution<> dis(0, *armiesToPlace);
+            userInput = dis(gen);
+        }
+    }
+    return userInput;
+}
+

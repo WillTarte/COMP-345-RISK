@@ -2,13 +2,16 @@
 #define COMP_345_PROJ_PLAYER_STRATEGY_H
 
 #include "Map.h"
+#include <random>
+#include <algorithm>
 
 class Player;
 
 enum Strategies {
     HUMAN_PLAYER,
     AGGRESSIVE_BOT,
-    BENEVOLENT_BOT
+    BENEVOLENT_BOT,
+    RANDOM_BOT
 };
 
 enum StrategyContext {
@@ -107,6 +110,24 @@ private:
     int fortifyArmyCount();
     int numArmies();
     int place();
+};
+
+class RandomBotStrategy : public PlayerStrategy {
+public:
+    RandomBotStrategy();
+    RandomBotStrategy(Player* player) : PlayerStrategy(player){};
+    RandomBotStrategy(const Player &player);
+    ~RandomBotStrategy() = default;
+    RandomBotStrategy(const RandomBotStrategy& toCopy);
+    RandomBotStrategy& operator=(const RandomBotStrategy& rhs);
+    char yesOrNo(StrategyContext context);
+    int intInput(StrategyContext context);
+private:
+    int chooseRandomCountry(std::mt19937 gen);
+    int chooseRandomNeighbour(std::mt19937 gen);
+    int sendRandomArmies(std::mt19937 gen);
+    int attackMaxDice(std::mt19937 gen);
+    int reinforceMaxCards(std::mt19937 gen, int currentType);
 };
 
 #endif //COMP_345_PROJ_PLAYER_STRATEGY_H
