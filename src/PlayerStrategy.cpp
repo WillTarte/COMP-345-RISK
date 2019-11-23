@@ -886,9 +886,11 @@ int RandomBotStrategy::intInput(StrategyContext context) {
     switch((int) context) {
         case StrategyContext::ATTACK_FROM_COUNTRY: {
             userInput = RandomBotStrategy::chooseRandomCountry(gen);
+            from = player->getOwnedCountries()->at(userInput);
         } break;
         case StrategyContext::ATTACK_TO_COUNTRY: {
             userInput = RandomBotStrategy::chooseRandomNeighbour(gen);
+            to = from->getAdjCountries()->at(userInput);
         } break;
         case StrategyContext::ATTACK_DICE_COUNT: {
             userInput = RandomBotStrategy::attackMaxDice(gen);
@@ -900,9 +902,11 @@ int RandomBotStrategy::intInput(StrategyContext context) {
         } break;
         case StrategyContext::FORTIFY_FROM_COUNTRY: {
             userInput = RandomBotStrategy::chooseRandomCountry(gen);
+            from = player->getOwnedCountries()->at(userInput);
         } break;
         case StrategyContext::FORTIFY_TO_COUNTRY: {
             userInput = RandomBotStrategy::chooseRandomNeighbour(gen);
+            to = from->getAdjCountries()->at(userInput);
         } break;
         case StrategyContext::FORTIFY_ARMY_COUNT: {
             userInput = RandomBotStrategy::sendRandomArmies(gen);
