@@ -603,10 +603,10 @@ int BenevolentBotStrategy::intInput(StrategyContext context) {
             count = fortifyArmyCount();
             break;
         case StrategyContext::REINFORCE_ARMY_COUNT:
-            count = numArmies();
+            count = place();
             break;
         case StrategyContext::REINFORCE_CARD_COUNT:
-            count = place();
+            count = numArmies();
             break;
         case StrategyContext::ATTACK_FROM_COUNTRY:
         case StrategyContext::ATTACK_TO_COUNTRY:
