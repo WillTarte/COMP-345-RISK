@@ -813,11 +813,17 @@ bool BenevolentBotStrategy::canFortify() {
  */
 char RandomBotStrategy::yesOrNo(StrategyContext context) {
     std::vector<char> optionVector = {'y', 'n'};
+    std::shuffle(optionVector.begin(), optionVector.end(), std::mt19937(std::random_device()())); // randomize the option vector
     switch((int) context) {
         case StrategyContext::ATTACK:
+            std::cout << ((optionVector[0] == 'y') ? " yes, master" : " no, master") << std::endl;
+            break;
         case StrategyContext::FORTIFY:
+            std::cout << ((optionVector[0] == 'y') ? " yes, master" : " no, master") << std::endl;
+            break;
         case StrategyContext::REINFORCE:
-            std::shuffle(optionVector.begin(), optionVector.end(), std::mt19937(std::random_device()())); // randomize the option vector
+            std::cout << ((optionVector[0] == 'y') ? " yes, master" : " no, master") << std::endl;
+            break;
     }
     return optionVector[0];
 }
@@ -827,17 +833,14 @@ char RandomBotStrategy::yesOrNo(StrategyContext context) {
  * @return
  */
 int RandomBotStrategy::attackMaxDice(std::mt19937 gen) {
-    int maxDice = 0;
+    int maxDice = 1;
     if (from->getNumberOfTroops() > 3) {
         maxDice = 3;
     }
     else if (from->getNumberOfTroops() == 3) {
         maxDice = 2;
     }
-    else if (from->getNumberOfTroops() == 2) {
-        maxDice = 1;
-    }
-    std::uniform_int_distribution<> dis(0, maxDice);
+    std::uniform_int_distribution<> dis(1, maxDice);
     return dis(gen);
 }
 
@@ -852,13 +855,13 @@ int RandomBotStrategy::chooseRandomCountry(std::mt19937 gen) {
 }
 
 int RandomBotStrategy::chooseRandomNeighbour(std::mt19937 gen) {
-    int numberOfNeighbours = from->getAdjCountries()->size();
+    int numberOfNeighbours = this->from->getAdjCountries()->size();
     std::uniform_int_distribution<> dis(0, numberOfNeighbours - 1);
     return dis(gen);
 }
 
 int RandomBotStrategy::sendRandomArmies(std::mt19937 gen) {
-    int maxArmies = from->getNumberOfTroops() - 1;
+    int maxArmies = this->from->getNumberOfTroops() - 1;
     std::uniform_int_distribution<> dis(0, maxArmies);
     return dis(gen);
 }
@@ -897,7 +900,7 @@ int RandomBotStrategy::intInput(StrategyContext context) {
         } break;
         case StrategyContext::DEFEND_DICE_COUNT: {
             int maxDice = (from->getNumberOfTroops() >= 2) ? 2 : 1;
-            std::uniform_int_distribution<> dis(0, maxDice);
+            std::uniform_int_distribution<> dis(1, maxDice);
             userInput = dis(gen);
         } break;
         case StrategyContext::FORTIFY_FROM_COUNTRY: {
@@ -922,6 +925,7 @@ int RandomBotStrategy::intInput(StrategyContext context) {
             userInput = dis(gen);
         }
     }
+    std::cout << " " << userInput << std::endl;
     return userInput;
 }
 

@@ -312,7 +312,7 @@ int Player::fortify() {
     } while (playerChoice != 'y' && playerChoice != 'n');
 
     if (playerChoice == 'y') {
-        std::cout << "\n\nPlayer " << this->getPlayerId() << " has chosen to fortify!" << std::endl;
+        std::cout << "\nPlayer " << this->getPlayerId() << " has chosen to fortify!" << std::endl;
         do {
             std::cin.clear();
             showCountries(*this->getOwnedCountries());
@@ -330,7 +330,7 @@ int Player::fortify() {
         } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 ||
                  this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
     } else {
-        std::cout << "\n\nPlayer " << this->getPlayerId() << " has chosen NOT to fortify!" << std::endl;
+        std::cout << "\nPlayer " << this->getPlayerId() << " has chosen NOT to fortify!" << std::endl;
         this->setPlayerState(PlayerState::IDLE);
         this->strategy->resetChoices();
         return PlayerAction::ABORTED;
@@ -641,11 +641,11 @@ int Player::attack() {
         }
 
         if (playerChoice == 'y') {
-            std::cout << "\n\nPlayer " << this->getPlayerId() << " has chosen to attack!" << std::endl;
+            std::cout << "\nPlayer " << this->getPlayerId() << " has chosen to attack!" << std::endl;
             /*USER CHOOSES FROM WHICH COUNTRY TO ATTACK*/
             fromCountryIndex = getAttackingCountry(this);
         } else {
-            std::cout << "\n\nPlayer " << this->getPlayerId() << " has chosen NOT to attack!" << std::endl;
+            std::cout << "\nPlayer " << this->getPlayerId() << " has chosen NOT to attack!" << std::endl;
             this->setPlayerState(PlayerState::IDLE);
             this->strategy->resetChoices();
             return PlayerAction::ABORTED;
