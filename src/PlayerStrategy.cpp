@@ -899,7 +899,7 @@ int RandomBotStrategy::intInput(StrategyContext context) {
             userInput = RandomBotStrategy::attackMaxDice(gen);
         } break;
         case StrategyContext::DEFEND_DICE_COUNT: {
-            int maxDice = (from->getNumberOfTroops() >= 2) ? 2 : 1;
+            int maxDice = (to->getNumberOfTroops() >= 2) ? 2 : 1;
             std::uniform_int_distribution<> dis(1, maxDice);
             userInput = dis(gen);
         } break;
