@@ -42,7 +42,6 @@ Player::~Player() {
     delete pObservers;
     delete currentState;
     delete strategy;
-    delete strategyName;
 }
 
 /**
@@ -55,13 +54,11 @@ Player::Player(const Player &toCopy) {
     pDiceRoller = new DiceRoller();
     pPlayerId = new int(*toCopy.pPlayerId);
     pObservers = new std::list<Observer*>();
-    strategyName = new std::string();
     *pOwnedCountries = *toCopy.pOwnedCountries;
     *pCards = *toCopy.pCards;
     *pDiceRoller = *toCopy.pDiceRoller;
     *currentState = *toCopy.currentState;
     *pObservers = *toCopy.pObservers;
-    *strategyName = *toCopy.strategyName;
 }
 
 /**
@@ -77,7 +74,6 @@ void Player::operator=(const Player &rhs) {
     this->strategy = rhs.strategy;
     this->pObservers = rhs.pObservers;
     this->currentState = rhs.currentState;
-    this->strategyName = rhs.strategyName;
 }
 
 std::ostream& operator<<(std::ostream& os, const PlayerState state) {
@@ -105,19 +101,21 @@ void Player::setPlayerStrategy(Strategies strat) {
     switch (strat) {
         case Strategies::AGGRESSIVE_BOT: {
             this->strategy = new AggressiveBotStrategy(this);
-            this->strategyName = new std::string("AGGRESSIVE");
         } break;
         case Strategies::BENEVOLENT_BOT: {
             this->strategy = new BenevolentBotStrategy(this);
-            this->strategyName = new std::string("BENEVOLENT");
+        } break;
+        case Strategies::RANDOM_BOT: {
+            this->strategy = new RandomBotStrategy(this);
         } break;
         case Strategies::HUMAN_PLAYER: {
             this->strategy = new HumanPlayerStrategy(this);
-            this->strategyName = new std::string("HUMAN");
-        }
+        } break;
+        case Strategies::CHEATER_BOT: {
+            this->strategy = new CheaterBotStrategy(this);
+        } break;
         default: {
             this->strategy = new HumanPlayerStrategy(this);
-            this->strategyName = new std::string("HUMAN");
         }
     }
 }
@@ -290,8 +288,16 @@ int Player::executeFortify(Map::Country &fromCountry, Map::Country &countryToFor
 }
 
 int Player::fortify() {
+
     this->setPlayerState(PlayerState::FORTIFYING);
     this->notifyAll();
+
+    if ( this->getStrategy()->getStrategyName() == "CHEATER") {
+        this->setPlayerState(PlayerState::IDLE);
+        this->strategy->resetChoices();
+        return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::FORTIFY);
+    }
+
     char playerChoice = 0;
     int fromCountryIndex = -1;
     int ctryToFortIndex = -1;
@@ -308,6 +314,7 @@ int Player::fortify() {
     } while (playerChoice != 'y' && playerChoice != 'n');
 
     if (playerChoice == 'y') {
+        std::cout << "\nPlayer " << this->getPlayerId() << " has chosen to fortify!" << std::endl;
         do {
             std::cin.clear();
             showCountries(*this->getOwnedCountries());
@@ -325,6 +332,7 @@ int Player::fortify() {
         } while (fromCountryIndex < 0 || fromCountryIndex > (int) this->getOwnedCountries()->size() - 1 ||
                  this->getOwnedCountries()->at(fromCountryIndex)->getNumberOfTroops() <= 1);
     } else {
+        std::cout << "\nPlayer " << this->getPlayerId() << " has chosen NOT to fortify!" << std::endl;
         this->setPlayerState(PlayerState::IDLE);
         this->strategy->resetChoices();
         return PlayerAction::ABORTED;
@@ -567,6 +575,12 @@ int Player::reinforce() {
     this->setPlayerState(PlayerState::REINFORCING);
     this->notifyAll();
 
+    if ( this->getStrategy()->getStrategyName() == "CHEATER") {
+        this->setPlayerState(PlayerState::IDLE);
+        this->strategy->resetChoices();
+        return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::REINFORCE);
+    }
+
     auto exchange = cardExchange(*this);
     if (exchange < 0) {
         this->setPlayerState(PlayerState::IDLE);
@@ -623,6 +637,12 @@ int Player::attack() {
     this->setPlayerState(PlayerState::ATTACKING);
     this->notifyAll();
 
+    if ( this->getStrategy()->getStrategyName() == "CHEATER") {
+        this->setPlayerState(PlayerState::IDLE);
+        this->strategy->resetChoices();
+        return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::ATTACK);
+    }
+
     /* USER DECISION TO ATTACK OR NOT*/
     do {
         std::cin.clear();
@@ -635,9 +655,11 @@ int Player::attack() {
         }
 
         if (playerChoice == 'y') {
+            std::cout << "\nPlayer " << this->getPlayerId() << " has chosen to attack!" << std::endl;
             /*USER CHOOSES FROM WHICH COUNTRY TO ATTACK*/
             fromCountryIndex = getAttackingCountry(this);
         } else {
+            std::cout << "\nPlayer " << this->getPlayerId() << " has chosen NOT to attack!" << std::endl;
             this->setPlayerState(PlayerState::IDLE);
             this->strategy->resetChoices();
             return PlayerAction::ABORTED;

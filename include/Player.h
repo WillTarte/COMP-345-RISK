@@ -48,7 +48,6 @@ public:
     inline PlayerState getPlayerState() const { return *currentState; }
     inline void setPlayerState(PlayerState newState) { delete currentState; this->currentState =  new PlayerState(newState);}
     void setPlayerStrategy(Strategies strategy);
-    inline std::string getStrategyName() { return *strategyName;}
 
 private:
     int executeAttack(Map::Country* fromCountry, Map::Country* toCountry, Player* defendingPlayer, int numAttackingDice, int numDefendingDice);
@@ -56,11 +55,10 @@ private:
     std::vector<Map::Country*>* pOwnedCountries;
     Hand* pCards;
     DiceRoller* pDiceRoller;
-    PlayerStrategy* strategy{};
+    PlayerStrategy* strategy;
     const int* pPlayerId;
-    PlayerState* currentState{};
+    PlayerState* currentState;
     std::list<Observer*>* pObservers;
-    std::string* strategyName{};
 };
 
 enum PlayerAction {
