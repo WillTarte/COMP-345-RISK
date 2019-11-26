@@ -206,7 +206,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
-        std::cout << "What strategy should player " << i << " use? a)Human b)aggresive c)passive"  << std::endl;
+        std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random"  << std::endl;
 
         char strat = 0;
         std::cin >> strat;
@@ -215,6 +215,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
             case 'a': player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
             case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
             case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
+            case 'd': player->setPlayerStrategy(Strategies::RANDOM_BOT); break;
             default: {
                 player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
             }
@@ -272,7 +273,7 @@ void GameLoop::distributeArmies() {
         for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
             int countryToPlaceOn;
             do {
-                cout << "\nWhere do you place army number " << i;
+                cout << "\nWhere do you place army number " << i << ": ";
                 cin >> countryToPlaceOn;
                 cin.clear();
                 cin.ignore(512, '\n');
