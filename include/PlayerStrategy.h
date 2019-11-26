@@ -60,7 +60,7 @@ protected:
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
     HumanPlayerStrategy();
-    explicit HumanPlayerStrategy(Player* player): PlayerStrategy(player){};
+    explicit HumanPlayerStrategy(Player* player): PlayerStrategy(player) { this->strategyName = new std::string("HUMAN"); };
     ~HumanPlayerStrategy() = default;
     HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
     HumanPlayerStrategy& operator=(const HumanPlayerStrategy& rhs);
@@ -72,7 +72,7 @@ public:
 class AggressiveBotStrategy : public PlayerStrategy {
 public:
     AggressiveBotStrategy();
-    explicit AggressiveBotStrategy(Player* player): PlayerStrategy(player){};
+    explicit AggressiveBotStrategy(Player* player): PlayerStrategy(player) { this->strategyName = new std::string("AGGRESSIVE"); };
     explicit AggressiveBotStrategy(const Player &player);
     ~AggressiveBotStrategy() = default;
     AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
@@ -97,7 +97,7 @@ private:
 class BenevolentBotStrategy : public PlayerStrategy {
 public:
     BenevolentBotStrategy();
-    explicit BenevolentBotStrategy(Player* player): PlayerStrategy(player){};
+    explicit BenevolentBotStrategy(Player* player): PlayerStrategy(player){ this->strategyName = new std::string("BENEVOLENT"); };
     explicit BenevolentBotStrategy(const Player &player);
     ~BenevolentBotStrategy() = default;
     BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);
@@ -118,7 +118,7 @@ private:
 class RandomBotStrategy : public PlayerStrategy {
 public:
     RandomBotStrategy();
-    explicit RandomBotStrategy(Player* player) : PlayerStrategy(player){};
+    explicit RandomBotStrategy(Player* player) : PlayerStrategy(player){ this->strategyName = new std::string("RANDOM"); };
     explicit RandomBotStrategy(const Player &player);
     ~RandomBotStrategy() = default;
     RandomBotStrategy(const RandomBotStrategy& toCopy);
@@ -136,7 +136,7 @@ private:
 class CheaterBotStrategy : public PlayerStrategy {
 public:
     CheaterBotStrategy();
-    explicit CheaterBotStrategy(Player* player) : PlayerStrategy(player) {};
+    explicit CheaterBotStrategy(Player* player) : PlayerStrategy(player) { this->strategyName = new std::string("CHEATER"); };
     explicit CheaterBotStrategy(const Player& player);
     ~CheaterBotStrategy() = default;
     CheaterBotStrategy(const CheaterBotStrategy& toCopy);
