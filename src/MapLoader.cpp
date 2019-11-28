@@ -49,7 +49,7 @@ void MapLoader::operator=(MapLoader& rhs) {
  * Main method of the map loader. Parses the file and creates the map object
  * @return Map
  */
-Map* MapLoader::readMapFile() {
+Map* MapLoader::readMapFile(bool verbose) {
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
     if(!infile || infile.peek() == EOF){
@@ -93,24 +93,26 @@ Map* MapLoader::readMapFile() {
             //read sections
             if (*pMode == "files") {
                 //this mode is in every example file, do we need it?
-                std::cout << "Line " << *pLineCount
-                          << " - [WARNING] : the parser encountered the file mode, which is not supported at the moment.\n";
+                if(verbose){
+                    std::cout << "Line " << *pLineCount
+                              << " - [WARNING] : the parser encountered the file mode, which is not supported at the moment.\n";
+                }
             } else if (*pMode == "continents") {
-                if (validateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap)) {
+                if (validateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap,verbose)) {
                     pContinentData->push_back(*pLineWords);
                 } else {
                     return nullptr;
                 }
             } else if (*pMode == "countries") {
                 if (validateCountryLine(pCountryCount, pLineWords, pLineCount, pValidMap, pCountryID,
-                                        pContinentCount)) {
+                                        pContinentCount,verbose)) {
                     pCountryData->push_back(*pLineWords);
                 } else {
                     return nullptr;
                 }
             } else if (*pMode == "borders") {
                 auto* pLineNums = new std::vector<int>;
-                if (validateBordersLine(pLineNums, pLineWords, pLineCount, pValidMap, pCountryCount)) {
+                if (validateBordersLine(pLineNums, pLineWords, pLineCount, pValidMap, pCountryCount,verbose)) {
                     pBorderData->push_back(*pLineNums);
                 } else {
                     return nullptr;
@@ -119,8 +121,10 @@ Map* MapLoader::readMapFile() {
                 continue;
             } else {
                 //unknown mode error, will be ignored, non-critical
-                std::cout << "\nLine " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
-                std::cout << " ::  " << line;
+                if(verbose){
+                    std::cout << "\nLine " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
+                    std::cout << " ::  " << line;
+                }
             }
         }
         delete (pLineWords);
@@ -230,17 +234,21 @@ bool MapLoader::checkSection(std::string* mode, std::vector<std::string>* lineWo
  * Helper function that checks the validity of a continent line
  */
 bool MapLoader::validateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
-                                      bool* validMap) {
+                                      bool* validMap,bool verbose) {
     (*continentCount)++;
     //check validity of the line in this mode
     if (lineWords->size() < 2) {
-        std::cout << "Line " << *lineCount
-                  << " - [ERROR] : a line in the continents declaration had missing tokens, map could not be created.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [ERROR] : a line in the continents declaration had missing tokens, map could not be created.\n";
+        }
         *validMap = false;
         return false;
     } else if (lineWords->size() > 2) {
-        std::cout << "Line " << *lineCount
-                  << " - [WARNING] : a line in  the continents declaration had extra tokens.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [WARNING] : a line in  the continents declaration had extra tokens.\n";
+        }
         return true;
     } else {
         return true;
@@ -252,16 +260,18 @@ bool MapLoader::validateContinentLine(int* continentCount, std::vector<std::stri
  */
 bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount,
                                bool* validMap,
-                               int* countryID, const int* continentCount) {
+                               int* countryID, const int* continentCount,bool verbose) {
     (*countryCount)++;
     //check validity of the line in this mode
     if (lineWords->size() < 3) {
-        std::cout << "Line " << *lineCount
-                  << " - [ERROR] : a line in the countries declaration had missing tokens, map could not be created.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [ERROR] : a line in the countries declaration had missing tokens, map could not be created.\n";
+        }
         *validMap = false;
         return false;
     } else {
-        if (lineWords->size() > 3)
+        if (lineWords->size() > 3 && verbose)
             std::cout << "Line " << *lineCount
                       << " - [WARNING] : a line in  the countries declaration had extra tokens.\n";
         //check country id matches with order and that it references a valid continent
@@ -269,7 +279,9 @@ bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>*
             (*countryID)++;
             return true;
         } else {
-            std::cout << "Line " << *lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
+            if(verbose){
+                std::cout << "Line " << *lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
+            }
             *validMap = false;
             return false;
         }
@@ -280,11 +292,13 @@ bool MapLoader::validateCountryLine(int* countryCount, std::vector<std::string>*
  * Helper function that checks the validity of a border line
  */
 bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std::string>* lineWords, const int* lineCount,
-                               bool* validMap, const int* countryCount) {
+                               bool* validMap, const int* countryCount, bool verbose) {
     //check validity of the line in this mode
     if (lineWords->size() < 2) {
-        std::cout << "Line " << *lineCount
-                  << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
+        }
         *validMap = false;
         return false;
     } else {
@@ -296,7 +310,9 @@ bool MapLoader::validateBordersLine(std::vector<int>* lineNums, std::vector<std:
             lineNums->push_back(x);
             //check that all countries referenced in this line exist
             if (x > *countryCount) {
-                std::cout << "Line " << *lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
+                if(verbose){
+                    std::cout << "Line " << *lineCount << " - [ERROR] : a country or continent ID did was invalid.\n";
+                }
                 *validMap = false;
                 return false;
             }
@@ -348,7 +364,7 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
  * Main method of the map loader. Parses the file and creates the map object
  * @return Map
  */
-Map *AlternativeLoader::altReadMapFile() {
+Map *AlternativeLoader::altReadMapFile(bool verbose) {
     //create file stream to read file line by line
     std::ifstream infile(*pDominationMapFile);
 
@@ -392,17 +408,19 @@ Map *AlternativeLoader::altReadMapFile() {
             //read sections
             if (*pMode == "Map") {
                 //this mode is in every example file, do we need it?
-                std::cout << "Line " << *pLineCount
-                          << " - [WARNING] : the parser encountered the Map mode, which is not supported at the moment.\n";
+                if(verbose){
+                    std::cout << "Line " << *pLineCount
+                              << " - [WARNING] : the parser encountered the Map mode, which is not supported at the moment.\n";
+                }
             } else if (*pMode == "Continents") {
-                if (altValidateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap)) {
+                if (altValidateContinentLine(pContinentCount, pLineWords, pLineCount, pValidMap,verbose)) {
                     pContinentData->push_back(*pLineWords);
                 } else {
                     infile.close();
                     return nullptr;
                 }
             } else if (*pMode == "Territories") {
-                if (altValidateTerritoriesLine(pLineWords, pLineCount, pValidMap)) {
+                if (altValidateTerritoriesLine(pLineWords, pLineCount, pValidMap,verbose)) {
                     pTerritoryData->push_back(*pLineWords);
                 } else {
                     infile.close();
@@ -410,8 +428,10 @@ Map *AlternativeLoader::altReadMapFile() {
                 }
             } else {
                 //unknown mode error, will be ignored, non-critical
-                std::cout << "\nLine " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
-                std::cout << " ::  " << line;
+                if(verbose){
+                    std::cout << "\nLine " << *pLineCount << " - [WARNING] : the parser encountered an unknown mode. ";
+                    std::cout << " ::  " << line;
+                }
             }
         }
         delete (pLineWords);
@@ -545,17 +565,21 @@ void AlternativeLoader::altGetMapName(std::string *mapName, std::vector<std::str
  * Helper function that checks the validity of a continent line
  */
 bool AlternativeLoader::altValidateContinentLine(int *continentCount, std::vector<std::string> *lineWords, const int *lineCount,
-                                            bool *validMap) {
+                                            bool *validMap,bool verbose) {
     (*continentCount)++;
     //check validity of the line in this mode
     if (lineWords->size() < 2) {
-        std::cout << "Line " << *lineCount
-                  << " - [ERROR] : a line in the continents declaration had missing tokens, map could not be created.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [ERROR] : a line in the continents declaration had missing tokens, map could not be created.\n";
+        }
         *validMap = false;
         return false;
     } else if (lineWords->size() > 2) {
-        std::cout << "Line " << *lineCount
-                  << " - [WARNING] : a line in  the continents declaration had extra tokens.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [WARNING] : a line in  the continents declaration had extra tokens.\n";
+        }
         return true;
     } else {
         return true;
@@ -566,11 +590,13 @@ bool AlternativeLoader::altValidateContinentLine(int *continentCount, std::vecto
  * Helper function that checks the validity of a territory line
  */
 bool AlternativeLoader::altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
-                                              bool *validMap) {
+                                              bool *validMap,bool verbose) {
     //check validity of the line in this mode
     if (lineWords->size() < 5) {
-        std::cout << "Line " << *lineCount
-                  << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
+        if(verbose){
+            std::cout << "Line " << *lineCount
+                      << " - [ERROR] : a line in the borders declaration had missing tokens, map could not be created.\n";
+        }
         *validMap = false;
         return false;
     }
