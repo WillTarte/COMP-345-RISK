@@ -186,11 +186,34 @@ static bool loadOtherMap() {
         cin.clear();
         cin.ignore(512, '\n');
     } while (playerChoice != 'y' && playerChoice != 'n');
-    if(playerChoice == 'y'){
-        return true;
-    }
-    return false;
+    return playerChoice == 'y';
 }
+
+static vector<char> choosePlayerStarts(int numPlayers) {
+    vector<char> strats;
+    int counter = 1;
+    char playerChoice;
+    do {
+        cout << "What strategy should player " << counter << " use? a) aggresive b) passive c) random d) cheater"  << std::endl;
+        cin >> playerChoice;
+        cin.clear();
+        cin.ignore(512, '\n');
+        if(playerChoice != 'a' && playerChoice != 'b' && playerChoice != 'c' && playerChoice != 'd'){
+            continue;
+        }else if(std::find(strats.begin(), strats.end(), playerChoice) != strats.end()){
+            cout << "Please choose a different strategy, this one is already taken by another player"  << std::endl;
+            continue;
+        }else{
+            counter++;
+            strats.push_back(playerChoice);
+        }
+        if(counter > numPlayers){
+            break;
+        }
+    } while (true);
+    return strats;
+}
+
 
 /**
  * Creates the players and assigns countries to them
@@ -335,6 +358,7 @@ void GameLoop::start() {
  */
  void GameLoop::startTournament() {
      int numberOfPlayers = choosePlayerNumber(2,4);
+     vector<char> playerStarts = choosePlayerStarts(numberOfPlayers);
      int numMaps = 0;
      vector<Map*> mapList;
      vector<string> mapNames;
