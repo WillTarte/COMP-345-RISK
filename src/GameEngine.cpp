@@ -170,15 +170,29 @@ static std::string chooseMap() {
  * Prompts the user for the number of players
  * @return the number of players
  */
-static int choosePlayerNumber() {
-    unsigned int playerChoice;
+static int choosePlayerNumber(int minPlayers, int maxPlayers) {
+    int playerChoice;
     do {
-        cout << "please choose a number of players between 2 and 6 :\n";
+        cout << "please choose a number of players between " << minPlayers << " and " << maxPlayers << " :\n";
         cin >> playerChoice;
         cin.clear();
         cin.ignore(512, '\n');
-    } while (playerChoice < 2 || playerChoice > 6 || isnan(playerChoice));
+    } while (playerChoice < minPlayers || playerChoice > maxPlayers || isnan(playerChoice));
     return int(playerChoice);
+}
+
+static bool loadOtherMap() {
+    char playerChoice = 'z';
+    do {
+        cout << "\nWould you like to add a map to the tournament (y / n) ?";
+        cin >> playerChoice;
+        cin.clear();
+        cin.ignore(512, '\n');
+    } while (playerChoice != 'y' && playerChoice != 'n');
+    if(playerChoice == 'y'){
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -323,7 +337,48 @@ void GameLoop::start() {
  * Tournament mode start phase
  */
  void GameLoop::startTournament() {
-    //empty
+     int numberOfPlayers = choosePlayerNumber(2,4);
+     int numMaps = 0;
+     vector<Map*> mapList;
+     vector<string> mapNames;
+     do{
+         //which map to load
+         std::string mapToLoad;
+         Map* gameMap;
+         if(numMaps == 0 || loadOtherMap()){
+             mapToLoad = chooseMap();
+         }else{
+             break;
+         }
+         //load the map (try to use both loaders, to accept both map types)
+         MapLoader myLoader = MapLoader(mapToLoad);
+         gameMap = myLoader.readMapFile();
+         if(gameMap == nullptr){
+             AlternativeLoader altLoader = AlternativeLoader(mapToLoad);
+             gameMap = altLoader.altReadMapFile();
+         }
+         //test map
+         if(gameMap == nullptr || !gameMap->testConnected()){
+             cout << "\nThere was an error loading the game board. Try another mapfile.\n";
+             continue;
+         }else if (gameMap->getMapCountries()->size() < numberOfPlayers) {
+             std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
+                       << numberOfPlayers << " players. Please try again." << std::endl;
+             continue;
+         } else if(std::find(mapNames.begin(), mapNames.end(), mapToLoad) != mapNames.end()){
+             cout << "\nThis map was already chosen, choose another map file.\n";
+             continue;
+         }else {
+             numMaps++;
+             mapList.push_back(gameMap);
+             mapNames.push_back(mapToLoad);
+         }
+         //bail
+         if(numMaps >= 5){
+             cout << "\nThe maximum number of maps was created.\n";
+            break;
+         }
+     }while(true);
 }
 
 /**
@@ -335,7 +390,7 @@ void GameLoop::startSingle() {
     Map* gameMap;
     do {
         mapToLoad = chooseMap();
-        numberOfPlayers = choosePlayerNumber();
+        numberOfPlayers = choosePlayerNumber(2,6);
 
         MapLoader myLoader = MapLoader(mapToLoad);
         gameMap = myLoader.readMapFile();
