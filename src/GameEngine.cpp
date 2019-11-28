@@ -24,7 +24,8 @@ GameLoop* GameLoop::gameLoopInstance = nullptr;
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
 GameLoop::GameLoop(Map* map, vector<Player*>* playerList, Deck* deck) {
-    gameMap = map;
+    gameMaps->push_back(map);
+    currentMap = new int(0);
     allPlayers = playerList;
     gameDeck = deck;
 }
@@ -63,7 +64,8 @@ GameLoop* GameLoop::getInstance() {
  * Game loop destructor
  */
 GameLoop::~GameLoop() {
-    delete gameMap;
+    delete gameMaps;
+    delete currentMap;
     delete allPlayers;
 }
 
@@ -76,7 +78,7 @@ void GameLoop::resetInstance() {
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
 void GameLoop::loop() {
-
+    Map* currMap = getCurrentMap();
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
@@ -98,14 +100,14 @@ void GameLoop::loop() {
         cout << "\u001b[34m";
         currentPlayer->fortify();
 
-        gameNotDone = !isGameDone(currentPlayer);
+        gameNotDone = !isGameDone(currentPlayer,currMap);
 
         if (gameNotDone) {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
                 // for demo - give all countries to first player at the end of the round
-                currentPlayer->setOwnedCountries(gameMap->getMapCountries());
+                currentPlayer->setOwnedCountries(currMap->getMapCountries());
                 gameNotDone = false;
             }
         }
@@ -130,8 +132,8 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @param currentPlayerPosition
  * @return true, if the currently playing player owns all the countries
  */
-bool GameLoop::isGameDone(Player* currentPlayer) {
-    return currentPlayer->getOwnedCountries()->size() == gameMap->getMapCountries()->size();
+bool GameLoop::isGameDone(Player* currentPlayer,Map* currMap) {
+    return currentPlayer->getOwnedCountries()->size() == currMap->getMapCountries()->size();
 }
 
 /**
