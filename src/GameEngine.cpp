@@ -291,16 +291,42 @@ void GameLoop::distributeArmies() {
 }
 
 /**
- * Game start phase
+ * Choose Game start phase
  */
 void GameLoop::start() {
+    int gameModeChoice;
+    do {
+        cout << "\nWhich game mode do you want to play? \n 1 - Single game \n 2 - Tournament \n";
+        cin >> gameModeChoice;
+        cin.clear();
+        cin.ignore(512, '\n');
+    } while (gameModeChoice < 1 || gameModeChoice > 2 || isnan(gameModeChoice));
+
+    // init gamemode
+    switch(gameModeChoice){
+        case 1:
+            startSingle();
+            break;
+        case 2:
+            startTournament();
+            break;
+        default:
+            //should never get here
+            startSingle();
+            break;
+    }
+}
+
+/**
+ * Tournament mode start phase
+ */
+ void GameLoop::startTournament() {
     //empty
 }
 
-void GameLoop::startTournament() {
-    //empty
-}
-
+/**
+ * Single game mode start phase
+ */
 void GameLoop::startSingle() {
     std::string mapToLoad;
     int numberOfPlayers;
