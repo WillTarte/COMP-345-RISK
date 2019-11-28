@@ -388,8 +388,13 @@ void GameLoop::startSingle() {
     do {
         mapToLoad = chooseMap();
         numberOfPlayers = choosePlayerNumber(2,6);
+        //load the map (try to use both loaders, to accept both map types)
         MapLoader myLoader = MapLoader(mapToLoad);
         gameMap = myLoader.readMapFile();
+        if(gameMap == nullptr){
+            AlternativeLoader altLoader = AlternativeLoader(mapToLoad);
+            gameMap = altLoader.altReadMapFile();
+        }
         if (gameMap == nullptr || !gameMap->testConnected()) {
             cout << "There was an error loading the game board. Try another mapfile.\n";
             continue;
