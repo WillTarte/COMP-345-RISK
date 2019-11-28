@@ -16,6 +16,7 @@ add_compile_options(
 
 file(COPY "references/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+add_executable(Tournament-mode-driver "src/Drivers/Tournament-mode-driver.cpp")
 add_executable(Cards-driver "src/Drivers/CardsDriver.cpp")
 add_executable(Dice-driver "src/Drivers/DiceDriver.cpp")
 add_executable(Map-driver "src/Drivers/MapDriver.cpp")
@@ -43,6 +44,9 @@ target_sources(Player-driver PRIVATE "src/MapLoader.cpp" "src/Map.cpp" "src/Dice
 target_include_directories(Game-engine-driver PRIVATE "include")
 target_sources(Game-engine-driver PRIVATE "src/Drivers/GameEngineDriver.cpp" "src/PlayerStrategy.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp" "src/GameObservers.cpp")
 
+target_include_directories(Tournament-mode-driver PRIVATE "include")
+target_sources(Tournament-mode-driver PRIVATE "src/Drivers/Tournament-mode-driver.cpp" "src/PlayerStrategy.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp" "src/GameObservers.cpp")
+
 target_include_directories(Game-observers-driver PRIVATE "include")
 target_sources(Game-observers-driver PRIVATE "src/Drivers/GameObserversDriver.cpp" "src/GameObservers.cpp" "src/Player.cpp" "src/GameEngine.cpp" "src/Map.cpp" "src/Dice.cpp" "src/Cards.cpp" "src/MapLoader.cpp" "src/PlayerStrategy.cpp")
 
@@ -52,5 +56,6 @@ target_sources(Player-Strategy-driver PRIVATE "src/Drivers/PlayerStrategyDriver.
 
 target_link_libraries(Player-driver stdc++fs)
 target_link_libraries(Game-engine-driver stdc++fs)
+target_link_libraries(Tournament-mode-driver stdc++fs)
 target_link_libraries(Game-observers-driver stdc++fs)
 target_link_libraries(Player-Strategy-driver stdc++fs)
