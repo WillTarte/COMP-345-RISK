@@ -388,11 +388,10 @@ void GameLoop::startSingle() {
     do {
         mapToLoad = chooseMap();
         numberOfPlayers = choosePlayerNumber(2,6);
-
         MapLoader myLoader = MapLoader(mapToLoad);
         gameMap = myLoader.readMapFile();
         if (gameMap == nullptr || !gameMap->testConnected()) {
-            cout << "\nThere was an error loading the game board. Try another mapfile.\n";
+            cout << "There was an error loading the game board. Try another mapfile.\n";
             continue;
         } else if (gameMap->getMapCountries()->size() < numberOfPlayers) {
             std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "

@@ -49,7 +49,9 @@ void MapLoader::operator=(MapLoader& rhs) {
  * Main method of the map loader. Parses the file and creates the map object
  * @return Map
  */
-Map* MapLoader::readMapFile(bool verbose) {
+Map* MapLoader::readMapFile() {
+    //for debug purposes, change to true to print errors and warnings
+    bool verbose = false;
     //create file stream to read file line by line
     std::ifstream infile(*pMapFile);
     if(!infile || infile.peek() == EOF){
@@ -130,6 +132,7 @@ Map* MapLoader::readMapFile(bool verbose) {
         delete (pLineWords);
     }
     //create map object
+
     auto* map = initMapObject(pMapName, pContinentData, pCountryData, pBorderData, pValidMap);
 
     //clean up
@@ -143,6 +146,9 @@ Map* MapLoader::readMapFile(bool verbose) {
     delete (pCountryID);
     delete (pBorderData);
 
+    if(!*pValidMap){
+        return nullptr;
+    }
     return map;
 }
 
@@ -364,7 +370,9 @@ void AlternativeLoader::altSetMapFile(std::string newMapFile) {
  * Main method of the map loader. Parses the file and creates the map object
  * @return Map
  */
-Map *AlternativeLoader::altReadMapFile(bool verbose) {
+Map *AlternativeLoader::altReadMapFile() {
+    //for debug purposes, change to true to print errors and warnings
+    bool verbose = false;
     //create file stream to read file line by line
     std::ifstream infile(*pDominationMapFile);
 

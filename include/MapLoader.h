@@ -17,7 +17,7 @@ public:
     void operator=(MapLoader& rhs);
     std::string* pMapFile;
     void setMapFile(std::string newMapFile);
-    virtual Map* readMapFile(bool verbose=false);
+    virtual Map* readMapFile();
 
 private:
     static Map* initMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
@@ -41,7 +41,7 @@ public:
     AlternativeLoader(const AlternativeLoader& toCopy);
     void operator=(AlternativeLoader& rhs);
     void altSetMapFile(std::string newMapFile);
-    Map* altReadMapFile(bool verbose = false);
+    Map* altReadMapFile();
 private:
     std::string* pDominationMapFile;
     static Map* altInitMapObject(std::string* mapName, std::vector<std::vector<std::string>>* continentData,
