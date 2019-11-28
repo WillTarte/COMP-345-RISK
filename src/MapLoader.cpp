@@ -139,16 +139,17 @@ Map* MapLoader::readMapFile() {
     delete (pMode);
     delete (pLineCount);
     delete (pContinentCount);
-    delete (pValidMap);
     delete (pContinentData);
     delete (pCountryCount);
     delete (pCountryData);
     delete (pCountryID);
     delete (pBorderData);
 
-    if(!*pValidMap){
+    if(!*pValidMap || pContinentData->empty() || pCountryData->empty() || pBorderData->empty()){
+        delete (pValidMap);
         return nullptr;
     }
+    delete (pValidMap);
     return map;
 }
 
