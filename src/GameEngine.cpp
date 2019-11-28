@@ -24,8 +24,7 @@ GameLoop* GameLoop::gameLoopInstance = nullptr;
  * @return playerList - the list of all players in the game (where playerList[0] is the first player & playerList[n-1] is the last player
  */
 GameLoop::GameLoop(Map* map, vector<Player*>* playerList, Deck* deck) {
-    gameMaps->push_back(map);
-    currentMap = new int(0);
+    gameMap = map;
     allPlayers = playerList;
     gameDeck = deck;
 }
@@ -64,8 +63,7 @@ GameLoop* GameLoop::getInstance() {
  * Game loop destructor
  */
 GameLoop::~GameLoop() {
-    delete gameMaps;
-    delete currentMap;
+    delete gameMap;
     delete allPlayers;
 }
 
@@ -78,7 +76,6 @@ void GameLoop::resetInstance() {
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
 void GameLoop::loop() {
-    Map* currMap = getCurrentMap();
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
@@ -100,14 +97,14 @@ void GameLoop::loop() {
         cout << "\u001b[34m";
         currentPlayer->fortify();
 
-        gameNotDone = !isGameDone(currentPlayer,currMap);
+        gameNotDone = !isGameDone(currentPlayer,gameMap);
 
         if (gameNotDone) {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
                 // for demo - give all countries to first player at the end of the round
-                currentPlayer->setOwnedCountries(currMap->getMapCountries());
+                currentPlayer->setOwnedCountries(gameMap->getMapCountries());
                 gameNotDone = false;
             }
         }

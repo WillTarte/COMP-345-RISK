@@ -30,18 +30,14 @@ class GameLoop {
 
         bool isRoundFinished (unsigned long currentPlayerPosition);
         static bool isGameDone (Player* currentPlayer,Map* currMap);
-        Map* getGameMap() { return gameMaps->at(0); }
-        Map* getCurrentMap(){return gameMaps->at(*currentMap);}
-        vector<Map*>* getGameMaps() {return gameMaps;}
-        void addGameMap(Map* map) { gameMaps->push_back(map); }
+        Map* getGameMap() { return gameMap; }
         inline vector<Player*>* getAllPlayers () { return allPlayers; }
         inline Deck* getGameDeck() { return gameDeck; }
 
 private:
         static GameLoop* gameLoopInstance;
-        int* currentMap;
         Deck* gameDeck;
-        vector<Map*>* gameMaps;
+        Map* gameMap;
         vector<Player*>* allPlayers;
         GameLoop(Map* map, vector<Player*>* playerList, Deck* deck);
 };
