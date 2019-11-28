@@ -24,7 +24,7 @@ int main() {
 
     cout << "\n";
 
-    GameLoop::start();
+    GameLoop::startSingle();
 
     for (unsigned long i = 0; i < GameLoop::getInstance()->getAllPlayers()->size(); i++) {
         for (unsigned long j = 0;

@@ -17,6 +17,8 @@ class GameLoop {
     public:
         ~GameLoop();
         static void start();
+        static void startTournament();
+        static void startSingle();
         static void resetInstance();
         static GameLoop* getInstance();
         static void initInstance(Map* gameMap, vector<Player*>* playerList, Deck* deck);

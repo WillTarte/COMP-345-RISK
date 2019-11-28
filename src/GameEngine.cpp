@@ -294,7 +294,14 @@ void GameLoop::distributeArmies() {
  * Game start phase
  */
 void GameLoop::start() {
+    //empty
+}
 
+void GameLoop::startTournament() {
+    //empty
+}
+
+void GameLoop::startSingle() {
     std::string mapToLoad;
     int numberOfPlayers;
     Map* gameMap;
