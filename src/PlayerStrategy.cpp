@@ -1016,6 +1016,9 @@ int CheaterBotStrategy::cheaterReinforce() {
         country->setNumberOfTroops(country->getNumberOfTroops() * 2);
         std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
     }
+
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
     return PlayerAction::SUCCEEDED;
 }
 
@@ -1052,16 +1055,22 @@ int CheaterBotStrategy::cheaterAttack() {
                 }
             }
             if (defendingPlayer == nullptr) {
+                player->setPlayerState(PlayerState::IDLE);
+                player->getStrategy()->resetChoices();
                 return PlayerAction::FAILED;
             }
             if (exchangeCountryOwnership(defendingPlayer, neighbour)) {
                 std::cout << "[CHEATER] - Country " << neighbour->getCountryName() << " has been attacked & conquered by Player " << this->player->getPlayerId() << " -\n";
                 continue;
             } else {
+                player->setPlayerState(PlayerState::IDLE);
+                player->getStrategy()->resetChoices();
                 return PlayerAction::FAILED;
             }
         }
     }
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
     return PlayerAction::SUCCEEDED;
 }
 
@@ -1080,5 +1089,8 @@ int CheaterBotStrategy::cheaterFortify() {
             std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
         }
     }
+
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
     return PlayerAction::SUCCEEDED;
 }

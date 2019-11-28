@@ -291,10 +291,7 @@ int Player::fortify() {
 
     this->setPlayerState(PlayerState::FORTIFYING);
     this->notifyAll();
-
-    if ( this->getStrategy()->getStrategyName() == "CHEATER") {
-        this->setPlayerState(PlayerState::IDLE);
-        this->strategy->resetChoices();
+    if (this->getStrategy()->getStrategyName() == "CHEATER") {
         return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::FORTIFY);
     }
 
@@ -302,7 +299,6 @@ int Player::fortify() {
     int fromCountryIndex = -1;
     int ctryToFortIndex = -1;
     int numArmies = -1;
-
     do {
         std::cin.clear();
         std::cout << "\n[PLAYER " << this->getPlayerId() << "] Do you wish to fortify a country this turn (y/n)? ";
@@ -576,8 +572,6 @@ int Player::reinforce() {
     this->notifyAll();
 
     if ( this->getStrategy()->getStrategyName() == "CHEATER") {
-        this->setPlayerState(PlayerState::IDLE);
-        this->strategy->resetChoices();
         return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::REINFORCE);
     }
 
@@ -638,8 +632,6 @@ int Player::attack() {
     this->notifyAll();
 
     if ( this->getStrategy()->getStrategyName() == "CHEATER") {
-        this->setPlayerState(PlayerState::IDLE);
-        this->strategy->resetChoices();
         return (PlayerAction) this->getStrategy()->yesOrNo(StrategyContext::ATTACK);
     }
 
