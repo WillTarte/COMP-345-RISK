@@ -213,6 +213,28 @@ static vector<char> choosePlayerStarts(int numPlayers) {
     return strats;
 }
 
+static int chooseNumGamesToPlay() {
+    int numGames;
+    do {
+        cout << "please choose the number of games to be played on each map (between 1 and 5) : \n";
+        cin >> numGames;
+        cin.clear();
+        cin.ignore(512, '\n');
+    } while (numGames < 1 || numGames > 5 || isnan(numGames));
+    return int(numGames);
+}
+
+static int chooseMaxTurns() {
+    int numTurns;
+    do {
+        cout << "please choose the maximum number of turns to be played on each map (between 3 and 50) : \n";
+        cin >> numTurns;
+        cin.clear();
+        cin.ignore(512, '\n');
+    } while (numTurns < 3 || numTurns > 50 || isnan(numTurns));
+    return int(numTurns);
+}
+
 
 /**
  * Creates the players and assigns countries to them
@@ -401,6 +423,10 @@ void GameLoop::start() {
             break;
          }
      }while(true);
+
+     //fetch game settings
+     int numGamesToPlay = chooseNumGamesToPlay();
+     int maxTurns = chooseMaxTurns();
 }
 
 /**
