@@ -242,7 +242,7 @@ static int chooseMaxTurns() {
  * @param map the map object
  * @return the vector of players
  */
-static vector<Player*>* initPlayers(int numPlayers, Map* map) {
+static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playerRoles = {}) {
     vector<vector<Map::Country*>> countriesPerPlayer;
     countriesPerPlayer.reserve(numPlayers);
     //split up the countries by the number of players
@@ -263,10 +263,16 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
-        std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
 
         char strat = 0;
-        std::cin >> strat;
+
+        //support tournament role
+        if(playerRoles.empty()){
+            std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
+            std::cin >> strat;
+        }else{
+            strat = playerRoles.at(i);
+        }
 
         switch(strat) {
             case 'a': player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
