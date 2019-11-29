@@ -5,7 +5,7 @@
 int main() {
 
     char choice = '\0';
-    GameLoop::start();
+    GameLoop::startSingle(true);
     GameLoop::getInstance()->distributeArmies();
 
 
