@@ -75,13 +75,21 @@ void GameLoop::resetInstance() {
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
-int GameLoop::loop() {
+int GameLoop::loop(int maxTurn) {
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
 
-    do {
+    //limit or not number of turns
+    int turnsLeft = -1;
+    bool limitTurns = false;
+    if(maxTurn != -1){
+        turnsLeft = maxTurn * allPlayers->size();
+        limitTurns = true;
+    }
 
+    do {
+        turnsLeft--;
         currentPlayer = allPlayers->at(currentPlayerPosition);
         if(currentPlayer->getOwnedCountries()->empty()) {
             continue;
@@ -106,6 +114,12 @@ int GameLoop::loop() {
                 currentPlayer->setOwnedCountries(gameMap->getMapCountries());
                 gameNotDone = false;
             }
+        }else{
+            continue;
+        }
+        //return -1 if draw
+        if(limitTurns && turnsLeft <= 0){
+            return -1;
         }
     } while (gameNotDone);
 
