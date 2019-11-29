@@ -75,7 +75,7 @@ void GameLoop::resetInstance() {
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
-void GameLoop::loop() {
+int GameLoop::loop() {
     bool gameNotDone = true;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
@@ -109,8 +109,16 @@ void GameLoop::loop() {
         }
     } while (gameNotDone);
 
+    //return winner ID
+    int winnerPlayerID = 99;
+    for (auto* p : *GameLoop::getInstance()->getAllPlayers()) {
+        if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
+            winnerPlayerID = p->getPlayerId();
+        }
+    }
     currentPlayer->notifyAll();
     cout.flush();
+    return winnerPlayerID;
 }
 
 /**
@@ -271,6 +279,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
             std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
             std::cin >> strat;
         }else{
+            //increment to match with switch case bellow
             strat = playerRoles.at(i)++;
         }
 
@@ -435,6 +444,7 @@ void GameLoop::start() {
      int maxTurns = chooseMaxTurns();
 
      //run the games
+     vector<int> winners;
      for(int i = 1; i <= numGamesToPlay; i++){
          //init
          Map* currentMap = mapList.at(i-1);
@@ -445,7 +455,7 @@ void GameLoop::start() {
 
          //run game
          GameLoop::getInstance()->distributeArmies();
-         GameLoop::getInstance()->loop();
+         winners.push_back(GameLoop::getInstance()->loop());
          GameLoop::resetInstance();
 
          //cleanup

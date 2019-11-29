@@ -24,7 +24,7 @@ class GameLoop {
         static void initInstance(Map* gameMap, vector<Player*>* playerList, Deck* deck);
         GameLoop(const GameLoop& toCopy) = delete;
         void operator=(GameLoop& rhs) = delete;
-        void loop();
+        int loop();
 
     void distributeArmies();
 
