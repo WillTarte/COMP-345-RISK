@@ -346,7 +346,7 @@ static int getNumberOfArmies(int numberOfPlayers) {
  */
 std::string centerOut(const string& str, const int width) {
     stringstream ss, spaces;
-    int padding = width - str.size();                 // count excess room to pad
+    int padding = width - int(str.size());                 // count excess room to pad
     for (int i = 0; i < padding / 2; ++i)
         spaces << " ";
     ss << spaces.str() << str << spaces.str();    // format with padding
@@ -401,7 +401,7 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     std::cout << "D: " << draw;
 
     //print table
-    for(int i = 0; i < maps.size(); i++){
+    for(int i = 0; i < int(maps.size()); i++){
         for(int j = 0; j < games; j++){
             if(j == 0 &&  i == 0){
                 std::cout << centerOut(" ", 10) << " | ";
@@ -451,7 +451,7 @@ void GameLoop::distributeArmies() {
             for (unsigned long i = 1; i <= currentPlayer->getOwnedCountries()->size(); i++) {
                 cout << i << " - " << currentPlayer->getOwnedCountries()->at(i - 1)->getCountryName() << "\n";
             }
-            for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
+            for (int i = int(currentPlayer->getOwnedCountries()->size() + 1); i <= numberOfArmies; i++) {
                 int countryToPlaceOn;
                 do {
                     cout << "\nWhere do you place army number " << i << ": ";
@@ -470,7 +470,7 @@ void GameLoop::distributeArmies() {
             std::mt19937 eng(rd());
             std::uniform_int_distribution<> distr(1, int(currentPlayer->getOwnedCountries()->size()));
             //place troops randomly
-            for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
+            for (int i = int(currentPlayer->getOwnedCountries()->size() + 1); i <= numberOfArmies; i++) {
                 int countryToPlaceOn = distr(eng);
                 //increment the number of troops on the selected country
                 Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
@@ -540,7 +540,7 @@ void GameLoop::start() {
          if(gameMap == nullptr || !gameMap->testConnected()){
              cout << "\nThere was an error loading the game board. Try another mapfile.\n";
              continue;
-         }else if (gameMap->getMapCountries()->size() < numberOfPlayers) {
+         }else if (int(gameMap->getMapCountries()->size()) < numberOfPlayers) {
              std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
                        << numberOfPlayers << " players. Please try again." << std::endl;
              continue;
@@ -610,7 +610,7 @@ void GameLoop::startSingle(bool demoMode) {
         if (gameMap == nullptr || !gameMap->testConnected()) {
             cout << "There was an error loading the game board. Try another mapfile.\n";
             continue;
-        } else if (gameMap->getMapCountries()->size() < numberOfPlayers) {
+        } else if (int(gameMap->getMapCountries()->size()) < numberOfPlayers) {
             std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
                       << numberOfPlayers << " players. Please try again." << std::endl;
         } else {
