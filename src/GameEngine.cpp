@@ -84,7 +84,7 @@ int GameLoop::loop(int maxTurn) {
     int turnsLeft = -1;
     bool limitTurns = false;
     if(maxTurn != -1){
-        turnsLeft = maxTurn * allPlayers->size();
+        turnsLeft = maxTurn * int(allPlayers->size());
         limitTurns = true;
     }
 
@@ -294,7 +294,9 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
             std::cin >> strat;
         }else{
             //increment to match with switch case bellow
-            strat = playerRoles.at(i)++;
+            strat = playerRoles.at(i);
+            strat++;
+            std::cout << strat;
         }
 
         switch(strat) {
@@ -334,6 +336,95 @@ static int getNumberOfArmies(int numberOfPlayers) {
             return 20;
         default:
             return 0;
+    }
+}
+/**
+ * Center the text in the column
+ * @param str
+ * @param width
+ * @return
+ */
+std::string centerOut(const string& str, const int width) {
+    stringstream ss, spaces;
+    int padding = width - str.size();                 // count excess room to pad
+    for (int i = 0; i < padding / 2; ++i)
+        spaces << " ";
+    ss << spaces.str() << str << spaces.str();    // format with padding
+    if (padding > 0 && padding % 2 != 0)               // if odd #, add 1 space
+        ss << " ";
+    return ss.str();
+}
+
+
+static void printGameReport(vector<std::string> maps, vector<char> players, int games, int draw, vector<int> winners){
+    std::cout << "\n\n--------------------------------------------------------\n";
+    std::cout << "--------------------Game Statistics---------------------\n";
+    std::cout << "--------------------------------------------------------\n\n";
+
+    //print maps
+    std::cout << "M: ";
+    for(int i = 0; i < int(maps.size()); i++){
+        if(i == int(maps.size()-1)){
+            std::cout << maps.at(i) << "\n";
+        }else{
+            std::cout << maps.at(i) << ", ";
+        }
+    }
+
+    //normalize and print players
+    vector<std::string> playerStrats;
+    std::cout << "P: ";
+    for(int i = 0; i < int(players.size()); i++){
+        std::string currPlayer = std::to_string(players.at(i));
+        //normalize
+        if(currPlayer == "a"){
+            playerStrats.emplace_back("Aggresive");
+        }else if(currPlayer == "b"){
+            playerStrats.emplace_back("Passive");
+        }else if(currPlayer == "c"){
+            playerStrats.emplace_back("Random");
+        }else if(currPlayer == "d"){
+            playerStrats.emplace_back("Cheater");
+        }else{
+            playerStrats.emplace_back("Unknown");
+        }
+        //print
+        if(i == int(players.size()-1)){
+            std::cout << playerStrats.at(i) << ".\n";
+        }else{
+            std::cout << playerStrats.at(i) << ", ";
+        }
+    }
+
+    //print other info
+    std::cout << "G: " << games;
+    std::cout << "D: " << draw;
+
+    //print table
+    for(int i = 0; i < maps.size(); i++){
+        for(int j = 0; j < games; j++){
+            if(j == 0 &&  i == 0){
+                std::cout << centerOut(" ", 10) << " | ";
+            }else if(i == 0){
+                std::string to_print = "Game " + std::to_string(i+1);
+                std::cout << centerOut(to_print, 10) << " | ";
+            }else if(j == 0){
+                std::cout << centerOut(maps.at(i), 10) << " | ";
+            }else{
+                std::string thisWinner;
+                int winnerIndex = winners.at(i + (j*3));
+                if(winnerIndex == -1){
+                    thisWinner = "Draw";
+                }else{
+                    thisWinner = playerStrats.at(winnerIndex);
+                }
+                std::cout << centerOut(thisWinner,10) << " | ";
+            }
+            for (int g = 0; g < 56; g++) {
+                std::cout << "-";
+            }
+            std::cout << "\n";
+        }
     }
 }
 
@@ -484,7 +575,7 @@ void GameLoop::start() {
 
          //run game
          GameLoop::getInstance()->distributeArmies();
-         winners.push_back(GameLoop::getInstance()->loop());
+         winners.push_back(GameLoop::getInstance()->loop(maxTurns));
          GameLoop::resetInstance();
 
          //cleanup
@@ -494,6 +585,9 @@ void GameLoop::start() {
          delete(gamePlayers);
          delete(gameDeck);
      }
+
+     //print report
+     printGameReport(mapNames,playerStrats,numGamesToPlay,maxTurns,winners);
 }
 
 /**
@@ -538,6 +632,7 @@ void GameLoop::startSingle(bool demoMode) {
         GameLoop::resetInstance();
     }
 }
+
 
 
 

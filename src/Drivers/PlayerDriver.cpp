@@ -207,7 +207,7 @@ bool test_Player_reinforce(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    GameLoop::start();
+    GameLoop::startSingle(true);
     Hand* pHand = GameLoop::getInstance()->getAllPlayers()->at(0)->getCards();
     pHand->getHand()->push_back(CardType::CAVALRY);
     pHand->getHand()->push_back(CardType::CAVALRY);
