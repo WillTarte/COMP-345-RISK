@@ -188,7 +188,7 @@ static bool loadOtherMap() {
     return playerChoice == 'y';
 }
 
-static vector<char> choosePlayerStarts(int numPlayers) {
+static vector<char> choosePlayerStrats(int numPlayers) {
     vector<char> strats;
     int counter = 1;
     char playerChoice;
@@ -271,7 +271,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
             std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
             std::cin >> strat;
         }else{
-            strat = playerRoles.at(i);
+            strat = playerRoles.at(i)++;
         }
 
         switch(strat) {
@@ -387,7 +387,7 @@ void GameLoop::start() {
  */
  void GameLoop::startTournament() {
      int numberOfPlayers = choosePlayerNumber(2,4);
-     vector<char> playerStarts = choosePlayerStarts(numberOfPlayers);
+     vector<char> playerStrats = choosePlayerStrats(numberOfPlayers);
      int numMaps = 0;
      vector<Map*> mapList;
      vector<string> mapNames;
@@ -433,6 +433,28 @@ void GameLoop::start() {
      //fetch game settings
      int numGamesToPlay = chooseNumGamesToPlay();
      int maxTurns = chooseMaxTurns();
+
+     //run the games
+     for(int i = 1; i <= numGamesToPlay; i++){
+         //init
+         Map* currentMap = mapList.at(i-1);
+         std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
+         Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
+         gameDeck->createDeck();
+         GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
+
+         //run game
+         GameLoop::getInstance()->distributeArmies();
+         GameLoop::getInstance()->loop();
+         GameLoop::resetInstance();
+
+         //cleanup
+         for(auto & gamePlayer : *gamePlayers){
+             delete(gamePlayer);
+         }
+         delete(gamePlayers);
+         delete(gameDeck);
+     }
 }
 
 /**
@@ -469,6 +491,50 @@ void GameLoop::startSingle() {
     gameMap->printMap();
 
     GameLoop::initInstance(gameMap, gamePlayers, gameDeck);
+
+    for (unsigned long i = 0; i < GameLoop::getInstance()->getAllPlayers()->size(); i++) {
+        for (unsigned long j = 0;
+             j < GameLoop::getInstance()->getAllPlayers()->at(i)->getOwnedCountries()->size(); j++) {
+            cout << "player " << i << " owns country : "
+                 << GameLoop::getInstance()->getAllPlayers()->at(i)->getOwnedCountries()->at(j)->getCountryName()
+                 << "\n";
+        }
+    }
+
+    cout << "\nprint map to compare with output of start : \n";
+
+    GameLoop::getInstance()->getGameMap()->printMap();
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "-------------------------- Deck ------------------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
+    cout << "Number of cards in the deck: " << *GameLoop::getInstance()->getGameDeck()->getNumberOfCards() << endl;
+    cout << "Number of countries in the map: " << GameLoop::getInstance()->getGameMap()->getMapCountries()->size()
+         << endl;
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "------------------ Distributing armies -----------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
+    GameLoop::getInstance()->distributeArmies();
+
+    cout << "\nprint map to see where armies went : \n";
+
+    GameLoop::getInstance()->getGameMap()->printMap();
+
+    std::cout << "\n\n\033[34m";
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "--------------- Running the main game loop -------------" << std::endl;
+    std::cout << "--------------------------------------------------------" << std::endl;
+    std::cout << "\033[30m";
+
+    GameLoop::getInstance()->loop();
+    GameLoop::resetInstance();
 }
 
 
