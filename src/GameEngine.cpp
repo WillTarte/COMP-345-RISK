@@ -87,7 +87,6 @@ void GameLoop::loop() {
             continue;
         }
 
-        //TODO: clear after each phase
         cout << "\u001b[35m";
         currentPlayer->reinforce();
 
@@ -242,7 +241,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
     //create the players with their respective list of countries created above
     for (int i = 0; i < numPlayers; i++) {
         auto* player = new Player(countriesPerPlayer[i], new Hand(), new DiceRoller(), i);
-        std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random"  << std::endl;
+        std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
 
         char strat = 0;
         std::cin >> strat;
@@ -252,6 +251,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map) {
             case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
             case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
             case 'd': player->setPlayerStrategy(Strategies::RANDOM_BOT); break;
+            case 'e': player->setPlayerStrategy(Strategies::CHEATER_BOT); break;
             default: {
                 player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
             }
@@ -289,6 +289,7 @@ static int getNumberOfArmies(int numberOfPlayers) {
 /**
  * Prompt each player for army distribution
  */
+// TODO: based on player strategy, distribute armies (i.e. automaticaly distributed or human player decided)
 void GameLoop::distributeArmies() {
     int numberOfPlayers = allPlayers->size();
     int numberOfArmies = getNumberOfArmies(numberOfPlayers);

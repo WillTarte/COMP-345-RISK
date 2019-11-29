@@ -11,7 +11,8 @@ enum Strategies {
     HUMAN_PLAYER,
     AGGRESSIVE_BOT,
     BENEVOLENT_BOT,
-    RANDOM_BOT
+    RANDOM_BOT,
+    CHEATER_BOT
 };
 
 enum StrategyContext {
@@ -35,14 +36,15 @@ public:
     PlayerStrategy();
     PlayerStrategy(const PlayerStrategy& toCopy);
     PlayerStrategy& operator=(const PlayerStrategy& rhs);
-    PlayerStrategy(Player* player);
-    virtual char yesOrNo(StrategyContext context) = 0;
+    explicit PlayerStrategy(Player* player);
+    virtual signed char yesOrNo(StrategyContext context) = 0;
     virtual int intInput(StrategyContext context) = 0;
     virtual inline void setArmiesToPlace(int armies) { armiesToPlace = new int(armies); }
     virtual inline void setExchangingCardType(int count) { exchangingCardType = new int(count); }
     virtual inline void setTo(Map::Country* toCountry) { to = toCountry; }
     virtual void resetChoices();
     virtual ~PlayerStrategy();
+    std::string getStrategyName() const { return *strategyName; };
 
 protected:
     int* armiesToPlace;
@@ -51,30 +53,31 @@ protected:
     Player* player;
     Map::Country* from;
     Map::Country* to;
+    const std::string* strategyName;
 
 };
 
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
     HumanPlayerStrategy();
-    HumanPlayerStrategy(Player* player): PlayerStrategy(player){};
+    explicit HumanPlayerStrategy(Player* player): PlayerStrategy(player) { this->strategyName = new std::string("HUMAN"); };
     ~HumanPlayerStrategy() = default;
     HumanPlayerStrategy(const HumanPlayerStrategy& toCopy);
     HumanPlayerStrategy& operator=(const HumanPlayerStrategy& rhs);
     HumanPlayerStrategy(const Player& player);
-    char yesOrNo(StrategyContext _);
+    signed char yesOrNo(StrategyContext _);
     int intInput(StrategyContext _);
 };
 
 class AggressiveBotStrategy : public PlayerStrategy {
 public:
     AggressiveBotStrategy();
-    AggressiveBotStrategy(Player* player): PlayerStrategy(player){};
-    AggressiveBotStrategy(const Player &player);
+    explicit AggressiveBotStrategy(Player* player): PlayerStrategy(player) { this->strategyName = new std::string("AGGRESSIVE"); };
+    explicit AggressiveBotStrategy(const Player &player);
     ~AggressiveBotStrategy() = default;
     AggressiveBotStrategy(const AggressiveBotStrategy& toCopy);
     AggressiveBotStrategy& operator=(const AggressiveBotStrategy& rhs);
-    char yesOrNo(StrategyContext context);
+    signed char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
 private:
@@ -94,12 +97,12 @@ private:
 class BenevolentBotStrategy : public PlayerStrategy {
 public:
     BenevolentBotStrategy();
-    BenevolentBotStrategy(Player* player): PlayerStrategy(player){};
-    BenevolentBotStrategy(const Player &player);
+    explicit BenevolentBotStrategy(Player* player): PlayerStrategy(player){ this->strategyName = new std::string("BENEVOLENT"); };
+    explicit BenevolentBotStrategy(const Player &player);
     ~BenevolentBotStrategy() = default;
     BenevolentBotStrategy(const BenevolentBotStrategy& toCopy);
     BenevolentBotStrategy& operator=(const BenevolentBotStrategy& rhs);
-    char yesOrNo(StrategyContext context);
+    signed char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 
 private:
@@ -115,12 +118,12 @@ private:
 class RandomBotStrategy : public PlayerStrategy {
 public:
     RandomBotStrategy();
-    RandomBotStrategy(Player* player) : PlayerStrategy(player){};
-    RandomBotStrategy(const Player &player);
+    explicit RandomBotStrategy(Player* player) : PlayerStrategy(player){ this->strategyName = new std::string("RANDOM"); };
+    explicit RandomBotStrategy(const Player &player);
     ~RandomBotStrategy() = default;
     RandomBotStrategy(const RandomBotStrategy& toCopy);
     RandomBotStrategy& operator=(const RandomBotStrategy& rhs);
-    char yesOrNo(StrategyContext context);
+    signed char yesOrNo(StrategyContext context);
     int intInput(StrategyContext context);
 private:
     int chooseRandomCountry(std::mt19937 gen);
@@ -128,6 +131,23 @@ private:
     int sendRandomArmies(std::mt19937 gen);
     int attackMaxDice(std::mt19937 gen);
     int reinforceMaxCards(std::mt19937 gen, int currentType);
+};
+
+class CheaterBotStrategy : public PlayerStrategy {
+public:
+    CheaterBotStrategy();
+    explicit CheaterBotStrategy(Player* player) : PlayerStrategy(player) { this->strategyName = new std::string("CHEATER"); };
+    explicit CheaterBotStrategy(const Player& player);
+    ~CheaterBotStrategy() = default;
+    CheaterBotStrategy(const CheaterBotStrategy& toCopy);
+    CheaterBotStrategy& operator=(const CheaterBotStrategy& rhs);
+    signed char yesOrNo(StrategyContext context);
+    int intInput(StrategyContext context);
+    int cheaterReinforce();
+    int cheaterAttack();
+    int cheaterFortify();
+private:
+    bool exchangeCountryOwnership(Player* defendingPlayer, Map::Country* toExchange);
 };
 
 #endif //COMP_345_PROJ_PLAYER_STRATEGY_H
