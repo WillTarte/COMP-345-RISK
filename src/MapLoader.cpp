@@ -139,17 +139,20 @@ Map* MapLoader::readMapFile() {
     delete (pMode);
     delete (pLineCount);
     delete (pContinentCount);
-    delete (pContinentData);
     delete (pCountryCount);
-    delete (pCountryData);
     delete (pCountryID);
-    delete (pBorderData);
 
     if(!*pValidMap || pContinentData->empty() || pCountryData->empty() || pBorderData->empty()){
         delete (pValidMap);
+        delete (pContinentData);
+        delete (pCountryData);
+        delete (pBorderData);
         return nullptr;
     }
     delete (pValidMap);
+    delete (pContinentData);
+    delete (pCountryData);
+    delete (pBorderData);
     return map;
 }
 
@@ -452,13 +455,19 @@ Map *AlternativeLoader::altReadMapFile() {
     delete (pMode);
     delete (pLineCount);
     delete (pContinentCount);
-    delete (pValidMap);
-    delete (pContinentData);
     delete (pCountryCount);
-    delete (pTerritoryData);
     delete (pCountryID);
 
     infile.close();
+    if(!*pValidMap || pContinentData->empty() || pTerritoryData->empty()){
+        delete (pValidMap);
+        delete (pContinentData);
+        delete (pTerritoryData);
+        return nullptr;
+    }
+    delete (pValidMap);
+    delete (pContinentData);
+    delete (pTerritoryData);
     return map;
 }
 
