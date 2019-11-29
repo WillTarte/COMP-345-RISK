@@ -326,7 +326,6 @@ static int getNumberOfArmies(int numberOfPlayers) {
 /**
  * Prompt each player for army distribution
  */
-// TODO: based on player strategy, distribute armies (i.e. automaticaly distributed or human player decided)
 void GameLoop::distributeArmies() {
     int numberOfPlayers = allPlayers->size();
     int numberOfArmies = getNumberOfArmies(numberOfPlayers);
@@ -335,27 +334,43 @@ void GameLoop::distributeArmies() {
     int counter = 0;
     cout << "\nEach player has " << numberOfArmies << " armies to place on their countries. \n";
     while (counter < numberOfPlayers) {
-        cout << "Placing 1 army per country." << std::endl;
+        //place one troop per country
         for (auto& country : *currentPlayer->getOwnedCountries()) {
             country->setNumberOfTroops(1);
         }
-        cout << "Player " << currentPlayer->getPlayerId()
-             << " , please place your armies. Here is your list of countries :\n";
-        for (unsigned long i = 1; i <= currentPlayer->getOwnedCountries()->size(); i++) {
-            cout << i << " - " << currentPlayer->getOwnedCountries()->at(i - 1)->getCountryName() << "\n";
-        }
-        for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
-            int countryToPlaceOn;
-            do {
-                cout << "\nWhere do you place army number " << i << ": ";
-                cin >> countryToPlaceOn;
-                cin.clear();
-                cin.ignore(512, '\n');
-            } while (countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) ||
-                     isnan(countryToPlaceOn));
-            //increment the number of troops on the selected country
-            Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
-            currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
+        //manual place for humans, automatic for bots
+        if(currentPlayer->getStrategy()->getStrategyName() == "HUMAN"){
+            cout << "Placing 1 army per country." << std::endl;
+            cout << "Player " << currentPlayer->getPlayerId()
+                 << " , please place your armies. Here is your list of countries :\n";
+            for (unsigned long i = 1; i <= currentPlayer->getOwnedCountries()->size(); i++) {
+                cout << i << " - " << currentPlayer->getOwnedCountries()->at(i - 1)->getCountryName() << "\n";
+            }
+            for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
+                int countryToPlaceOn;
+                do {
+                    cout << "\nWhere do you place army number " << i << ": ";
+                    cin >> countryToPlaceOn;
+                    cin.clear();
+                    cin.ignore(512, '\n');
+                } while (countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) ||
+                         isnan(countryToPlaceOn));
+                //increment the number of troops on the selected country
+                Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
+                currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
+            }
+        }else{
+            //define random device and range
+            std::random_device rd;
+            std::mt19937 eng(rd());
+            std::uniform_int_distribution<> distr(1, int(currentPlayer->getOwnedCountries()->size()));
+            //place troops randomly
+            for (int i = currentPlayer->getOwnedCountries()->size() + 1; i <= numberOfArmies; i++) {
+                int countryToPlaceOn = distr(eng);
+                //increment the number of troops on the selected country
+                Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
+                currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
+            }
         }
         currentPlayerPosition++;
         currentPlayerPosition = currentPlayerPosition % numberOfPlayers;
