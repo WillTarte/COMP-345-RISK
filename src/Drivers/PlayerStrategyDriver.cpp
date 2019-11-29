@@ -13,12 +13,12 @@ int main() {
     std::cin >> choice;
     if(choice == 'y') {
         for(auto* p : *GameLoop::getInstance()->getAllPlayers()) {
-            std::cout << "Player " << p->getPlayerId() << " was " << p->getStrategyName() << std::endl;
+            std::cout << "Player " << p->getPlayerId() << " was " << p->getStrategy()->getStrategyName() << std::endl;
             p->setPlayerStrategy(Strategies::HUMAN_PLAYER);
         }
     } else {
         for(auto* p : *GameLoop::getInstance()->getAllPlayers()) {
-            std::cout << "Player " << p->getPlayerId() << " is " << p->getStrategyName() << std::endl;
+            std::cout << "Player " << p->getPlayerId() << " is " << p->getStrategy()->getStrategyName() << std::endl;
         }
     }
 

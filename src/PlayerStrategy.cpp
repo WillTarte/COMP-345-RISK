@@ -2,6 +2,7 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
+#include <GameEngine.h>
 #include "../include/Player.h"
 #include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
@@ -15,6 +16,7 @@ PlayerStrategy::PlayerStrategy() {
     this->player = nullptr;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("ABSTRACT");
 }
 
 PlayerStrategy::PlayerStrategy(Player* player) {
@@ -23,6 +25,7 @@ PlayerStrategy::PlayerStrategy(Player* player) {
     this->player = player;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string(player->getStrategy()->getStrategyName());
 }
 
 PlayerStrategy::PlayerStrategy(const PlayerStrategy& toCopy) {
@@ -31,6 +34,7 @@ PlayerStrategy::PlayerStrategy(const PlayerStrategy& toCopy) {
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
+    this->strategyName = new std::string(toCopy.getStrategyName());
 }
 
 PlayerStrategy& PlayerStrategy::operator=(const PlayerStrategy& rhs) {
@@ -39,6 +43,7 @@ PlayerStrategy& PlayerStrategy::operator=(const PlayerStrategy& rhs) {
     this->player = rhs.player;
     this->from = rhs.from;
     this->to = rhs.to;
+    this->strategyName = new std::string(rhs.getStrategyName());
 }
 
 void PlayerStrategy::resetChoices() {
@@ -55,6 +60,7 @@ PlayerStrategy::~PlayerStrategy() {
     delete armiesToPlace;
     delete exchangingCardType;
     delete numWeakest;
+    delete strategyName;
     // makes sure the player is not deleted when switching strategies
     player = nullptr;
     delete player;
@@ -69,6 +75,7 @@ HumanPlayerStrategy::HumanPlayerStrategy() {
     this->player = nullptr;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("HUMAN");
 }
 
 HumanPlayerStrategy::HumanPlayerStrategy(const Player& player) {
@@ -77,6 +84,7 @@ HumanPlayerStrategy::HumanPlayerStrategy(const Player& player) {
     this->player = new Player(player);
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("HUMAN");
 }
 
 HumanPlayerStrategy::HumanPlayerStrategy(const HumanPlayerStrategy& toCopy)  : PlayerStrategy(toCopy) {
@@ -85,6 +93,7 @@ HumanPlayerStrategy::HumanPlayerStrategy(const HumanPlayerStrategy& toCopy)  : P
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
+    this->strategyName = new std::string("HUMAN");
 }
 
 HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& rhs) {
@@ -93,6 +102,7 @@ HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& r
     this->player = rhs.player;
     this->from = rhs.from;
     this->to = rhs.to;
+    this->strategyName = new std::string("HUMAN");
 }
 
 /******************************************************************************/
@@ -104,6 +114,7 @@ AggressiveBotStrategy::AggressiveBotStrategy() {
     this->player = nullptr;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("AGGRESSIVE");
 }
 
 AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
@@ -112,6 +123,7 @@ AggressiveBotStrategy::AggressiveBotStrategy(const Player& player) {
     this->player = new Player(player);
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("AGGRESSIVE");
 }
 
 AggressiveBotStrategy::AggressiveBotStrategy(const AggressiveBotStrategy& toCopy) : PlayerStrategy(toCopy) {
@@ -120,6 +132,7 @@ AggressiveBotStrategy::AggressiveBotStrategy(const AggressiveBotStrategy& toCopy
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
+    this->strategyName = new std::string("AGGRESSIVE");
 }
 
 AggressiveBotStrategy& AggressiveBotStrategy::operator=(const AggressiveBotStrategy& rhs) {
@@ -128,6 +141,7 @@ AggressiveBotStrategy& AggressiveBotStrategy::operator=(const AggressiveBotStrat
     this->player = rhs.player;
     this->from = rhs.from;
     this->to = rhs.to;
+    this->strategyName = new std::string("AGGRESSIVE");
 }
 
 /******************************************************************************/
@@ -138,6 +152,7 @@ BenevolentBotStrategy::BenevolentBotStrategy() {
     this->player = nullptr;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("BENEVOLENT");
 }
 
 BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
@@ -145,6 +160,7 @@ BenevolentBotStrategy::BenevolentBotStrategy(const Player& player) {
     this->player = new Player(player);
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("BENEVOLENT");
 }
 
 BenevolentBotStrategy::BenevolentBotStrategy(const BenevolentBotStrategy& toCopy) : PlayerStrategy(toCopy) {
@@ -153,6 +169,7 @@ BenevolentBotStrategy::BenevolentBotStrategy(const BenevolentBotStrategy& toCopy
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
+    this->strategyName = new std::string("BENEVOLENT");
 }
 
 BenevolentBotStrategy& BenevolentBotStrategy::operator=(const BenevolentBotStrategy& rhs) {
@@ -161,6 +178,7 @@ BenevolentBotStrategy& BenevolentBotStrategy::operator=(const BenevolentBotStrat
     this->player = rhs.player;
     this->from = rhs.from;
     this->to = rhs.to;
+    this->strategyName = new std::string("BENEVOLENT");
 }
 
 /******************************************************************************/
@@ -172,6 +190,7 @@ RandomBotStrategy::RandomBotStrategy() {
     this->player = nullptr;
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("RANDOM");
 }
 
 RandomBotStrategy::RandomBotStrategy(const Player& player) {
@@ -179,6 +198,7 @@ RandomBotStrategy::RandomBotStrategy(const Player& player) {
     this->player = new Player(player);
     this->from = nullptr;
     this->to = nullptr;
+    this->strategyName = new std::string("RANDOM");
 }
 RandomBotStrategy::RandomBotStrategy(const RandomBotStrategy& toCopy) : PlayerStrategy(toCopy) {
     this->exchangingCardType = toCopy.exchangingCardType;
@@ -186,6 +206,7 @@ RandomBotStrategy::RandomBotStrategy(const RandomBotStrategy& toCopy) : PlayerSt
     this->player = toCopy.player;
     this->from = toCopy.from;
     this->to = toCopy.to;
+    this->strategyName = new std::string("RANDOM");
 }
 
 RandomBotStrategy& RandomBotStrategy::operator=(const RandomBotStrategy& rhs) {
@@ -194,13 +215,50 @@ RandomBotStrategy& RandomBotStrategy::operator=(const RandomBotStrategy& rhs) {
     this->player = rhs.player;
     this->from = rhs.from;
     this->to = rhs.to;
+    this->strategyName = new std::string("RANDOM");
 }
 
+/******************************************************************************/
+/************************* Cheater bot constructors ****************************/
+/******************************************************************************/
+
+CheaterBotStrategy::CheaterBotStrategy(){
+    this->armiesToPlace = new int(0);
+    this->player = nullptr;
+    this->from = nullptr;
+    this->to = nullptr;
+    this->strategyName = new std::string("CHEATER");
+}
+
+CheaterBotStrategy::CheaterBotStrategy(const Player& player) {
+    this->armiesToPlace = new int(0);
+    this->player = new Player(player);
+    this->from = nullptr;
+    this->to = nullptr;
+    this->strategyName = new std::string("CHEATER");
+}
+CheaterBotStrategy::CheaterBotStrategy(const CheaterBotStrategy& toCopy) : PlayerStrategy(toCopy) {
+    this->exchangingCardType = toCopy.exchangingCardType;
+    this->armiesToPlace = toCopy.armiesToPlace;
+    this->player = toCopy.player;
+    this->from = toCopy.from;
+    this->to = toCopy.to;
+    this->strategyName = new std::string("CHEATER");
+}
+
+CheaterBotStrategy& CheaterBotStrategy::operator=(const CheaterBotStrategy& rhs) {
+    this->exchangingCardType = rhs.exchangingCardType;
+    this->armiesToPlace = rhs.armiesToPlace;
+    this->player = rhs.player;
+    this->from = rhs.from;
+    this->to = rhs.to;
+    this->strategyName = new std::string("CHEATER");
+}
 
 /******************************************************************************/
 /******************** Human player strategy methods ***************************/
 /******************************************************************************/
-char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
+signed char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
     /*
      * Need the parameter to generalize the function, but human inputs
      * don't need context. If you don't do anything with the parameter,
@@ -223,7 +281,7 @@ int HumanPlayerStrategy::intInput(StrategyContext _) {
 /******************************************************************************/
 /******************* Aggressive bot strategy methods **************************/
 /******************************************************************************/
-char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
+signed char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
         case StrategyContext::ATTACK:
@@ -562,7 +620,7 @@ bool AggressiveBotStrategy::canFortify() {
 /******************************************************************************/
 /******************* Benevolent bot strategy methods **************************/
 /******************************************************************************/
-char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
+signed char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
     char botChoice = 0;
     switch ((int) context) {
         case StrategyContext::ATTACK:
@@ -811,7 +869,7 @@ bool BenevolentBotStrategy::canFortify() {
  * @param context
  * @return
  */
-char RandomBotStrategy::yesOrNo(StrategyContext context) {
+signed char RandomBotStrategy::yesOrNo(StrategyContext context) {
     std::vector<char> optionVector = {'y', 'n'};
     std::shuffle(optionVector.begin(), optionVector.end(), std::mt19937(std::random_device()())); // randomize the option vector
     switch((int) context) {
@@ -929,3 +987,110 @@ int RandomBotStrategy::intInput(StrategyContext context) {
     return userInput;
 }
 
+/******************************************************************************/
+/********************* Cheater bot strategy methods ****************************/
+/******************************************************************************/
+
+signed char CheaterBotStrategy::yesOrNo(StrategyContext context) {
+
+    switch (context) {
+        case ATTACK:
+            return (signed char) this->cheaterAttack();
+        case REINFORCE:
+            return (signed char) this->cheaterReinforce();
+        case FORTIFY:
+            return (signed char) this->cheaterFortify();
+        default:
+            return -1;
+    }
+}
+
+int CheaterBotStrategy::intInput(StrategyContext context) {
+    return 0;
+}
+
+int CheaterBotStrategy::cheaterReinforce() {
+    std::cout << "We have a cheater! They are doubling all armies on their countries" << std::endl;
+    for(auto* country : *this->player->getOwnedCountries()) {
+        std::cout << "[CHEATER] - Country " << country->getCountryName() << " had " << country->getNumberOfTroops() << " armies. It now has ";
+        country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+        std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
+    }
+
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
+    return PlayerAction::SUCCEEDED;
+}
+
+bool CheaterBotStrategy::exchangeCountryOwnership(Player* defendingPlayer, Map::Country* toExchange) {
+    int toExchangeIndex = -1;
+    for (int i = 0; i < defendingPlayer->getOwnedCountries()->size(); i++) {
+        if (defendingPlayer->getOwnedCountries()->at(i)->getCountryId() == toExchange->getCountryId()) {
+            if (toExchangeIndex != -1) {
+                return false;
+            }
+            toExchangeIndex = i;
+        }
+    }
+    if (toExchangeIndex == -1) {
+        return false;
+    } else {
+        this->player->getOwnedCountries()->push_back(defendingPlayer->getOwnedCountries()->at(toExchangeIndex));
+        defendingPlayer->getOwnedCountries()->erase(defendingPlayer->getOwnedCountries()->begin() + toExchangeIndex);
+        return true;
+    }
+}
+
+int CheaterBotStrategy::cheaterAttack() {
+    std::cout << "We have a cheater! They are conquering all their neighbouring countries" << std::endl;
+    for (auto* country : *this->player->getOwnedCountries()) {
+        for (auto* neighbour : *country->getAdjCountries()) {
+            if (neighbour->getPlayerOwnerID() == this->player->getPlayerId()) {
+                continue;
+            }
+            Player* defendingPlayer = nullptr;
+            for (auto* i : *GameLoop::getInstance()->getAllPlayers()) {
+                if (i->getPlayerId() == neighbour->getPlayerOwnerID()) {
+                    defendingPlayer = i;
+                }
+            }
+            if (defendingPlayer == nullptr) {
+                player->setPlayerState(PlayerState::IDLE);
+                player->getStrategy()->resetChoices();
+                return PlayerAction::FAILED;
+            }
+            if (exchangeCountryOwnership(defendingPlayer, neighbour)) {
+                std::cout << "[CHEATER] - Country " << neighbour->getCountryName() << " has been attacked & conquered by Player " << this->player->getPlayerId() << " -\n";
+                continue;
+            } else {
+                player->setPlayerState(PlayerState::IDLE);
+                player->getStrategy()->resetChoices();
+                return PlayerAction::FAILED;
+            }
+        }
+    }
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
+    return PlayerAction::SUCCEEDED;
+}
+
+int CheaterBotStrategy::cheaterFortify() {
+    std::cout << "We have a cheater! They are fortifying all their countries with enemy neighbours" << std::endl;
+    for (auto* country : *this->player->getOwnedCountries()) {
+        bool canFortify = false;
+        for (auto* neighbour : *country->getAdjCountries()) {
+            if (neighbour->getPlayerOwnerID() != country->getPlayerOwnerID()) {
+                canFortify = true;
+            }
+        }
+        if (canFortify) {
+            std::cout << "[CHEATER] - Country " << country->getCountryName() << " had " << country->getNumberOfTroops() << " armies. It now has ";
+            country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+            std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
+        }
+    }
+
+    player->setPlayerState(PlayerState::IDLE);
+    player->getStrategy()->resetChoices();
+    return PlayerAction::SUCCEEDED;
+}
