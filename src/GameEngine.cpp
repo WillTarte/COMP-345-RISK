@@ -296,7 +296,6 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
             //increment to match with switch case bellow
             strat = playerRoles.at(i);
             strat++;
-            std::cout << strat;
         }
 
         switch(strat) {
@@ -365,7 +364,7 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     std::cout << "M: ";
     for(int i = 0; i < int(maps.size()); i++){
         if(i == int(maps.size()-1)){
-            std::cout << maps.at(i) << "\n";
+            std::cout << maps.at(i) << std::endl;
         }else{
             std::cout << maps.at(i) << ", ";
         }
@@ -390,7 +389,7 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
         }
         //print
         if(i == int(players.size()-1)){
-            std::cout << playerStrats.at(i) << ".\n";
+            std::cout << playerStrats.at(i) << "." << std::endl;
         }else{
             std::cout << playerStrats.at(i) << ", ";
         }
@@ -423,7 +422,7 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
             for (int g = 0; g < 56; g++) {
                 std::cout << "-";
             }
-            std::cout << "\n";
+            std::cout << std::endl;
         }
     }
 }
@@ -565,27 +564,29 @@ void GameLoop::start() {
 
      //run the games
      vector<int> winners;
-     for(int i = 1; i <= numGamesToPlay; i++){
-         //init
-         Map* currentMap = mapList.at(i-1);
-         std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
-         Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
-         gameDeck->createDeck();
-         GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
+     for(auto currentMap : mapList){
+         for(int i = 0; i < numGamesToPlay; i++){
+             //init
+             std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
+             Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
+             gameDeck->createDeck();
+             GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
 
-         //run game
-         GameLoop::getInstance()->distributeArmies();
-         winners.push_back(GameLoop::getInstance()->loop(maxTurns));
-         GameLoop::resetInstance();
+             //run game
+             GameLoop::getInstance()->distributeArmies();
+             std::cout << "here";
+             winners.push_back(GameLoop::getInstance()->loop(maxTurns));
+             std::cout << "not here";
+             GameLoop::resetInstance();
 
-         //cleanup
-         for(auto & gamePlayer : *gamePlayers){
-             delete(gamePlayer);
+             //cleanup
+             for(auto & gamePlayer : *gamePlayers){
+                 delete(gamePlayer);
+             }
+             delete(gamePlayers);
+             delete(gameDeck);
          }
-         delete(gamePlayers);
-         delete(gameDeck);
      }
-
      //print report
      printGameReport(mapNames,playerStrats,numGamesToPlay,maxTurns,winners);
 }

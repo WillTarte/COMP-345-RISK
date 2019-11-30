@@ -359,13 +359,13 @@ int Player::fortify() {
 
     do {
         std::cout << "\nYou have " << fromCountry->getNumberOfTroops() << " armies in this country."
-                  << " How many would you like to move ? (1 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
+                  << " How many would you like to move ? (0 to " << fromCountry->getNumberOfTroops() - 1 << ") ";
         numArmies = strategy->intInput(StrategyContext::FORTIFY_ARMY_COUNT);
-        if (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1) {
+        if (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 1) {
             std::cout << "\nInvalid input. Try again.\n";
             continue;
         }
-    } while (numArmies < 1 || numArmies > fromCountry->getNumberOfTroops() - 1);
+    } while (numArmies < 0 || numArmies > fromCountry->getNumberOfTroops() - 1);
 
     Map::Country *countryToFortify = fromCountry->getAdjCountries()->at(ctryToFortIndex);
 
