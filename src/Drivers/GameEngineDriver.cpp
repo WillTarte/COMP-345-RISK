@@ -67,7 +67,7 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    GameLoop::getInstance()->loop();
+    GameLoop::getInstance()->loop(200);
     GameLoop::resetInstance();
     return 0;
 }

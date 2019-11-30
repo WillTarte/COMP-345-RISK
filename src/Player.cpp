@@ -333,14 +333,10 @@ int Player::fortify() {
         this->strategy->resetChoices();
         return PlayerAction::ABORTED;
     }
-
     Map::Country *fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
-
     do {
-        std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size()
-                  << " neighbours\n";\
-        std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
-                  << fromCountry->getAdjCountries()->size() - 1 << ") ";
+        std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size() << " neighbours" << std::endl;
+        std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to " << fromCountry->getAdjCountries()->size() - 1 << ") ";
 
         ctryToFortIndex = strategy->intInput(StrategyContext::FORTIFY_TO_COUNTRY);
 
