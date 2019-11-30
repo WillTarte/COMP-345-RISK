@@ -11,4 +11,4 @@ https://www.jetbrains.com/help/clion/quick-tutorial-on-configuring-clion-on-wind
 https://www.hasbro.com/common/instruct/risk.pdf
 
 ## IDs
-40058454 40087900 40082638 40077724 40097695
+40058454 40087900 40082638 40077724
