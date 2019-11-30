@@ -76,7 +76,7 @@ void GameLoop::resetInstance() {
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
 int GameLoop::loop(int maxTurn) {
-    bool gameNotDone = true;
+    bool gameNotDone;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
 
@@ -91,18 +91,16 @@ int GameLoop::loop(int maxTurn) {
     do {
         turnsLeft--;
         currentPlayer = allPlayers->at(currentPlayerPosition);
-        if(currentPlayer->getOwnedCountries()->empty()) {
-            continue;
+        if (!currentPlayer->getOwnedCountries()->empty()) {
+            cout << "\u001b[35m";
+            currentPlayer->reinforce();
+
+            cout << "\u001b[33m";
+            currentPlayer->attack();
+
+            cout << "\u001b[34m";
+            currentPlayer->fortify();
         }
-
-        cout << "\u001b[35m";
-        currentPlayer->reinforce();
-
-        cout << "\u001b[33m";
-        currentPlayer->attack();
-
-        cout << "\u001b[34m";
-        currentPlayer->fortify();
 
         gameNotDone = !isGameDone(currentPlayer,gameMap);
 
@@ -110,29 +108,19 @@ int GameLoop::loop(int maxTurn) {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
-                // for demo - give all countries to first player at the end of the round
-                currentPlayer->setOwnedCountries(gameMap->getMapCountries());
-                gameNotDone = false;
             }
-        }else{
-            continue;
         }
-        //return -1 if draw
-        if(limitTurns && turnsLeft <= 0){
+        else {
+            currentPlayer->notifyAll();
+            cout.flush();
+            return currentPlayer->getPlayerId();
+        }
+        if (limitTurns && turnsLeft <= 0) {
+            std::cout << "\033[1m\033[33m";
+            std::cout << "There are no more turns left. It is a draw!!" << std::endl;
             return -1;
         }
-    } while (gameNotDone);
-
-    //return winner ID
-    int winnerPlayerID = 99;
-    for (auto* p : *GameLoop::getInstance()->getAllPlayers()) {
-        if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
-            winnerPlayerID = p->getPlayerId();
-        }
-    }
-    currentPlayer->notifyAll();
-    cout.flush();
-    return winnerPlayerID;
+    } while (true);
 }
 
 /**
@@ -202,7 +190,7 @@ static int choosePlayerNumber(int minPlayers, int maxPlayers) {
 static bool loadOtherMap() {
     char playerChoice = 'z';
     do {
-        cout << "\nWould you like to add a map to the tournament (y / n) ?";
+        cout << "\nWould you like to add a map to the tournament (y / n) ? ";
         cin >> playerChoice;
         cin.clear();
         cin.ignore(512, '\n');
@@ -221,10 +209,10 @@ static vector<char> choosePlayerStrats(int numPlayers) {
         cin.ignore(512, '\n');
         if(playerChoice != 'a' && playerChoice != 'b' && playerChoice != 'c' && playerChoice != 'd'){
             continue;
-        }else if(std::find(strats.begin(), strats.end(), playerChoice) != strats.end()){
+        } else if(std::find(strats.begin(), strats.end(), playerChoice) != strats.end()){
             cout << "Please choose a different strategy, this one is already taken by another player"  << std::endl;
             continue;
-        }else{
+        } else{
             counter++;
             strats.push_back(playerChoice);
         }
@@ -345,15 +333,14 @@ static int getNumberOfArmies(int numberOfPlayers) {
  */
 std::string centerOut(const string& str, const int width) {
     stringstream ss, spaces;
-    int padding = width - int(str.size());                 // count excess room to pad
+    int padding = width - int(str.size());
     for (int i = 0; i < padding / 2; ++i)
         spaces << " ";
-    ss << spaces.str() << str << spaces.str();    // format with padding
-    if (padding > 0 && padding % 2 != 0)               // if odd #, add 1 space
+    ss << spaces.str() << str << spaces.str();
+    if (padding > 0 && padding % 2 != 0)
         ss << " ";
     return ss.str();
 }
-
 
 static void printGameReport(vector<std::string> maps, vector<char> players, int games, int draw, vector<int> winners){
     std::cout << "\n\n--------------------------------------------------------\n";
@@ -362,10 +349,10 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
 
     //print maps
     std::cout << "M: ";
-    for(int i = 0; i < int(maps.size()); i++){
-        if(i == int(maps.size()-1)){
+    for (int i = 0; i < int(maps.size()); i++) {
+        if (i == int(maps.size()-1)){
             std::cout << maps.at(i) << std::endl;
-        }else{
+        } else{
             std::cout << maps.at(i) << ", ";
         }
     }
@@ -373,18 +360,18 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     //normalize and print players
     vector<std::string> playerStrats;
     std::cout << "P: ";
-    for(int i = 0; i < int(players.size()); i++){
+    for (int i = 0; i < int(players.size()); i++) {
         std::string currPlayer = std::to_string(players.at(i));
         //normalize
-        if(currPlayer == "a"){
+        if (currPlayer == "a") {
             playerStrats.emplace_back("Aggresive");
-        }else if(currPlayer == "b"){
+        } else if (currPlayer == "b") {
             playerStrats.emplace_back("Passive");
-        }else if(currPlayer == "c"){
+        } else if (currPlayer == "c") {
             playerStrats.emplace_back("Random");
-        }else if(currPlayer == "d"){
+        } else if (currPlayer == "d") {
             playerStrats.emplace_back("Cheater");
-        }else{
+        } else {
             playerStrats.emplace_back("Unknown");
         }
         //print
@@ -428,7 +415,8 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
 }
 
 /**
- * Prompt each player for army distribution
+ * Prompt each player for army distribution. Automatically puts one troup on each empty country and let's the player decide the rest
+ * If the player is a bot, the armies are randomly assigned to each country (at least one per country)
  */
 void GameLoop::distributeArmies() {
     int numberOfPlayers = allPlayers->size();
@@ -442,7 +430,7 @@ void GameLoop::distributeArmies() {
         for (auto& country : *currentPlayer->getOwnedCountries()) {
             country->setNumberOfTroops(1);
         }
-        //manual place for humans, automatic for bots
+
         if(currentPlayer->getStrategy()->getStrategyName() == "HUMAN"){
             cout << "Placing 1 army per country." << std::endl;
             cout << "Player " << currentPlayer->getPlayerId()
@@ -459,19 +447,16 @@ void GameLoop::distributeArmies() {
                     cin.ignore(512, '\n');
                 } while (countryToPlaceOn < 1 || countryToPlaceOn > int(currentPlayer->getOwnedCountries()->size()) ||
                          isnan(countryToPlaceOn));
-                //increment the number of troops on the selected country
                 Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
                 currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
             }
-        }else{
-            //define random device and range
+        } else {
             std::random_device rd;
             std::mt19937 eng(rd());
             std::uniform_int_distribution<> distr(1, int(currentPlayer->getOwnedCountries()->size()));
             //place troops randomly
             for (int i = int(currentPlayer->getOwnedCountries()->size() + 1); i <= numberOfArmies; i++) {
                 int countryToPlaceOn = distr(eng);
-                //increment the number of troops on the selected country
                 Map::Country* currCountry = currentPlayer->getOwnedCountries()->at(countryToPlaceOn - 1);
                 currCountry->setNumberOfTroops(currCountry->getNumberOfTroops() + 1);
             }
@@ -495,7 +480,6 @@ void GameLoop::start() {
         cin.ignore(512, '\n');
     } while (gameModeChoice < 1 || gameModeChoice > 2 || isnan(gameModeChoice));
 
-    // init gamemode
     switch(gameModeChoice){
         case 1:
             startSingle();
@@ -504,7 +488,6 @@ void GameLoop::start() {
             startTournament();
             break;
         default:
-            //should never get here
             startSingle();
             break;
     }
@@ -566,20 +549,17 @@ void GameLoop::start() {
      vector<int> winners;
      for(auto currentMap : mapList){
          for(int i = 0; i < numGamesToPlay; i++){
-             //init
              std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
              Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
              gameDeck->createDeck();
              GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
 
-             //run game
              GameLoop::getInstance()->distributeArmies();
              std::cout << "here";
              winners.push_back(GameLoop::getInstance()->loop(maxTurns));
              std::cout << "not here";
              GameLoop::resetInstance();
 
-             //cleanup
              for(auto & gamePlayer : *gamePlayers){
                  delete(gamePlayer);
              }
@@ -587,8 +567,7 @@ void GameLoop::start() {
              delete(gameDeck);
          }
      }
-     //print report
-     printGameReport(mapNames,playerStrats,numGamesToPlay,maxTurns,winners);
+     printGameReport(mapNames, playerStrats, numGamesToPlay, maxTurns, winners);
 }
 
 /**
@@ -601,10 +580,10 @@ void GameLoop::startSingle(bool demoMode) {
     do {
         mapToLoad = chooseMap();
         numberOfPlayers = choosePlayerNumber(2,6);
-        //load the map (try to use both loaders, to accept both map types)
         MapLoader myLoader = MapLoader(mapToLoad);
         gameMap = myLoader.readMapFile();
-        if(gameMap == nullptr){
+
+        if (gameMap == nullptr) {
             AlternativeLoader altLoader = AlternativeLoader(mapToLoad);
             gameMap = altLoader.altReadMapFile();
         }
@@ -627,7 +606,6 @@ void GameLoop::startSingle(bool demoMode) {
     GameLoop::initInstance(gameMap, gamePlayers, gameDeck);
 
     if(!demoMode){
-        //run game
         GameLoop::getInstance()->distributeArmies();
         GameLoop::getInstance()->loop();
         GameLoop::resetInstance();
