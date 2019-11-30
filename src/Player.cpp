@@ -21,8 +21,8 @@
  * @param diceRoller DiceRoller object
  * @param playerId this Player' integer id
  */
-Player::Player(std::vector<Map::Country*> ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
-    pOwnedCountries = new std::vector<Map::Country*>(std::move(ownedCountries));
+Player::Player(std::vector<Map::Country*>* ownedCountries, Hand* cards, DiceRoller* diceRoller, const int playerId) {
+    pOwnedCountries = ownedCountries;
     pCards = cards;
     pDiceRoller = diceRoller;
     pPlayerId = new int(playerId);
@@ -333,14 +333,10 @@ int Player::fortify() {
         this->strategy->resetChoices();
         return PlayerAction::ABORTED;
     }
-
     Map::Country *fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
-
     do {
-        std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size()
-                  << " neighbours\n";\
-        std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to "
-                  << fromCountry->getAdjCountries()->size() - 1 << ") ";
+        std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size() << " neighbours" << std::endl;
+        std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to " << fromCountry->getAdjCountries()->size() - 1 << ") ";
 
         ctryToFortIndex = strategy->intInput(StrategyContext::FORTIFY_TO_COUNTRY);
 

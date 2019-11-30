@@ -253,11 +253,13 @@ static int chooseMaxTurns() {
  * @return the vector of players
  */
 static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playerRoles = {}) {
-    vector<vector<Map::Country*>> countriesPerPlayer;
+    vector<vector<Map::Country*>*> countriesPerPlayer;
     countriesPerPlayer.reserve(numPlayers);
     //split up the countries by the number of players
     for (int i = 0; i < numPlayers; i++) {
-        countriesPerPlayer.emplace_back();
+        auto* countries = new vector<Map::Country*>();
+        countries->reserve(map->getMapCountries()->size());
+        countriesPerPlayer.emplace_back(countries);
     }
     //randomize map countries
     vector<Map::Country*>* randomizedCountries = map->getMapCountries();
@@ -265,7 +267,7 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
     for (unsigned long i = 0; i < randomizedCountries->size(); i++) {
         Map::Country* currCountry = randomizedCountries->at(i);
         currCountry->setPlayerOwnerID(int(i) % numPlayers);
-        countriesPerPlayer[i % numPlayers].push_back(currCountry);
+        countriesPerPlayer[i % numPlayers]->push_back(currCountry);
     }
 
     auto* players = new vector<Player*>();

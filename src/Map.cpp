@@ -134,12 +134,27 @@ Map::Country::~Country() {
 }
 
 void Map::Country::operator=(Map::Country& rhs){
+    std::cout << "In country = operator:" << *rhs.cyName;
     this->cyID = rhs.cyID;
     this->cyName = rhs.cyName;
     this->cyContinent = rhs.cyContinent;
     this->pPlayerOwnerId = rhs.pPlayerOwnerId;
     this->pNumberOfTroops = rhs.pNumberOfTroops;
     this->pAdjCountries = rhs.pAdjCountries;
+}
+
+Map::Country::Country(const Country& toCopy) {
+    std::cout << "In country copy constructor:" << *toCopy.cyName;
+    this->cyID = new int(*toCopy.cyID);
+    this->cyName = new std::string(*toCopy.cyName);
+    this->cyContinent = new int(*toCopy.cyContinent);
+    this->pPlayerOwnerId = new int(*toCopy.pPlayerOwnerId);
+    this->pNumberOfTroops = new int(*toCopy.pNumberOfTroops);
+    this->pAdjCountries = new std::vector<Country*>();
+    this->pAdjCountries->reserve(toCopy.pAdjCountries->size());
+    for(auto & pAdjCountry : *toCopy.pAdjCountries) {
+        this->pAdjCountries->push_back(new Country(*pAdjCountry));
+    }
 }
 
 /**
