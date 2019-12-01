@@ -511,7 +511,7 @@ void GameLoop::start() {
                  "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
                  "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
                  "                                                                                                                                                        ";
-
+    std::cout << endl;
      int numberOfPlayers = choosePlayerNumber(2,4);
      vector<char> playerStrats = choosePlayerStrats(numberOfPlayers);
      int numMaps = 0;
