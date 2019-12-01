@@ -11,8 +11,6 @@
 #include <list>
 #include <cmath>
 
-// TODO: player draw card during attack
-
 /**
  * Player constructor
  *

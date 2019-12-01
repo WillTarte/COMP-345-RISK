@@ -63,15 +63,19 @@ GameLoop* GameLoop::getInstance() {
  * Game loop destructor
  */
 GameLoop::~GameLoop() {
-    delete gameMap;
     delete allPlayers;
+    // In tournament mode, the maps are stored in a vector (heap memory) so we cant delete them if we reuse the map
+    this->gameMap = nullptr;
+    delete this->gameDeck;
 }
 
+// TODO: we have to refactor resetting the instance because it should be handled differently between tournament and single to not cause memory leaks
 void GameLoop::resetInstance() {
     delete gameLoopInstance;
     gameLoopInstance = nullptr;
 }
 
+//TODO: when a player wins the game, the message is printed twice, and there's extra cheater bot notification
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */
@@ -499,6 +503,15 @@ void GameLoop::start() {
  * Tournament mode start phase
  */
  void GameLoop::startTournament() {
+
+    std::cout << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
+                 "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
+                 " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
+                 "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
+                 "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
+                 "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
+                 "                                                                                                                                                        ";
+
      int numberOfPlayers = choosePlayerNumber(2,4);
      vector<char> playerStrats = choosePlayerStrats(numberOfPlayers);
      int numMaps = 0;
@@ -557,25 +570,34 @@ void GameLoop::start() {
              GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
 
              GameLoop::getInstance()->distributeArmies();
-             std::cout << "here";
              winners.push_back(GameLoop::getInstance()->loop(maxTurns));
-             std::cout << "not here";
              GameLoop::resetInstance();
-
-             for(auto & gamePlayer : *gamePlayers){
-                 delete(gamePlayer);
-             }
-             delete(gamePlayers);
-             delete(gameDeck);
          }
      }
      printGameReport(mapNames, playerStrats, numGamesToPlay, maxTurns, winners);
+     std::cout << "\n"
+                  ".___________. __    __       ___      .__   __.  __  ___      _______.    _______   ______   .______         .______    __          ___   ____    ____  __  .__   __.   _______  __  \n"
+                  "|           ||  |  |  |     /   \\     |  \\ |  | |  |/  /     /       |   |   ____| /  __  \\  |   _  \\        |   _  \\  |  |        /   \\  \\   \\  /   / |  | |  \\ |  |  /  _____||  | \n"
+                  "`---|  |----`|  |__|  |    /  ^  \\    |   \\|  | |  '  /     |   (----`   |  |__   |  |  |  | |  |_)  |       |  |_)  | |  |       /  ^  \\  \\   \\/   /  |  | |   \\|  | |  |  __  |  | \n"
+                  "    |  |     |   __   |   /  /_\\  \\   |  . `  | |    <       \\   \\       |   __|  |  |  |  | |      /        |   ___/  |  |      /  /_\\  \\  \\_    _/   |  | |  . `  | |  | |_ | |  | \n"
+                  "    |  |     |  |  |  |  /  _____  \\  |  |\\   | |  .  \\  .----)   |      |  |     |  `--'  | |  |\\  \\----.   |  |      |  `----./  _____  \\   |  |     |  | |  |\\   | |  |__| | |__| \n"
+                  "    |__|     |__|  |__| /__/     \\__\\ |__| \\__| |__|\\__\\ |_______/       |__|      \\______/  | _| `._____|   | _|      |_______/__/     \\__\\  |__|     |__| |__| \\__|  \\______| (__) \n"
+                  "                                                                                                                                                                                     ";
 }
 
 /**
  * Single game mode start phase
  */
 void GameLoop::startSingle(bool demoMode) {
+
+    std::cout << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
+                 "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
+                 " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
+                 "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
+                 "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
+                 "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
+                 "                                                                                                                                                        \n\n";
+
     std::string mapToLoad;
     int numberOfPlayers;
     Map* gameMap;
@@ -612,6 +634,15 @@ void GameLoop::startSingle(bool demoMode) {
         GameLoop::getInstance()->loop();
         GameLoop::resetInstance();
     }
+
+    std::cout << "\n"
+                 ".___________. __    __       ___      .__   __.  __  ___      _______.    _______   ______   .______         .______    __          ___   ____    ____  __  .__   __.   _______  __  \n"
+                 "|           ||  |  |  |     /   \\     |  \\ |  | |  |/  /     /       |   |   ____| /  __  \\  |   _  \\        |   _  \\  |  |        /   \\  \\   \\  /   / |  | |  \\ |  |  /  _____||  | \n"
+                 "`---|  |----`|  |__|  |    /  ^  \\    |   \\|  | |  '  /     |   (----`   |  |__   |  |  |  | |  |_)  |       |  |_)  | |  |       /  ^  \\  \\   \\/   /  |  | |   \\|  | |  |  __  |  | \n"
+                 "    |  |     |   __   |   /  /_\\  \\   |  . `  | |    <       \\   \\       |   __|  |  |  |  | |      /        |   ___/  |  |      /  /_\\  \\  \\_    _/   |  | |  . `  | |  | |_ | |  | \n"
+                 "    |  |     |  |  |  |  /  _____  \\  |  |\\   | |  .  \\  .----)   |      |  |     |  `--'  | |  |\\  \\----.   |  |      |  `----./  _____  \\   |  |     |  | |  |\\   | |  |__| | |__| \n"
+                 "    |__|     |__|  |__| /__/     \\__\\ |__| \\__| |__|\\__\\ |_______/       |__|      \\______/  | _| `._____|   | _|      |_______/__/     \\__\\  |__|     |__| |__| \\__|  \\______| (__) \n"
+                 "                                                                                                                                                                                     ";
 }
 
 
