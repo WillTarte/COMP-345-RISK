@@ -309,7 +309,17 @@ int Player::fortify() {
 
     if (playerChoice == 'y') {
         std::cout << "\nPlayer " << this->getPlayerId() << " has chosen to fortify!" << std::endl;
+        int failsafeCounter = 0;
         do {
+            //avoid infinite loops in case of bot malfunction or human delaying the game
+            if(failsafeCounter >= 10){
+                std::cout << "\nInvalid user input for 10 consecutive prompts, aborting action.\n";
+                this->setPlayerState(PlayerState::IDLE);
+                this->strategy->resetChoices();
+                return PlayerAction::ABORTED;
+            }
+            failsafeCounter++;
+
             std::cin.clear();
             showCountries(*this->getOwnedCountries());
             std::cout << "\nYou own " << this->getOwnedCountries()->size()
@@ -332,7 +342,14 @@ int Player::fortify() {
         return PlayerAction::ABORTED;
     }
     Map::Country *fromCountry = this->getOwnedCountries()->at(fromCountryIndex);
+    int failsafeCounter = 0;
     do {
+        //avoid infinite loops in case of bot malfunction or human delaying the game
+        if(failsafeCounter >= 10){
+            std::cout << "\nInvalid user input for 10 consecutive prompts, aborting action.\n";
+            return -1;
+        }
+        failsafeCounter++;
         std::cout << "\nCountry " << fromCountry->getCountryName() << " has " << fromCountry->getAdjCountries()->size() << " neighbours" << std::endl;
         std::cout << "Which of YOUR countries would you like to move your armies to ? (0 to " << fromCountry->getAdjCountries()->size() - 1 << ") ";
 
@@ -506,7 +523,14 @@ int Player::reinforce() {
                 for (auto i = 0; i <= 2; i++) {
                     if (types[i] > 0) {
                         auto input = 0;
+                        int failsafeCounter = 0;
                         do {
+                            //avoid infinite loops in case of bot malfunction or human delaying the game
+                            if(failsafeCounter >= 10){
+                                std::cout << "An error occurred while exchanging your cards." << std::endl;
+                                return -1;
+                            }
+                            failsafeCounter++;
                             std::cout << "How many " << (i == 0 ? "infantry" : i == 1 ? "artillery" : "cavalry");
                             std::cout << " would you like to exchange?";
                             player.strategy->setExchangingCardType(i);
@@ -630,7 +654,17 @@ int Player::attack() {
     }
 
     /* USER DECISION TO ATTACK OR NOT*/
+    int failsafeCounter = 0;
     do {
+        //avoid infinite loops in case of bot malfunction or human delaying the game
+        if(failsafeCounter >= 10){
+            std::cout << "\nInvalid user input for 10 consecutive prompts, aborting action.\n";
+            this->setPlayerState(PlayerState::IDLE);
+            this->strategy->resetChoices();
+            return PlayerAction::ABORTED;
+        }
+        failsafeCounter++;
+
         std::cin.clear();
         std::cout << "It is Player " << this->getPlayerId() << "'s turn to attack!" << std::endl;
         std::cout << "\n[ATTACKER] Will you attack?(y/n)";

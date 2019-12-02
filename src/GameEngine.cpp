@@ -369,13 +369,13 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     for (int i = 0; i < int(players.size()); i++) {
         std::string currPlayer = std::to_string(players.at(i));
         //normalize
-        if (currPlayer == "a") {
+        if (currPlayer == std::to_string('a')) {
             playerStrats.emplace_back("Aggresive");
-        } else if (currPlayer == "b") {
+        } else if (currPlayer == std::to_string('b')) {
             playerStrats.emplace_back("Passive");
-        } else if (currPlayer == "c") {
+        } else if (currPlayer == std::to_string('c')) {
             playerStrats.emplace_back("Random");
-        } else if (currPlayer == "d") {
+        } else if (currPlayer == std::to_string('d')) {
             playerStrats.emplace_back("Cheater");
         } else {
             playerStrats.emplace_back("Unknown");
@@ -389,22 +389,24 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     }
 
     //print other info
-    std::cout << "G: " << games;
-    std::cout << "D: " << draw;
+    std::cout << "G: " << games << std::endl;
+    std::cout << "D: " << draw << std::endl;
 
     //print table
-    for(int i = 0; i < int(maps.size()); i++){
-        for(int j = 0; j < games; j++){
-            if(j == 0 &&  i == 0){
-                std::cout << centerOut(" ", 10) << " | ";
+    int winnerIndexCounter = 0;
+    for(int i = 0; i < int(maps.size() + 1); i++){
+        for(int j = 0; j <= games; j++){
+            if(j == 0 && i == 0){
+                std::cout << "\n\n" << centerOut(" ", 10) << " | ";
             }else if(i == 0){
-                std::string to_print = "Game " + std::to_string(i+1);
+                std::string to_print = "Game " + std::to_string(j);
                 std::cout << centerOut(to_print, 10) << " | ";
             }else if(j == 0){
-                std::cout << centerOut(maps.at(i), 10) << " | ";
+                std::cout << centerOut(maps.at(i-1), 10) << " | ";
             }else{
                 std::string thisWinner;
-                int winnerIndex = winners.at(i + (j*3));
+                int winnerIndex = winners.at(winnerIndexCounter);
+                winnerIndexCounter++;
                 if(winnerIndex == -1){
                     thisWinner = "Draw";
                 }else{
@@ -412,11 +414,12 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
                 }
                 std::cout << centerOut(thisWinner,10) << " | ";
             }
-            for (int g = 0; g < 56; g++) {
-                std::cout << "-";
-            }
-            std::cout << std::endl;
         }
+        std::cout << std::endl;
+        for (int g = 0; g < 75; g++) {
+            std::cout << "-";
+        }
+        std::cout << std::endl;
     }
 }
 
