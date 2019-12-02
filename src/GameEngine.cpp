@@ -83,42 +83,54 @@ int GameLoop::loop(int maxTurn) {
     bool gameNotDone;
     int currentPlayerPosition = 0;
     Player* currentPlayer = nullptr;
+    int turnCounter = 1;
 
     //limit or not number of turns
     int turnsLeft = -1;
     bool limitTurns = false;
-    if(maxTurn != -1){
+    if (maxTurn != -1) {
         turnsLeft = maxTurn * int(allPlayers->size());
         limitTurns = true;
     }
 
     do {
-        turnsLeft--;
         currentPlayer = allPlayers->at(currentPlayerPosition);
         if (!currentPlayer->getOwnedCountries()->empty()) {
+            std::cout << "\u001b[0m\n--------------------------------------------------------\n"
+                         "----------------------TURN " << turnCounter << "----------------------------\n"
+                      << "--------------------------------------------------------" << std::endl;
+            turnsLeft--;
+
             cout << "\u001b[35m";
             currentPlayer->reinforce();
 
             cout << "\u001b[33m";
             currentPlayer->attack();
 
+            gameNotDone = !isGameDone(currentPlayer, gameMap);
+
+            if (gameNotDone) {
+                currentPlayerPosition++;
+                if (isRoundFinished(currentPlayerPosition)) {
+                    currentPlayerPosition = 0;
+                }
+            } else {
+                currentPlayer->notifyAll();
+                cout.flush();
+                return currentPlayer->getPlayerId();
+            }
+
             cout << "\u001b[34m";
             currentPlayer->fortify();
-        }
 
-        gameNotDone = !isGameDone(currentPlayer,gameMap);
-
-        if (gameNotDone) {
+            turnCounter++;
+        } else {
             currentPlayerPosition++;
             if (isRoundFinished(currentPlayerPosition)) {
                 currentPlayerPosition = 0;
             }
         }
-        else {
-            currentPlayer->notifyAll();
-            cout.flush();
-            return currentPlayer->getPlayerId();
-        }
+
         if (limitTurns && turnsLeft <= 0) {
             std::cout << "\033[1m\033[33m";
             std::cout << "There are no more turns left. It is a draw!!" << std::endl;
@@ -142,7 +154,7 @@ bool GameLoop::isRoundFinished(unsigned long currentPlayerPosition) {
  * @param currentPlayerPosition
  * @return true, if the currently playing player owns all the countries
  */
-bool GameLoop::isGameDone(Player* currentPlayer,Map* currMap) {
+bool GameLoop::isGameDone(Player* currentPlayer, Map* currMap) {
     return currentPlayer->getOwnedCountries()->size() == currMap->getMapCountries()->size();
 }
 
@@ -207,20 +219,21 @@ static vector<char> choosePlayerStrats(int numPlayers) {
     int counter = 1;
     char playerChoice;
     do {
-        cout << "What strategy should player " << counter << " use? a) aggresive b) passive c) random d) cheater"  << std::endl;
+        cout << "What strategy should player " << counter << " use? a) aggresive b) passive c) random d) cheater"
+             << std::endl;
         cin >> playerChoice;
         cin.clear();
         cin.ignore(512, '\n');
-        if(playerChoice != 'a' && playerChoice != 'b' && playerChoice != 'c' && playerChoice != 'd'){
+        if (playerChoice != 'a' && playerChoice != 'b' && playerChoice != 'c' && playerChoice != 'd') {
             continue;
-        } else if(std::find(strats.begin(), strats.end(), playerChoice) != strats.end()){
-            cout << "Please choose a different strategy, this one is already taken by another player"  << std::endl;
+        } else if (std::find(strats.begin(), strats.end(), playerChoice) != strats.end()) {
+            cout << "Please choose a different strategy, this one is already taken by another player" << std::endl;
             continue;
-        } else{
+        } else {
             counter++;
             strats.push_back(playerChoice);
         }
-        if(counter > numPlayers){
+        if (counter > numPlayers) {
             break;
         }
     } while (true);
@@ -283,23 +296,35 @@ static vector<Player*>* initPlayers(int numPlayers, Map* map, vector<char> playe
         char strat = 0;
 
         //support tournament role
-        if(playerRoles.empty()){
-            std::cout << "What strategy should player " << i << " use? a) Human b) aggresive c) passive d) random e) cheater"  << std::endl;
+        if (playerRoles.empty()) {
+            std::cout << "What strategy should player " << i
+                      << " use? a) Human b) aggresive c) passive d) random e) cheater" << std::endl;
             std::cin >> strat;
-        }else{
+        } else {
             //increment to match with switch case bellow
             strat = playerRoles.at(i);
             strat++;
         }
 
-        switch(strat) {
-            case 'a': player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
-            case 'b': player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT); break;
-            case 'c': player->setPlayerStrategy(Strategies::BENEVOLENT_BOT); break;
-            case 'd': player->setPlayerStrategy(Strategies::RANDOM_BOT); break;
-            case 'e': player->setPlayerStrategy(Strategies::CHEATER_BOT); break;
+        switch (strat) {
+            case 'a':
+                player->setPlayerStrategy(Strategies::HUMAN_PLAYER);
+                break;
+            case 'b':
+                player->setPlayerStrategy(Strategies::AGGRESSIVE_BOT);
+                break;
+            case 'c':
+                player->setPlayerStrategy(Strategies::BENEVOLENT_BOT);
+                break;
+            case 'd':
+                player->setPlayerStrategy(Strategies::RANDOM_BOT);
+                break;
+            case 'e':
+                player->setPlayerStrategy(Strategies::CHEATER_BOT);
+                break;
             default: {
-                player->setPlayerStrategy(Strategies::HUMAN_PLAYER); break;
+                player->setPlayerStrategy(Strategies::HUMAN_PLAYER);
+                break;
             }
         }
         new StatsObserver(player);
@@ -331,6 +356,7 @@ static int getNumberOfArmies(int numberOfPlayers) {
             return 0;
     }
 }
+
 /**
  * Center the text in the column
  * @param str
@@ -348,7 +374,7 @@ std::string centerOut(const string& str, const int width) {
     return ss.str();
 }
 
-static void printGameReport(vector<std::string> maps, vector<char> players, int games, int draw, vector<int> winners){
+static void printGameReport(vector<std::string> maps, vector<char> players, int games, int draw, vector<int> winners) {
     std::cout << "\n\n--------------------------------------------------------\n";
     std::cout << "--------------------Game Statistics---------------------\n";
     std::cout << "--------------------------------------------------------\n\n";
@@ -356,9 +382,9 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
     //print maps
     std::cout << "M: ";
     for (int i = 0; i < int(maps.size()); i++) {
-        if (i == int(maps.size()-1)){
+        if (i == int(maps.size() - 1)) {
             std::cout << maps.at(i) << std::endl;
-        } else{
+        } else {
             std::cout << maps.at(i) << ", ";
         }
     }
@@ -381,9 +407,9 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
             playerStrats.emplace_back("Unknown");
         }
         //print
-        if(i == int(players.size()-1)){
+        if (i == int(players.size() - 1)) {
             std::cout << playerStrats.at(i) << "." << std::endl;
-        }else{
+        } else {
             std::cout << playerStrats.at(i) << ", ";
         }
     }
@@ -394,25 +420,25 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
 
     //print table
     int winnerIndexCounter = 0;
-    for(int i = 0; i < int(maps.size() + 1); i++){
-        for(int j = 0; j <= games; j++){
-            if(j == 0 && i == 0){
+    for (int i = 0; i < int(maps.size() + 1); i++) {
+        for (int j = 0; j <= games; j++) {
+            if (j == 0 && i == 0) {
                 std::cout << "\n\n" << centerOut(" ", 10) << " | ";
-            }else if(i == 0){
+            } else if (i == 0) {
                 std::string to_print = "Game " + std::to_string(j);
                 std::cout << centerOut(to_print, 10) << " | ";
-            }else if(j == 0){
-                std::cout << centerOut(maps.at(i-1), 10) << " | ";
-            }else{
+            } else if (j == 0) {
+                std::cout << centerOut(maps.at(i - 1), 10) << " | ";
+            } else {
                 std::string thisWinner;
                 int winnerIndex = winners.at(winnerIndexCounter);
                 winnerIndexCounter++;
-                if(winnerIndex == -1){
+                if (winnerIndex == -1) {
                     thisWinner = "Draw";
-                }else{
+                } else {
                     thisWinner = playerStrats.at(winnerIndex);
                 }
-                std::cout << centerOut(thisWinner,10) << " | ";
+                std::cout << centerOut(thisWinner, 10) << " | ";
             }
         }
         std::cout << std::endl;
@@ -440,7 +466,7 @@ void GameLoop::distributeArmies() {
             country->setNumberOfTroops(1);
         }
 
-        if(currentPlayer->getStrategy()->getStrategyName() == "HUMAN"){
+        if (currentPlayer->getStrategy()->getStrategyName() == "HUMAN") {
             cout << "Placing 1 army per country." << std::endl;
             cout << "Player " << currentPlayer->getPlayerId()
                  << " , please place your armies. Here is your list of countries :\n";
@@ -489,7 +515,7 @@ void GameLoop::start() {
         cin.ignore(512, '\n');
     } while (gameModeChoice < 1 || gameModeChoice > 2 || isnan(gameModeChoice));
 
-    switch(gameModeChoice){
+    switch (gameModeChoice) {
         case 1:
             startSingle();
             break;
@@ -505,87 +531,88 @@ void GameLoop::start() {
 /**
  * Tournament mode start phase
  */
- void GameLoop::startTournament() {
+void GameLoop::startTournament() {
 
-    std::cout << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
-                 "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
-                 " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
-                 "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
-                 "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
-                 "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
-                 "                                                                                                                                                        ";
+    std::cout
+            << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
+               "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
+               " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
+               "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
+               "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
+               "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
+               "                                                                                                                                                        ";
     std::cout << endl;
-     int numberOfPlayers = choosePlayerNumber(2,4);
-     vector<char> playerStrats = choosePlayerStrats(numberOfPlayers);
-     int numMaps = 0;
-     vector<Map*> mapList;
-     vector<string> mapNames;
-     do{
-         //which map to load
-         std::string mapToLoad;
-         Map* gameMap;
-         if(numMaps == 0 || loadOtherMap()){
-             mapToLoad = chooseMap();
-         }else{
-             break;
-         }
-         //load the map (try to use both loaders, to accept both map types)
-         MapLoader myLoader = MapLoader(mapToLoad);
-         gameMap = myLoader.readMapFile();
-         if(gameMap == nullptr){
-             AlternativeLoader altLoader = AlternativeLoader(mapToLoad);
-             gameMap = altLoader.altReadMapFile();
-         }
-         //test map
-         if(gameMap == nullptr || !gameMap->testConnected()){
-             cout << "\nThere was an error loading the game board. Try another mapfile.\n";
-             continue;
-         }else if (int(gameMap->getMapCountries()->size()) < numberOfPlayers) {
-             std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
-                       << numberOfPlayers << " players. Please try again." << std::endl;
-             continue;
-         } else if(std::find(mapNames.begin(), mapNames.end(), mapToLoad) != mapNames.end()){
-             cout << "\nThis map was already chosen, choose another map file.\n";
-             continue;
-         }else {
-             numMaps++;
-             mapList.push_back(gameMap);
-             mapNames.push_back(mapToLoad);
-         }
-         //bail
-         if(numMaps >= 5){
-             cout << "\nThe maximum number of maps was created.\n";
+    int numberOfPlayers = choosePlayerNumber(2, 4);
+    vector<char> playerStrats = choosePlayerStrats(numberOfPlayers);
+    int numMaps = 0;
+    vector<Map*> mapList;
+    vector<string> mapNames;
+    do {
+        //which map to load
+        std::string mapToLoad;
+        Map* gameMap;
+        if (numMaps == 0 || loadOtherMap()) {
+            mapToLoad = chooseMap();
+        } else {
             break;
-         }
-     }while(true);
+        }
+        //load the map (try to use both loaders, to accept both map types)
+        MapLoader myLoader = MapLoader(mapToLoad);
+        gameMap = myLoader.readMapFile();
+        if (gameMap == nullptr) {
+            AlternativeLoader altLoader = AlternativeLoader(mapToLoad);
+            gameMap = altLoader.altReadMapFile();
+        }
+        //test map
+        if (gameMap == nullptr || !gameMap->testConnected()) {
+            cout << "\nThere was an error loading the game board. Try another mapfile.\n";
+            continue;
+        } else if (int(gameMap->getMapCountries()->size()) < numberOfPlayers) {
+            std::cout << "The selected map with " << gameMap->getMapCountries()->size() << " cannot support "
+                      << numberOfPlayers << " players. Please try again." << std::endl;
+            continue;
+        } else if (std::find(mapNames.begin(), mapNames.end(), mapToLoad) != mapNames.end()) {
+            cout << "\nThis map was already chosen, choose another map file.\n";
+            continue;
+        } else {
+            numMaps++;
+            mapList.push_back(gameMap);
+            mapNames.push_back(mapToLoad);
+        }
+        //bail
+        if (numMaps >= 5) {
+            cout << "\nThe maximum number of maps was created.\n";
+            break;
+        }
+    } while (true);
 
-     //fetch game settings
-     int numGamesToPlay = chooseNumGamesToPlay();
-     int maxTurns = chooseMaxTurns();
+    //fetch game settings
+    int numGamesToPlay = chooseNumGamesToPlay();
+    int maxTurns = chooseMaxTurns();
 
-     //run the games
-     vector<int> winners;
-     for(auto currentMap : mapList){
-         for(int i = 0; i < numGamesToPlay; i++){
-             std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
-             Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
-             gameDeck->createDeck();
-             GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
+    //run the games
+    vector<int> winners;
+    for (auto currentMap : mapList) {
+        for (int i = 0; i < numGamesToPlay; i++) {
+            std::vector<Player*>* gamePlayers = initPlayers(numberOfPlayers, currentMap, playerStrats);
+            Deck* gameDeck = new Deck(currentMap->getMapCountries()->size());
+            gameDeck->createDeck();
+            GameLoop::initInstance(currentMap, gamePlayers, gameDeck);
 
-             GameLoop::getInstance()->distributeArmies();
-             winners.push_back(GameLoop::getInstance()->loop(maxTurns));
-             GameLoop::resetInstance();
-         }
-     }
-     printGameReport(mapNames, playerStrats, numGamesToPlay, maxTurns, winners);
-     std::cout << "\n"
-                  ".___________. __    __       ___      .__   __.  __  ___      _______.    _______   ______   .______         .______    __          ___   ____    ____  __  .__   __.   _______  __  \n"
-                  "|           ||  |  |  |     /   \\     |  \\ |  | |  |/  /     /       |   |   ____| /  __  \\  |   _  \\        |   _  \\  |  |        /   \\  \\   \\  /   / |  | |  \\ |  |  /  _____||  | \n"
-                  "`---|  |----`|  |__|  |    /  ^  \\    |   \\|  | |  '  /     |   (----`   |  |__   |  |  |  | |  |_)  |       |  |_)  | |  |       /  ^  \\  \\   \\/   /  |  | |   \\|  | |  |  __  |  | \n"
-                  "    |  |     |   __   |   /  /_\\  \\   |  . `  | |    <       \\   \\       |   __|  |  |  |  | |      /        |   ___/  |  |      /  /_\\  \\  \\_    _/   |  | |  . `  | |  | |_ | |  | \n"
-                  "    |  |     |  |  |  |  /  _____  \\  |  |\\   | |  .  \\  .----)   |      |  |     |  `--'  | |  |\\  \\----.   |  |      |  `----./  _____  \\   |  |     |  | |  |\\   | |  |__| | |__| \n"
-                  "    |__|     |__|  |__| /__/     \\__\\ |__| \\__| |__|\\__\\ |_______/       |__|      \\______/  | _| `._____|   | _|      |_______/__/     \\__\\  |__|     |__| |__| \\__|  \\______| (__) \n"
-                  "                                                                                                                                                                                     ";
+            GameLoop::getInstance()->distributeArmies();
+            winners.push_back(GameLoop::getInstance()->loop(maxTurns));
+            GameLoop::resetInstance();
+        }
+    }
+    printGameReport(mapNames, playerStrats, numGamesToPlay, maxTurns, winners);
+    std::cout << "\n"
+                 ".___________. __    __       ___      .__   __.  __  ___      _______.    _______   ______   .______         .______    __          ___   ____    ____  __  .__   __.   _______  __  \n"
+                 "|           ||  |  |  |     /   \\     |  \\ |  | |  |/  /     /       |   |   ____| /  __  \\  |   _  \\        |   _  \\  |  |        /   \\  \\   \\  /   / |  | |  \\ |  |  /  _____||  | \n"
+                 "`---|  |----`|  |__|  |    /  ^  \\    |   \\|  | |  '  /     |   (----`   |  |__   |  |  |  | |  |_)  |       |  |_)  | |  |       /  ^  \\  \\   \\/   /  |  | |   \\|  | |  |  __  |  | \n"
+                 "    |  |     |   __   |   /  /_\\  \\   |  . `  | |    <       \\   \\       |   __|  |  |  |  | |      /        |   ___/  |  |      /  /_\\  \\  \\_    _/   |  | |  . `  | |  | |_ | |  | \n"
+                 "    |  |     |  |  |  |  /  _____  \\  |  |\\   | |  .  \\  .----)   |      |  |     |  `--'  | |  |\\  \\----.   |  |      |  `----./  _____  \\   |  |     |  | |  |\\   | |  |__| | |__| \n"
+                 "    |__|     |__|  |__| /__/     \\__\\ |__| \\__| |__|\\__\\ |_______/       |__|      \\______/  | _| `._____|   | _|      |_______/__/     \\__\\  |__|     |__| |__| \\__|  \\______| (__) \n"
+                 "                                                                                                                                                                                     ";
 }
 
 /**
@@ -593,20 +620,21 @@ void GameLoop::start() {
  */
 void GameLoop::startSingle(bool demoMode) {
 
-    std::cout << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
-                 "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
-                 " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
-                 "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
-                 "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
-                 "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
-                 "                                                                                                                                                        \n\n";
+    std::cout
+            << "____    __    ____  _______  __        ______   ______   .___  ___.  _______    .___________.  ______      .______       __       _______. __  ___  __  \n"
+               "\\   \\  /  \\  /   / |   ____||  |      /      | /  __  \\  |   \\/   | |   ____|   |           | /  __  \\     |   _  \\     |  |     /       ||  |/  / |  | \n"
+               " \\   \\/    \\/   /  |  |__   |  |     |  ,----'|  |  |  | |  \\  /  | |  |__      `---|  |----`|  |  |  |    |  |_)  |    |  |    |   (----`|  '  /  |  | \n"
+               "  \\            /   |   __|  |  |     |  |     |  |  |  | |  |\\/|  | |   __|         |  |     |  |  |  |    |      /     |  |     \\   \\    |    <   |  | \n"
+               "   \\    /\\    /    |  |____ |  `----.|  `----.|  `--'  | |  |  |  | |  |____        |  |     |  `--'  |    |  |\\  \\----.|  | .----)   |   |  .  \\  |__| \n"
+               "    \\__/  \\__/     |_______||_______| \\______| \\______/  |__|  |__| |_______|       |__|      \\______/     | _| `._____||__| |_______/    |__|\\__\\ (__) \n"
+               "                                                                                                                                                        \n\n";
 
     std::string mapToLoad;
     int numberOfPlayers;
     Map* gameMap;
     do {
         mapToLoad = chooseMap();
-        numberOfPlayers = choosePlayerNumber(2,6);
+        numberOfPlayers = choosePlayerNumber(2, 6);
         MapLoader myLoader = MapLoader(mapToLoad);
         gameMap = myLoader.readMapFile();
 
@@ -632,7 +660,7 @@ void GameLoop::startSingle(bool demoMode) {
 
     GameLoop::initInstance(gameMap, gamePlayers, gameDeck);
 
-    if(!demoMode){
+    if (!demoMode) {
         GameLoop::getInstance()->distributeArmies();
         GameLoop::getInstance()->loop();
         GameLoop::resetInstance();
