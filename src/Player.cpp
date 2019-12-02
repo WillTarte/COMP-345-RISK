@@ -430,7 +430,6 @@ Player::executeAttack(Map::Country *fromCountry, Map::Country *toCountry, Player
                 } else {
                     int newArmies = 0;
                     do {
-                        //TODO: if the player conquers atleast 1 country, then they get 1 card for that turn
                         GameLoop::getInstance()->getGameDeck()->draw(*this->getCards());
                         cout << "\n[ATTACKER] How many armies do you want to place on your new country?(1 to "
                              << fromCountry->getNumberOfTroops() - 1 << ")";
