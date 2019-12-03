@@ -69,13 +69,11 @@ GameLoop::~GameLoop() {
     delete this->gameDeck;
 }
 
-// TODO: we have to refactor resetting the instance because it should be handled differently between tournament and single to not cause memory leaks
 void GameLoop::resetInstance() {
     delete gameLoopInstance;
     gameLoopInstance = nullptr;
 }
 
-//TODO: when a player wins the game, the message is printed twice, and there's extra cheater bot notification
 /**
  * Loop for each round of the game. Checks if there is a winner at the end of each player's turn
  */

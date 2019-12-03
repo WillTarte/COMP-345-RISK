@@ -22,7 +22,7 @@ int main() {
         }
     }
 
-    GameLoop::getInstance()->loop(1);
+    GameLoop::getInstance()->loop();
 
     GameLoop::resetInstance();
     return 0;
