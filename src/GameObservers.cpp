@@ -28,17 +28,11 @@ void PhaseObserver::operator=(const PhaseObserver& rhs) {
 }
 
 void PhaseObserver::update() {
-    bool gameDone = false;
 
-    for (auto *p : *GameLoop::getInstance()->getAllPlayers()) {
-        if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
-            gameDone = true;
-        }
-    }
-    if (gameDone) {
-        // do nothing
+    if (this->subject->getOwnedCountries()->size() ==
+        GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
+        return;
     } else {
-
         std::cout << std::endl << "#####################" << std::endl;
         std::cout << "Player " << this->subject->getPlayerId() << " is " << subject->getPlayerState() << std::endl;
         std::cout << "#####################" << std::endl << std::endl;
@@ -127,11 +121,10 @@ void StatsObserver::update() {
     bool gameDone = false;
     int playerId = 0;
 
-    for (auto* p : *GameLoop::getInstance()->getAllPlayers()) {
-        if (p->getOwnedCountries()->size() == GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
-            gameDone = true;
-            playerId = p->getPlayerId();
-        }
+    if (this->subject->getOwnedCountries()->size() ==
+        GameLoop::getInstance()->getGameMap()->getMapCountries()->size()) {
+        gameDone = true;
+        playerId = this->subject->getPlayerId();
     }
     if (gameDone) {
         cout << "\033[1m\033[33m";

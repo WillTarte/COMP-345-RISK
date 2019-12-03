@@ -27,6 +27,7 @@ public:
     class Country{
         public:
             Country(int id, std::string name, int continent);
+            Country(const Country& toCopy);
             void operator=(Country& rhs);
             ~Country();
             inline std::vector<Country*>* getAdjCountries(){return pAdjCountries;};

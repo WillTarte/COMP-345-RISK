@@ -10,35 +10,39 @@
 #include <vector>
 #include <iterator>
 
+//NOTE: because of requirements for the GameEngine, the test methods for the player behaviors do not work anymore
+
 bool test_Player_Constructor() {
 
     // Arrange
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
+    auto* ownedCountries1 = new std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 0);
     Map::Country country2 = Map::Country(1, "country2", 0);
     Map::Country country3 = Map::Country(3, "country3", 1);
     Map::Country* pCountry1 = &country1;
     Map::Country* pCountry2 = &country2;
     Map::Country* pCountry3 = &country3;
-    ownedCountries1.push_back(pCountry1);
-    ownedCountries1.push_back(pCountry2);
-    ownedCountries1.push_back(pCountry3);
-    Hand* cards = new Hand();
+    ownedCountries1->push_back(pCountry1);
+    ownedCountries1->push_back(pCountry2);
+    ownedCountries1->push_back(pCountry3);
+    auto* cards = new Hand();
     Deck deck = Deck(3);
     deck.createDeck();
     deck.draw(*cards);
-    DiceRoller* diceRoller = new DiceRoller();
+    auto* diceRoller = new DiceRoller();
     const int playerId = 1;
     bool success = true;
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, diceRoller, playerId);
+    auto* player1 = new Player(ownedCountries1, cards, diceRoller, playerId);
 
     // Assert
-    if (player1.getOwnedCountries()->empty() || player1.getCards()->getHand()->empty() ||
-        playerId != player1.getPlayerId()) {
+    if (player1->getOwnedCountries()->empty() || player1->getCards()->getHand()->empty() ||
+        playerId != player1->getPlayerId()) {
         success = false;
     }
+
+    delete player1;
     return success;
 }
 
@@ -46,34 +50,35 @@ bool test_Player_getOwnedCountries(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
+    auto* ownedCountries1 = new std::vector<Map::Country*>();
     Map::Country country1 = Map::Country(0, "country1", 0);
     Map::Country country2 = Map::Country(1, "country2", 0);
     Map::Country country3 = Map::Country(3, "country3", 1);
     Map::Country* pCountry1 = &country1;
     Map::Country* pCountry2 = &country2;
     Map::Country* pCountry3 = &country3;
-    ownedCountries1.push_back(pCountry1);
-    ownedCountries1.push_back(pCountry2);
-    ownedCountries1.push_back(pCountry3);
-    Hand* cards = new Hand();
-    DiceRoller* diceRoller = new DiceRoller();
+    ownedCountries1->push_back(pCountry1);
+    ownedCountries1->push_back(pCountry2);
+    ownedCountries1->push_back(pCountry3);
+    auto* cards = new Hand();
+    auto* diceRoller = new DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, diceRoller, 0);
+    auto* player1 = new Player(ownedCountries1, cards, diceRoller, 0);
 
     // Assert
-    if (player1.getOwnedCountries()->empty()) {
+    if (player1->getOwnedCountries()->empty()) {
         success = false;
     }
     if (verbose) {
         std::cout << "\033[35m";
         std::cout << "\nThe player owns countries: ";
-        for (auto& i : *player1.getOwnedCountries()) {
+        for (auto& i : *player1->getOwnedCountries()) {
             std::cout << i->getCountryName() << " ";
         }
         std::cout << "\033[31m" << std::endl;
     }
+    delete player1;
     return success;
 }
 
@@ -81,27 +86,27 @@ bool test_Player_getHand(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    Hand* cards = new Hand();
+    auto* ownedCountries1 = new std::vector<Map::Country*>();
+    auto* cards = new Hand();
     Deck deck = Deck(3);
     deck.createDeck();
     deck.draw(*cards);
     deck.draw(*cards);
     deck.draw(*cards);
     deck.draw(*cards);
-    DiceRoller* diceRoller = new DiceRoller();
+    auto* diceRoller = new DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, diceRoller, 1);
+    auto* player1 = new Player(ownedCountries1, cards, diceRoller, 1);
 
     // Assert
-    if (player1.getCards()->getHand()->empty()) {
+    if (player1->getCards()->getHand()->empty()) {
         success = false;
     }
 
     if (verbose) {
         std::cout << "\n" << "\033[35m";
-        for (auto& i : *player1.getCards()->getHand()) {
+        for (auto& i : *player1->getCards()->getHand()) {
             switch ((int) i) {
                 case 0:
                     std::cout << "player1 has a card " << "INFANTRY" << std::endl;
@@ -116,6 +121,7 @@ bool test_Player_getHand(bool verbose = false) {
         }
         std::cout << "\033[31m";
     }
+    delete player1;
     return success;
 }
 
@@ -123,18 +129,18 @@ bool test_Player_getDiceRoller(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    std::vector<Map::Country*> ownedCountries1 = std::vector<Map::Country*>();
-    Hand* cards = new Hand();
-    DiceRoller* diceRoller = new DiceRoller();
+    auto* ownedCountries1 = new std::vector<Map::Country*>();
+    auto* cards = new Hand();
+    auto* diceRoller = new DiceRoller();
 
     // Act
-    Player player1 = Player(ownedCountries1, cards, diceRoller, 1);
+    auto* player1 = new Player(ownedCountries1, cards, diceRoller, 1);
 
     // Assert
-    if (player1.getDiceRoller()->roll(1).empty()
-        || player1.getDiceRoller()->roll(2).size() != 2
-        || player1.getDiceRoller()->getHistory().empty()
-        || player1.getDiceRoller()->getPercentages().empty()) {
+    if (player1->getDiceRoller()->roll(1).empty()
+        || player1->getDiceRoller()->roll(2).size() != 2
+        || player1->getDiceRoller()->getHistory().empty()
+        || player1->getDiceRoller()->getPercentages().empty()) {
 
         success = false;
     }
@@ -142,18 +148,19 @@ bool test_Player_getDiceRoller(bool verbose = false) {
     if (verbose) {
         std::cout << "\n" << "\033[35m";
         std::cout << "player1 rolled ";
-        std::vector<int> rolls = player1.getDiceRoller()->roll(1);
+        std::vector<int> rolls = player1->getDiceRoller()->roll(1);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << std::endl;
         std::cout << "player1 rolled ";
-        rolls = player1.getDiceRoller()->roll(2);
+        rolls = player1->getDiceRoller()->roll(2);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << std::endl;
         std::cout << "player1 rolled ";
-        rolls = player1.getDiceRoller()->roll(3);
+        rolls = player1->getDiceRoller()->roll(3);
         std::copy(rolls.begin(), rolls.end(), std::ostream_iterator<int>(std::cout));
         std::cout << "\033[31m\n";
     }
+    delete player1;
     return success;
 }
 
@@ -164,7 +171,7 @@ bool test_Player_fortify(bool verbose = false) {
     GameLoop::getInstance()->distributeArmies(); // because you need armies to fortify
 
     int numArmiesC1 = GameLoop::getInstance()->getAllPlayers()->at(0)->getOwnedCountries()->at(0)->getNumberOfTroops();
-    Map::Country* neighbour = new Map::Country(99, "neighbour", 1);
+    auto* neighbour = new Map::Country(99, "neighbour", 1);
     neighbour->setPlayerOwnerID(GameLoop::getInstance()->getAllPlayers()->at(0)->getPlayerId());
     int numArmiesC2 = neighbour->getNumberOfTroops();
 
@@ -207,7 +214,7 @@ bool test_Player_reinforce(bool verbose = false) {
 
     // Arrange
     bool success = true;
-    GameLoop::start();
+    GameLoop::startSingle(true);
     Hand* pHand = GameLoop::getInstance()->getAllPlayers()->at(0)->getCards();
     pHand->getHand()->push_back(CardType::CAVALRY);
     pHand->getHand()->push_back(CardType::CAVALRY);

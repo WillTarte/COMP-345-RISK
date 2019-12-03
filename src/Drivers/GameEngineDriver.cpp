@@ -24,7 +24,7 @@ int main() {
 
     cout << "\n";
 
-    GameLoop::start();
+    GameLoop::startSingle(true);
 
     for (unsigned long i = 0; i < GameLoop::getInstance()->getAllPlayers()->size(); i++) {
         for (unsigned long j = 0;
@@ -67,7 +67,7 @@ int main() {
     std::cout << "--------------------------------------------------------" << std::endl;
     std::cout << "\033[30m";
 
-    GameLoop::getInstance()->loop();
+    GameLoop::getInstance()->loop(200);
     GameLoop::resetInstance();
     return 0;
 }

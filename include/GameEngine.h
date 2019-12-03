@@ -17,19 +17,20 @@ class GameLoop {
     public:
         ~GameLoop();
         static void start();
+        static void startTournament();
+        static void startSingle(bool demoMode = false);
         static void resetInstance();
         static GameLoop* getInstance();
         static void initInstance(Map* gameMap, vector<Player*>* playerList, Deck* deck);
         GameLoop(const GameLoop& toCopy) = delete;
         void operator=(GameLoop& rhs) = delete;
-        void loop();
+        int loop(int maxTurn = -1);
 
     void distributeArmies();
 
         bool isRoundFinished (unsigned long currentPlayerPosition);
-        bool isGameDone (Player* currentPlayer);
-
-    Map* getGameMap() { return gameMap; }
+        static bool isGameDone (Player* currentPlayer,Map* currMap);
+        Map* getGameMap() { return gameMap; }
         inline vector<Player*>* getAllPlayers () { return allPlayers; }
         inline Deck* getGameDeck() { return gameDeck; }
 

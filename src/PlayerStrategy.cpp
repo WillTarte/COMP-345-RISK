@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <GameEngine.h>
 #include "../include/Player.h"
-#include "../include/PlayerStrategy.h"
 #include "../include/Map.h"
 
 /******************************************************************************/
@@ -258,13 +257,14 @@ CheaterBotStrategy& CheaterBotStrategy::operator=(const CheaterBotStrategy& rhs)
 /******************************************************************************/
 /******************** Human player strategy methods ***************************/
 /******************************************************************************/
+
+/**
+ * Need the parameter to generalize the function, but human inputs
+ * don't need context. If you don't do anything with the parameter,
+ * it throws a warning. So this way we get to generalize the solution
+ * by just throwing away the parameter immediately.
+ */
 signed char HumanPlayerStrategy::yesOrNo(StrategyContext _) {
-    /*
-     * Need the parameter to generalize the function, but human inputs
-     * don't need context. If you don't do anything with the parameter,
-     * it throws a warning. So this way we get to generalize the solution
-     * by just throwing away the parameter immediately.
-     */
     char playerDecision = 0;
     std::cin >> playerDecision;
     std::cin.ignore(512, '\n');
@@ -303,7 +303,6 @@ signed char AggressiveBotStrategy::yesOrNo(StrategyContext context) {
 }
 
 bool AggressiveBotStrategy::canAttack() {
-
     Map::Country* biggest = nullptr;
     bool canAttack = false;
     std::set<int> checkedCountries = std::set<int>();
@@ -335,7 +334,6 @@ bool AggressiveBotStrategy::canAttack() {
     if (from != nullptr && biggest->getCountryId() != from->getCountryId()) {
         canAttack = false;
     }
-
     return canAttack;
 }
 
@@ -455,7 +453,6 @@ int AggressiveBotStrategy::attackNumDice() {
     else {
         numDice = from->getNumberOfTroops() - 1;
     }
-
     return numDice;
 }
 
@@ -470,7 +467,6 @@ int AggressiveBotStrategy::defendNumDice() {
     else {
         numDice = 1;
     }
-
     return numDice;
 }
 
@@ -480,41 +476,16 @@ int AggressiveBotStrategy::defendNumDice() {
  * The expected output is the smallest country they own.
  **/
 int AggressiveBotStrategy::fortifyFromCountryIndex() {
-
-    from = nullptr;
-    std::set<int> checkedBiggestCountries = std::set<int>();
-    unsigned int fromCountryIndex = -1;
-    while (from == nullptr) {
-        Map::Country* biggestCountry = nullptr;
-        for (auto* country : *player->getOwnedCountries()) {
-            if (biggestCountry != nullptr && checkedBiggestCountries.find(biggestCountry->getCountryId()) != checkedBiggestCountries.end()) {
-                continue;
-            }
-            if (biggestCountry == nullptr || biggestCountry->getNumberOfTroops() < country->getNumberOfTroops()) {
-                biggestCountry = country;
-            }
-        }
-
-        for (auto* neighbour : *biggestCountry->getAdjCountries()) {
-            if (neighbour->getPlayerOwnerID() == biggestCountry->getPlayerOwnerID() && neighbour->getNumberOfTroops() > 1 ) {
-                from = neighbour;
-            }
-        }
-
-        if (from == nullptr) {
-            checkedBiggestCountries.insert(biggestCountry->getCountryId());
-            continue;
-        }
-
-        fromCountryIndex = -1;
-        for (unsigned long i = 0; i < player->getOwnedCountries()->size(); i++) {
-            if (player->getOwnedCountries()->at(i)->getCountryId() == from->getCountryId()) {
-                fromCountryIndex = i;
-            }
+    int fromCountryIndex = 0;
+    int numTroops = 9999;
+    for (int i = 0; i < player->getOwnedCountries()->size(); i++) {
+        if (player->getOwnedCountries()->at(i)->getNumberOfTroops() < numTroops && player->getOwnedCountries()->at(i)->getNumberOfTroops() > 1) {
+            fromCountryIndex = i;
+            numTroops = player->getOwnedCountries()->at(i)->getNumberOfTroops();
+            from = player->getOwnedCountries()->at(i);
         }
     }
-
-    return (int) fromCountryIndex;
+    return fromCountryIndex;
 }
 
 /**
@@ -524,24 +495,16 @@ int AggressiveBotStrategy::fortifyFromCountryIndex() {
  * The expected output is the same as the attackFromCountry function
  **/
 int AggressiveBotStrategy::fortifyToCountryIndex() {
-    to = nullptr;
-    for (auto* country : *player->getOwnedCountries()) {
-        if (to == nullptr) {
-            to = country;
-        }
-        else if (country->getNumberOfTroops() > to->getNumberOfTroops()) {
-            to = country;
-        }
-    }
-
-    unsigned int toCountryRelativeIndex = -1;
-    for (unsigned long i = 0; i < from->getAdjCountries()->size(); i++) {
-        if (from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
-            toCountryRelativeIndex = i;
+    int toCountry = 0;
+    int numTroops = 2;
+    for (int i = 0; i < from->getAdjCountries()->size(); i++) {
+        if (from->getAdjCountries()->at(i)->getNumberOfTroops() >= numTroops) {
+            toCountry = i;
+            numTroops = from->getAdjCountries()->at(i)->getNumberOfTroops();
+            to = from->getAdjCountries()->at(i);
         }
     }
-
-    return (int) toCountryRelativeIndex;
+    return toCountry;
 }
 
 /**
@@ -563,7 +526,6 @@ int AggressiveBotStrategy::numCards() {
             count++;
         }
     }
-
     return count;
 }
 
@@ -577,7 +539,6 @@ int AggressiveBotStrategy::numCards() {
  **/
 int AggressiveBotStrategy::reinforceArmyCount() {
     Map::Country* biggest = nullptr;
-    // Find what the biggest country is
     for (auto* country : *player->getOwnedCountries()) {
         if (biggest == nullptr || country->getNumberOfTroops() > biggest->getNumberOfTroops()) {
             biggest = country;
@@ -588,10 +549,8 @@ int AggressiveBotStrategy::reinforceArmyCount() {
         std::cout << *armiesToPlace;
         return *armiesToPlace;
     }
-    else {
-        std::cout << "0";
-        return 0;
-    }
+    std::cout << "0";
+    return 0;
 }
 
 /**
@@ -600,7 +559,6 @@ int AggressiveBotStrategy::reinforceArmyCount() {
  * @return true if the bot can fortify
  */
 bool AggressiveBotStrategy::canFortify() {
-
     bool canFortify = false;
     Map::Country* biggestCountry = nullptr;
     for (auto* country: *player->getOwnedCountries()) {
@@ -613,7 +571,6 @@ bool AggressiveBotStrategy::canFortify() {
             canFortify = true;
         }
     }
-
     return canFortify;
 }
 
@@ -633,7 +590,6 @@ signed char BenevolentBotStrategy::yesOrNo(StrategyContext context) {
             botChoice = 'y';
             break;
         default: {
-            // Should never occur
             botChoice = 'n';
         }
     }
@@ -690,7 +646,6 @@ int BenevolentBotStrategy::defendNumDice() {
     else {
         numDice = 1;
     }
-
     return numDice;
 }
 
@@ -703,29 +658,15 @@ int BenevolentBotStrategy::defendNumDice() {
  * the benevolent bot player controls.
  **/
 int BenevolentBotStrategy::fortifyFromCountryIndex() {
-    from = nullptr;
-    std::set<int> checkedSmallestCountries = std::set<int>();
-    unsigned int fromCountryIndex = -1;
-    Map::Country* smallestCountry = nullptr;
-
-    for(auto* country : *player->getOwnedCountries()) {
-        if(smallestCountry == nullptr) {
-            smallestCountry = country;
-        } else if (smallestCountry->getNumberOfTroops() > country->getNumberOfTroops()) {
-            for(auto* neighbour : *country->getAdjCountries()) {
-                if(neighbour->getPlayerOwnerID() == country->getPlayerOwnerID() && neighbour->getNumberOfTroops() > country->getNumberOfTroops()) {
-                    smallestCountry = country;
-                    from = neighbour;
-                }
-            }
-        }
-    }
-    for (int i = 0; i < player->getOwnedCountries()->size();i++) {
-        if(player->getOwnedCountries()->at(i)->getCountryId() == from->getCountryId()) {
+    unsigned int fromCountryIndex = 0;
+    int numTroops = -1;
+    for(int i = 0; i < player->getOwnedCountries()->size(); i++){
+        if(player->getOwnedCountries()->at(i)->getNumberOfTroops() > numTroops){
             fromCountryIndex = i;
+            numTroops = player->getOwnedCountries()->at(i)->getNumberOfTroops();
+            from = player->getOwnedCountries()->at(i);
         }
     }
-
     return (int) fromCountryIndex;
 }
 
@@ -738,28 +679,17 @@ int BenevolentBotStrategy::fortifyFromCountryIndex() {
  * the benevolent bot player controls.
  **/
 int BenevolentBotStrategy::fortifyToCountryIndex() {
+    int toCountry = 0;
+    int numTroops = 9999;
 
-    to = nullptr;
-    Map::Country* smallestNeighbour = nullptr;
-    for(auto* neighbour : *from->getAdjCountries()) {
-        if(smallestNeighbour == nullptr && neighbour->getPlayerOwnerID() == from->getPlayerOwnerID()) {
-            smallestNeighbour = neighbour;
-            continue;
-        }
-        if(neighbour < smallestNeighbour && neighbour->getPlayerOwnerID() == from->getPlayerOwnerID()) {
-            smallestNeighbour = neighbour;
+    for(int i = 0; i < from->getAdjCountries()->size(); i++){
+        if(from->getAdjCountries()->at(i)->getNumberOfTroops() < numTroops){
+            toCountry = i;
+            numTroops = from->getAdjCountries()->at(i)->getNumberOfTroops();
+            to = from->getAdjCountries()->at(i);
         }
     }
-
-    to = smallestNeighbour;
-    unsigned int toCountryRelativeIndex = -1;
-    for (unsigned long i = 0 ; i < from->getAdjCountries()->size() ; i++) {
-        if (from->getAdjCountries()->at(i)->getCountryId() == to->getCountryId()) {
-            toCountryRelativeIndex = i;
-        }
-    }
-
-    return (int) toCountryRelativeIndex;
+    return toCountry;
 }
 
 /**
@@ -769,7 +699,10 @@ int BenevolentBotStrategy::fortifyToCountryIndex() {
 int BenevolentBotStrategy::fortifyArmyCount() {
     int move = from->getNumberOfTroops();
     move = (move - to->getNumberOfTroops()) / 2;
-
+    //bug fix : so that it doesnt try to move a negative number of armies
+    if(move < 0){
+        return 0;
+    }
     return move;
 }
 
@@ -784,7 +717,6 @@ int BenevolentBotStrategy::numArmies() {
             count++;
         }
     }
-
     return count;
 }
 
@@ -806,7 +738,6 @@ int BenevolentBotStrategy::place() {
     if (*numWeakest == -1) {
         int count = 0;
         int weakest = 0;
-        // Find what the smallest country is
         for (auto* country : *player->getOwnedCountries()) {
             if (weakest == 0 || country->getNumberOfTroops() < weakest) {
                 weakest = country->getNumberOfTroops();
@@ -822,7 +753,6 @@ int BenevolentBotStrategy::place() {
 
         numWeakest = new int(count);
     }
-
     return ceil((double)*armiesToPlace / (double)*numWeakest);
 }
 
@@ -832,7 +762,6 @@ int BenevolentBotStrategy::place() {
  * @return true if the bot can fortify
  */
 bool BenevolentBotStrategy::canFortify() {
-
     bool canFortify = false;
     Map::Country* smallestCountry = nullptr;
 
@@ -856,7 +785,6 @@ bool BenevolentBotStrategy::canFortify() {
             canFortify = true;
         }
     }
-
     return canFortify;
 }
 
@@ -992,7 +920,6 @@ int RandomBotStrategy::intInput(StrategyContext context) {
 /******************************************************************************/
 
 signed char CheaterBotStrategy::yesOrNo(StrategyContext context) {
-
     switch (context) {
         case ATTACK:
             return (signed char) this->cheaterAttack();
@@ -1011,9 +938,13 @@ int CheaterBotStrategy::intInput(StrategyContext context) {
 
 int CheaterBotStrategy::cheaterReinforce() {
     std::cout << "We have a cheater! They are doubling all armies on their countries" << std::endl;
+
     for(auto* country : *this->player->getOwnedCountries()) {
         std::cout << "[CHEATER] - Country " << country->getCountryName() << " had " << country->getNumberOfTroops() << " armies. It now has ";
-        country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+        //prevent overflow
+        if(country->getNumberOfTroops() * 2 > 0 && country->getNumberOfTroops() * 2 < 2147483647){
+            country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+        }
         std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
     }
 
@@ -1024,6 +955,7 @@ int CheaterBotStrategy::cheaterReinforce() {
 
 bool CheaterBotStrategy::exchangeCountryOwnership(Player* defendingPlayer, Map::Country* toExchange) {
     int toExchangeIndex = -1;
+
     for (int i = 0; i < defendingPlayer->getOwnedCountries()->size(); i++) {
         if (defendingPlayer->getOwnedCountries()->at(i)->getCountryId() == toExchange->getCountryId()) {
             if (toExchangeIndex != -1) {
@@ -1032,13 +964,15 @@ bool CheaterBotStrategy::exchangeCountryOwnership(Player* defendingPlayer, Map::
             toExchangeIndex = i;
         }
     }
+
     if (toExchangeIndex == -1) {
         return false;
-    } else {
-        this->player->getOwnedCountries()->push_back(defendingPlayer->getOwnedCountries()->at(toExchangeIndex));
-        defendingPlayer->getOwnedCountries()->erase(defendingPlayer->getOwnedCountries()->begin() + toExchangeIndex);
-        return true;
     }
+
+    toExchange->setPlayerOwnerID(this->player->getPlayerId());
+    this->player->getOwnedCountries()->push_back(defendingPlayer->getOwnedCountries()->at(toExchangeIndex));
+    defendingPlayer->getOwnedCountries()->erase(defendingPlayer->getOwnedCountries()->begin() + toExchangeIndex);
+    return true;
 }
 
 int CheaterBotStrategy::cheaterAttack() {
@@ -1085,11 +1019,13 @@ int CheaterBotStrategy::cheaterFortify() {
         }
         if (canFortify) {
             std::cout << "[CHEATER] - Country " << country->getCountryName() << " had " << country->getNumberOfTroops() << " armies. It now has ";
-            country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+            //prevent overflow
+            if(country->getNumberOfTroops() * 2 > 0 && country->getNumberOfTroops() * 2 < 2147483647){
+                country->setNumberOfTroops(country->getNumberOfTroops() * 2);
+            }
             std::cout << country->getNumberOfTroops() << " armies. -" << std::endl;
         }
     }
-
     player->setPlayerState(PlayerState::IDLE);
     player->getStrategy()->resetChoices();
     return PlayerAction::SUCCEEDED;

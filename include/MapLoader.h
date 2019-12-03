@@ -27,11 +27,11 @@ private:
     void getMapName(std::string* mapName, std::vector<std::string>* lineWords);
     bool checkSection(std::string* mode, std::vector<std::string>* lineWords);
     bool validateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
-                               bool* validMap);
+                               bool* validMap,bool verbose);
     bool validateCountryLine(int* countryCount, std::vector<std::string>* lineWords, const int* lineCount, bool* validMap,
-                        int* countryID, const int* continentCount);
+                        int* countryID, const int* continentCount,bool verbose);
     bool validateBordersLine(std::vector<int>* lineNums, std::vector<std::string>* lineWords, const int* lineCount,
-                             bool* validMap, const int* countryCount);
+                             bool* validMap, const int* countryCount,bool verbose);
 };
 
 class AlternativeLoader{
@@ -50,9 +50,9 @@ private:
     void altGetMapName(std::string *mapName, std::vector<std::string> *lineWords);
     bool altCheckSection(std::string* mode, const std::string &line);
     bool altValidateContinentLine(int* continentCount, std::vector<std::string>* lineWords, const int* lineCount,
-                                  bool* validMap);
+                                  bool* validMap,bool verbose);
     bool altValidateTerritoriesLine(std::vector<std::string> *lineWords, const int *lineCount,
-                                    bool *validMap);
+                                    bool *validMap,bool verbose);
     static std::string getContinentID(const std::string& continentName,std::vector<std::vector<std::string>> continentData);
     static int getCountryID(const std::string& countryName, const std::vector<std::string>& countryList);
 
