@@ -418,15 +418,17 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
 
     //print table
     int winnerIndexCounter = 0;
+    int numberGames = 0;
     for (int i = 0; i < int(maps.size() + 1); i++) {
         for (int j = 0; j <= games; j++) {
             if (j == 0 && i == 0) {
-                std::cout << "\n\n" << centerOut(" ", 10) << " | ";
+                std::cout << "\n\n" << centerOut(" ", 20) << " | ";
             } else if (i == 0) {
                 std::string to_print = "Game " + std::to_string(j);
                 std::cout << centerOut(to_print, 10) << " | ";
+                numberGames++;
             } else if (j == 0) {
-                std::cout << centerOut(maps.at(i - 1), 10) << " | ";
+                std::cout << centerOut(maps.at(i - 1), 20) << " | ";
             } else {
                 std::string thisWinner;
                 int winnerIndex = winners.at(winnerIndexCounter);
@@ -440,7 +442,7 @@ static void printGameReport(vector<std::string> maps, vector<char> players, int 
             }
         }
         std::cout << std::endl;
-        for (int g = 0; g < 75; g++) {
+        for (int g = 0; g < (13 * numberGames + 22); g++) {
             std::cout << "-";
         }
         std::cout << std::endl;
